@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small, with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (76 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -95,3 +95,20 @@ Every decision taken while building the agent, large or small, with the reason a
 | D62 | `venv` + `pip` + `Makefile` | Works on any machine with Python; nothing extra to install for evaluators | uv / poetry: nicer, but one more prerequisite | `Makefile` |
 | D63 | Tests run offline: scripted understanding + template writer | Deterministic, free and fast (< 1 s); every process rule is covered | Calling the real API in unit tests. LLM quality is measured by evals instead | `tests/` |
 | D64 | Code and docs in English, the agent in Spanish/English | The deliverable is reviewed in English; candidates speak Spanish | n/a | |
+
+## Changes after live testing (see [live testing log](../live-testing-log.md))
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D65 | The writer (Sonnet 5.5) runs with thinking off (`between_tools`) | Measured 1.3 s vs 6.0 s median, and better instruction-following, for one-line messages from explicit instructions | Adaptive thinking at low effort. Model-gated: other models reject `between_tools` | `llm/claude.py: THINKING_OFF_MODELS` |
+| D66 | Understanding (Haiku 5.5) keeps adaptive thinking at effort `low` | Disabling it made no measurable difference (1.9 s both); docs recommend low effort over disabling | Thinking disabled | `llm/claude.py` |
+| D67 | Experience is extracted as total **months** (int); years derived by code | "8 meses" became 0.5 years and the recap said "6 meses": the model rounds, code doesn't | Years as a float from the model | `schemas.Extracted`, `validators.validate_experience_months` |
+| D68 | The writer gets the name only when it was just learned and in the final message, and is told "don't use the name" otherwise | A rule in the system prompt alone didn't stop "Perfecto, Lucía" in every message | Trusting the system prompt | `policy._done`, `prompts.render_directive` |
+| D69 | Gender-neutral Spanish; gender is never inferred from a name | "Lucía" → "repartidora" risks misgendering | Gendered wording from the name | `prompts.build_speak_system` |
+| D70 | The writer may never claim it changed or corrected data | It once said "lo paso como 8" while the data was unchanged: only the engine changes data | n/a | `prompts.build_speak_system` |
+| D71 | A language switch needs the model's "clear" signal **and** a deterministic function-word check not disagreeing | The model alone read "en la noche" and "full time y part time" as English | Model only (wrong switches), or code only (misses short English) | `text.function_word_language`, `policy._update_language` |
+| D72 | Day/month dates: the model keeps the current year; code moves to next year only if > 60 days in the past, otherwise asks again | "el 1 de octubre" said on 21 Oct is a mistake, not a start date in 2027 | Model decides the year | `validators.resolve_start_date` |
+| D73 | Recap shows the year when it isn't the current one; decimal comma in Spanish | "01/10" hid a 2027 date; "1.5 años" isn't Spanish | n/a | `recap.py` |
+| D74 | Neutral Spanish (city unknown) uses "auto o moto" | "vehículo o moto" sounded wrong; "auto" is understood in Spain and Mexico | "coche" (Spain only), "carro" (Mexico only) | `copy.yaml`, `prompts.py` |
+| D75 | FAQ entry for "can we do this in English?" | The answer is known; "the team will confirm" was unhelpful | n/a | `faq.yaml: language` |
+| D76 | "Not a job offer" is a prohibition for the writer, not content | Phrased as content, it reached the candidate verbatim and sounded cold | n/a | `prompts.OUTCOME_FACTS` |

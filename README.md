@@ -9,7 +9,7 @@ The client has two different problems, and the design addresses each one separat
 | 60% of candidates don't answer recruiter calls | Asynchronous chat, first message seconds after applying, candidate answers when it suits them |
 | 80% of recruiter time goes to unqualified candidates | Knock-out questions first; recruiters only receive qualified (or flagged) candidates with a summary |
 
-📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives)
+📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes)
 
 ---
 
@@ -21,7 +21,7 @@ Requirements: Python 3.11+, an Anthropic API key.
 make install                 # creates .venv and installs the package
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make chat                    # talk to the agent as a candidate (add --debug via: .venv/bin/python -m screener.channels.cli --debug)
-make test                    # 77 tests, no API key needed
+make test                    # 92 tests, no API key needed
 ```
 
 In the chat, `/data` shows the structured screening data collected so far.
