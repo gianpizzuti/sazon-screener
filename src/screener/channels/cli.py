@@ -21,6 +21,8 @@ console = Console()
 
 
 def show(result: TurnResult, debug: bool) -> None:
+    if not result.messages and result.completed:
+        console.print("[dim](Sofía doesn't reply: the conversation is closed and there's nothing to answer)[/dim]")
     for message in result.messages:
         console.print(Panel(message.text, title="Sofía", title_align="left", border_style="green", width=72))
         if message.quick_replies:

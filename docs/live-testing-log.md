@@ -20,6 +20,8 @@ Unit tests prove the rules; only real conversations prove the prompts. Each issu
 | L10 | Final message: "(no es todavía una oferta de trabajo)" | A constraint for the model leaked into the text | Phrased as a prohibition, not as content (D76) | checked live |
 | L11 | "licencia… de vehículo o de moto" | Neutral-Spanish vocabulary choice | "auto o moto" (D74) | n/a |
 
+| L12 | After the end, "bye" and "ok" each got a reply, indefinitely (**found in manual testing**) | Every message after the end produced a courtesy reply | Questions answered, one courtesy reply, then silence; new information flagged for a recruiter (D80, D81) | `TestAfterTheEnd` (3 tests) |
+
 **Re-run after fixes:** all issues above resolved. In L7 the model mislabelled "full time y part time" as English *again*, and the second opinion vetoed the switch, which is the reason it exists.
 
 ### Latency measurements (writer = Claude Sonnet 5.5, understanding = Claude Haiku 5.5)

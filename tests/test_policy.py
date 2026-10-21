@@ -284,3 +284,31 @@ class TestRecapAndCorrections:
         complete_until_recap(policy, state)
         say(policy, state, "en realidad no tengo carnet", intents=("correction",), drivers_license="no")
         assert state.stage == Stage.DISQUALIFIED
+
+
+class TestAfterTheEnd:
+    def finish(self, policy, state):
+        to_screening(policy, state)
+        say(policy, state, "no tengo", drivers_license="no")
+        say(policy, state, "sí", intents=("affirm",))  # talent pool
+        assert state.talent_pool_opt_in is True
+
+    def test_small_talk_gets_one_courtesy_reply_then_silence(self, policy, state):
+        # regression: "bye" and "ok" after the end each got a reply, forever
+        self.finish(policy, state)
+        d, _ = say(policy, state, "bye", intents=("smalltalk",))
+        assert d.kind == "closed_followup"
+        d, events = say(policy, state, "ok", intents=("affirm",))
+        assert d.kind == "silent" and "ignored_after_close" in events
+
+    def test_questions_after_the_end_are_always_answered(self, policy, state):
+        self.finish(policy, state)
+        say(policy, state, "gracias", intents=("smalltalk",))
+        d, _ = say(policy, state, "¿cuándo me escribís?", intents=("question",), question="¿cuándo me escribís?", faq_id="process")
+        assert d.kind == "closed_followup" and d.answer.faq_id == "process"
+
+    def test_new_information_after_the_end_is_flagged_for_a_recruiter(self, policy, state):
+        self.finish(policy, state)
+        d, events = say(policy, state, "¡ya tengo el carnet!", drivers_license="yes")
+        assert "update_after_close" in d.notes and state.needs_review
+        assert state.stage == Stage.DISQUALIFIED  # a human re-evaluates, the bot doesn't

@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (79 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (81 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -120,3 +120,10 @@ Every decision taken while building the agent, large or small (79 so far), with 
 | D77 | Sentiment comes from the same understanding call, as 4 categories (neutral, positive, confused, frustrated) | Zero extra latency or cost; each category maps to a behaviour | A separate sentiment model, or a 0-1 score that changes nothing | `schemas.TurnAnalysis.sentiment` |
 | D78 | Confused → simpler words and options; frustrated → brief empathy, shorter, "N questions left" (N computed by code) | Adjusting tone is what keeps a candidate from dropping off | One tone for everyone | `policy.TONE_BY_SENTIMENT`, `prompts.TONE_HINTS` |
 | D79 | Sentiment changes the tone only, never eligibility or ordering | Fairness: a frustrated candidate must not be penalised or favoured | Using it as a screening signal. Limitation: per message, no trend over the conversation yet | `policy.decide` |
+
+## After the screening ends
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D80 | After the end: questions always answered; small talk gets at most one courtesy reply, then silence | Without it, "bye" / "ok" / "👍" got a reply each, forever (found in manual testing): annoying and a paid call per message | Replying to everything, or never replying (questions would go unanswered) | `policy._after_end` |
+| D81 | New information after the end (e.g. "I just got my licence") is acknowledged and flagged for a recruiter, not re-evaluated by the bot | Reopening a closed decision is a human call; the candidate still gets a response | Automatically re-running the screening. Trade-off: the summary generated at the end becomes stale (to regenerate on this flag) | `policy._after_end`, flag `update_after_close` |

@@ -158,6 +158,9 @@ misc:
   closing_followup:
     es: "Tu solicitud ya está registrada. Si tienes alguna duda, pregúntame."
     en: "Your application is already registered. If you have any questions, just ask."
+  update_after_close:
+    es: "¡Gracias por avisar! Se lo paso al equipo de selección para que lo revise."
+    en: "Thanks for letting me know! I'll pass it on to the recruiting team to review."
   postpone_ack:
     es: "Sin problema. Escríbeme cuando puedas y seguimos donde lo dejamos."
     en: "No problem. Write to me whenever you can and we'll pick up where we left off."

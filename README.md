@@ -21,7 +21,7 @@ Requirements: Python 3.11+, an Anthropic API key.
 make install                 # creates .venv and installs the package
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make chat                    # talk to the agent as a candidate (add --debug via: .venv/bin/python -m screener.channels.cli --debug)
-make test                    # 92 tests, no API key needed
+make test                    # 95 tests, no API key needed
 ```
 
 In the chat, `/data` shows the structured screening data collected so far.

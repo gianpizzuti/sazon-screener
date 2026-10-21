@@ -263,9 +263,16 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
             else:
                 steps.append("They don't want us to keep their details. Accept it, thank them and wish them luck.")
         case "closed_followup":
-            steps.append(
-                "The screening is already finished and nothing else is needed from them. Reply politely; ask nothing."
-            )
+            if "update_after_close" in d.notes:
+                steps.append(
+                    "The screening is already finished, but they shared new information. Thank them and say the "
+                    "recruiting team will review it. Promise nothing else; ask nothing."
+                )
+            else:
+                steps.append(
+                    "The screening is already finished and nothing else is needed from them. Reply in one short, "
+                    "polite sentence; ask nothing."
+                )
         case "postpone_ack":
             steps.append("They want to continue later. Say no problem, and that they can write anytime to pick up where they left off.")
 

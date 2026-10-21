@@ -42,7 +42,9 @@ class TemplateResponder:
             case "talent_pool_ack":
                 parts.append(t("talent_pool.yes" if d.talent_pool_answer else "talent_pool.no", loc))
             case "closed_followup":
-                if not d.answer:
+                if "update_after_close" in d.notes:
+                    parts.append(t("misc.update_after_close", loc))
+                elif not d.answer:
                     parts.append(t("misc.closing_followup", loc))
             case "interlude" | "recap" | "silent":
                 pass

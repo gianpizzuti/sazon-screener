@@ -106,7 +106,7 @@ class ScreeningPolicy:
             directive.answer = self._answer_question(state, analysis, events)
 
         if state.is_terminal:
-            return self._after_end(state, intents, directive, events)
+            return self._after_end(state, intents, directive, events, analysis)
 
         if "opt_out" in intents:
             return self._finish(state, Stage.WITHDRAWN, "withdrawn", events)
@@ -254,10 +254,16 @@ class ScreeningPolicy:
         )
         return Decision(directive, events)
 
-    def _after_end(self, state, intents, directive, events) -> Decision:
-        """Messages after the screening ended: talent-pool answer, questions, courtesy."""
+    def _after_end(self, state, intents, directive, events, analysis: TurnAnalysis) -> Decision:
+        """Messages after the screening ended.
+
+        Questions are always answered; new information is flagged for a recruiter; small
+        talk ("ok", "gracias", "bye") gets at most one courtesy reply, then silence, so
+        the bot never ping-pongs forever.
+        """
+        silent = Decision(Directive(kind="silent", locale=state.locale), events)
         if state.stage == Stage.TERMINATED:
-            return Decision(Directive(kind="silent", locale=state.locale), events)
+            return silent
         if (
             state.stage == Stage.DISQUALIFIED
             and state.talent_pool_opt_in is None
@@ -267,9 +273,20 @@ class ScreeningPolicy:
             events.append(Event("talent_pool", {"opt_in": state.talent_pool_opt_in}))
             directive.kind = "talent_pool_ack"
             directive.talent_pool_answer = state.talent_pool_opt_in
-        else:
-            directive.kind = "closed_followup"
-        directive.candidate_name = _first_name(state.data)
+            directive.candidate_name = _first_name(state.data)
+            return Decision(directive, events)
+        directive.kind = "closed_followup"
+        if directive.answer:
+            return Decision(directive, events)
+        if intents & {"provide_info", "correction"} and _has_values(analysis):
+            state.add_flag("update_after_close", ", ".join(e.field for e in analysis.evidence))
+            events.append(Event("update_after_close", {"fields": [e.field for e in analysis.evidence]}))
+            directive.notes.append("update_after_close")
+            return Decision(directive, events)
+        if state.post_close_replies >= 1:
+            events.append(Event("ignored_after_close"))
+            return silent
+        state.post_close_replies += 1
         return Decision(directive, events)
 
     def _done(self, state, directive, events, captured=()) -> Decision:
@@ -487,6 +504,12 @@ class ScreeningPolicy:
             case FieldName.START_DATE:
                 return f"can start on {d.start_date.isoformat()}"
         return name.value
+
+
+def _has_values(analysis: TurnAnalysis) -> bool:
+    return bool(analysis.evidence) and any(
+        v not in (None, []) for v in analysis.extracted.model_dump().values()
+    )
 
 
 def _first_name(data: ScreeningData) -> str | None:
