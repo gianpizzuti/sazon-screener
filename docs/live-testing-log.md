@@ -41,3 +41,10 @@ The Understand system prompt is served from cache (`cache_read_input_tokens` ≈
 - "3 años" about the licence was not extracted as delivery experience.
 - Mexican vocabulary once the city was known ("licencia de manejo", "tiempo completo", "Listo").
 - "asap" on 21 Oct (Madrid) stored as 20 Oct for a candidate in Mexico City, where it was still the 20th: start dates are computed in the candidate's timezone.
+
+## Round 2 (2026-10-21): manual testing and demo data generation
+
+| # | What happened | Root cause | Fix | Regression test |
+|---|---|---|---|---|
+| L13 | A Spanish candidate answered just "full time" and the agent switched to English, then back at the next message (found while generating demo data) | The function-word check gives no opinion on loanwords, so the model decided alone | A switch now needs the check to confirm, or ≥ 4 words without signal (D97) | `TestLanguageLoanwords` (3 tests); demo conversation regenerated: no switch |
+| L14 | "no, pero puedo conducir ebike" → disqualified (manual test) | Working as specified: a licence is a knock-out | None in code. It is real evidence for **open question #1 to the client** (are e-bikes accepted?); a recruiter can override the outcome (D87) | n/a |

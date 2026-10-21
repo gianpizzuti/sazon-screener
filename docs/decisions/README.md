@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Every decision, small ones included, is listed in the **[decision log](decision-log.md)** (81 entries). The records below are the deep-dives on the important ones.
+Every decision, small ones included, is listed in the **[decision log](decision-log.md)** (98 entries). The records below are the deep-dives on the important ones.
 
 Each record says what was decided, the alternatives considered, the trade-offs accepted and **when the decision should be revisited**.
 
@@ -13,3 +13,4 @@ Each record says what was decided, the alternatives considered, the trade-offs a
 | [0005](0005-grounding-and-layered-validation.md) | Grounded extraction and three layers of validation |
 | [0006](0006-templates-where-precision-matters.md) | Templates where precision beats naturalness, and as the degraded mode |
 | [0007](0007-faq-without-vector-db.md) | FAQ answering without a vector database |
+| [0008](0008-api-first-recruiter-tool.md) | API-first, with a Streamlit recruiter tool as one of its clients |
