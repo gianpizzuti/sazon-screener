@@ -20,7 +20,9 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field
 
 from screener.config import ClientConfig
+from screener.domain.models import TERMINAL_STAGES as TERMINAL
 from screener.domain.models import ConversationState, FieldName, ScreeningData, Stage, utcnow
+from screener.engine import followups
 from screener.engine.directive import Directive, Event
 from screener.engine.policy import ScreeningPolicy
 from screener.engine.recap import render_recap
@@ -123,6 +125,51 @@ class ScreeningEngine:
         self.repo.save_summary(conversation_id, summary)
         return summary
 
+    def run_followups(self) -> list[dict]:
+        """Send due follow-ups and mark abandoned conversations. Called periodically.
+
+        Pilot: a loop inside the API. Production: one scheduled job (or delayed tasks), with
+        a uniqueness constraint on (conversation, attempt) so several workers can't double-send.
+        """
+        now, settings, done = self.clock(), self.cfg.followups, []
+        for row in self.repo.conversations():
+            if row.stage in {s.value for s in TERMINAL}:
+                continue
+            with self._lock_for(row.id):
+                state = self.repo.get_state(row.id)  # re-read under the lock
+                timezone = self._timezone(state)
+                action = followups.next_action(state, now, settings, timezone)
+                if action is None:
+                    continue
+                if action.kind == "abandon":
+                    state.abandoned_at = now
+                    self.repo.save_turn(state, [], [Event("abandoned", {"field": state.current_field, "followups": state.followups_sent})])
+                    done.append({"conversation_id": state.id, "action": "abandoned"})
+                    continue
+                text = followups.render(state, action, self.cfg.copy_, self._pending_question(state),
+                                        self.policy.remaining_questions(state))
+                state.followups_sent, state.last_followup_at = action.attempt, now
+                meta = {"kind": "followup", "source": "template", "attempt": action.attempt,
+                        "whatsapp_template_required": action.template_required}
+                event = Event("followup_sent", {"attempt": action.attempt, "field": state.current_field,
+                                                "stage": state.stage, "template_required": action.template_required})
+                self.repo.save_turn(state, [("agent", text, meta)], [event])
+                done.append({"conversation_id": state.id, "action": "followup", "attempt": action.attempt, "text": text})
+        return done
+
+    def next_followup_at(self, state: ConversationState):
+        return None if state.is_terminal or state.abandoned_at else followups.due_at(state, self.cfg.followups)
+
+    def _pending_question(self, state: ConversationState) -> str:
+        copy, loc = self.cfg.copy_, state.locale
+        if state.stage == Stage.INTRO or state.current_field is None:
+            return ""
+        return copy.text(f"ask.{state.current_field.value}", loc, city=state.data.city or "")
+
+    def _timezone(self, state: ConversationState) -> str:
+        area = self.cfg.area(state.data.city_id)
+        return area.timezone if area else self.cfg.agent.default_timezone
+
     # ------------------------------------------------------------------ turn
     def _handle(self, conversation_id: str, text: str) -> TurnResult:
         state = self.repo.get_state(conversation_id)
@@ -159,6 +206,14 @@ class ScreeningEngine:
             return TurnResult(conversation_id=state.id, stage=state.stage, messages=[reply], completed=False, data=state.data)
 
         working = state.model_copy(deep=True)
+        if working.followups_sent or working.abandoned_at:
+            # They came back after our follow-ups: the metric that proves re-engagement works.
+            events.append(Event("resumed", {
+                "after_followups": working.followups_sent,
+                "was_abandoned": working.abandoned_at is not None,
+                "field": working.current_field,
+            }))
+            working.followups_sent, working.last_followup_at, working.abandoned_at = 0, None, None
         decision = self.policy.decide(working, analysis, text, today)
         events += decision.events
         if working.is_terminal and not state.is_terminal:
@@ -245,8 +300,7 @@ class ScreeningEngine:
     # ------------------------------------------------------------------ helpers
     def _today(self, state: ConversationState) -> date:
         """'Today' in the candidate's timezone: Spain and Mexico can be on different dates."""
-        area = self.cfg.area(state.data.city_id)
-        tz = ZoneInfo(area.timezone if area else self.cfg.agent.default_timezone)
+        tz = ZoneInfo(self._timezone(state))
         now: datetime = self.clock()
         return now.replace(tzinfo=ZoneInfo("UTC")).astimezone(tz).date()
 

@@ -18,6 +18,15 @@ agent:
   history_window: 30            # messages of history given to the response model
   default_timezone: Europe/Madrid
 
+# Re-engagement: fixed templates (on WhatsApp, approved by Meta), sent in the candidate's daytime.
+followups:
+  schedule_hours: [2, 24, 72]   # after the candidate's last message
+  quiet_hours_start: 21
+  quiet_hours_end: 9
+  abandon_after_hours: 24       # silence after the last follow-up => abandoned
+  whatsapp_window_hours: 24
+  scheduler_interval_seconds: 60
+
 # One model per task. Rationale in docs/decisions/0002-llm-per-task.md
 models:
   understand: claude-haiku-5-5  # hot path, narrow structured extraction: speed matters most

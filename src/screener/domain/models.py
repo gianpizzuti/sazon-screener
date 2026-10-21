@@ -161,6 +161,9 @@ class ConversationState(BaseModel):
     pending_questions: list[str] = Field(default_factory=list)
     abuse_strikes: int = 0
     post_close_replies: int = 0  # courtesy replies sent after the screening ended
+    followups_sent: int = 0          # follow-ups since the candidate's last message
+    last_followup_at: datetime | None = None
+    abandoned_at: datetime | None = None  # set after the last follow-up goes unanswered
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
     last_candidate_message_at: datetime | None = None

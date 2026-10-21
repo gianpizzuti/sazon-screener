@@ -11,7 +11,7 @@ from screener.api.app import create_app
 def client_for(make_engine):
     def _client(script):
         engine = make_engine(script)
-        return TestClient(create_app(engine)), engine
+        return TestClient(create_app(engine, scheduler=False)), engine
 
     return _client
 
@@ -96,22 +96,6 @@ def test_overriding_the_bot_is_audited(client_for):
         assert client.put(f"/candidates/{cid}/review", json={"status": "maybe"}).status_code == 422
 
 
-def test_silent_candidates_become_abandoned_and_show_where_they_stopped(make_engine):
-    from datetime import datetime, timedelta
-
-    from screener.analytics import compute
-    from screener.views import build_rows
-
-    engine = make_engine([analysis("sí", intents=("affirm",)), analysis("Ana López", full_name="Ana López")])
-    cid = engine.start().conversation_id
-    engine.handle(cid, "sí")
-    engine.handle(cid, "Ana López")  # now asked for the licence, then silence
-    later = datetime(2026, 10, 20, 10, 0) + timedelta(hours=3)
-    assert build_rows(engine.repo, now=later)[0].status == "abandoned"
-    assert build_rows(engine.repo, now=datetime(2026, 10, 20, 10, 30))[0].status == "in_progress"
-    assert compute(engine.repo, now=later).drop_off == {"License": 1}
-
-
 def test_candidate_data_can_be_erased(client_for):
     client, engine = client_for([analysis("sí", intents=("affirm",))])
     with client:
@@ -121,3 +105,28 @@ def test_candidate_data_can_be_erased(client_for):
         assert client.get(f"/candidates/{cid}").status_code == 404
         assert engine.repo.events(cid) == [] and engine.repo.messages(cid) == []
         assert client.delete(f"/candidates/{cid}").status_code == 404
+
+
+def test_demo_clock_is_off_unless_enabled(client_for):
+    client, _ = client_for([])
+    with client:
+        assert client.get("/demo/clock").status_code == 404
+        assert client.get("/health").json()["status"] == "ok"
+
+
+def test_demo_clock_advances_time_and_runs_followups(make_engine, tmp_path):
+    from screener.engine.clock import DemoClock
+
+    from conftest import NOW
+
+    engine = make_engine([])
+    engine.clock = DemoClock(tmp_path / "clock.json", base=lambda: NOW)  # 12:00 in Madrid: outside quiet hours
+    client = TestClient(create_app(engine, scheduler=False))
+    with client:
+        cid = client.post("/conversations", json={}).json()["conversation_id"]
+        body = client.post("/demo/advance", json={"hours": 3}).json()
+        assert body["offset_hours"] == 3
+        assert [a["action"] for a in body["actions"]] == ["followup"]
+        detail = client.get(f"/candidates/{cid}").json()
+        assert detail["row"]["status"] == "awaiting_reply" and detail["row"]["followups_sent"] == 1
+    assert DemoClock(tmp_path / "clock.json").offset_hours == 3  # survives a restart

@@ -8,6 +8,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from screener.config import ClientConfig, load_client_config
+from screener.domain.models import utcnow
+from screener.engine.clock import DemoClock
 from screener.engine.engine import ScreeningEngine
 from screener.storage.repository import Repository
 
@@ -19,6 +21,15 @@ DEFAULT_DB = f"sqlite:///{ROOT / 'data' / 'screener.db'}"
 def load_config() -> ClientConfig:
     load_dotenv(ROOT / ".env")
     return load_client_config(os.getenv("SCREENER_CLIENT_CONFIG") or DEFAULT_CLIENT)
+
+
+DEMO_CLOCK_FILE = ROOT / "data" / "demo_clock.json"
+
+
+def demo_tools_enabled() -> bool:
+    """Demo-only features (simulated clock). Never in production."""
+    load_dotenv(ROOT / ".env")
+    return os.getenv("SCREENER_DEMO_TOOLS", "0") == "1"
 
 
 def build_engine(config: ClientConfig | None = None, database_url: str | None = None) -> ScreeningEngine:
@@ -36,4 +47,5 @@ def build_engine(config: ClientConfig | None = None, database_url: str | None = 
         understander=ClaudeUnderstander(client, config),
         responder=ClaudeResponder(client, config),
         summarizer=ClaudeSummarizer(client, config),
+        clock=DemoClock(DEMO_CLOCK_FILE) if demo_tools_enabled() else utcnow,
     )

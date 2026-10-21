@@ -86,6 +86,40 @@ issue:
     es: "¿Me das una fecha aproximada? Por ejemplo, «el lunes» o «en dos semanas»."
     en: "Could you give me an approximate date? For example, 'next Monday' or 'in two weeks'."
 
+# Follow-ups for silent candidates. Fixed templates: on WhatsApp, messages sent more than 24 h
+# after the candidate's last message must be pre-approved templates, so each key maps to one.
+followup:
+  intro:
+    first:
+      es: "¡Hola de nuevo! 👋 Tu solicitud como repartidor/a en Grupo Sazón sigue abierta. Son 7 preguntas rápidas. ¿Empezamos?"
+      en: "Hi again! 👋 Your delivery driver application at Grupo Sazón is still open. Just 7 quick questions. Shall we start?"
+    second:
+      es: "Hola, soy Sofía de Grupo Sazón. Si te sigue interesando el puesto de repartidor/a, responde a este mensaje y en 3 minutos terminamos. ¿Empezamos?"
+      en: "Hi, it's Sofía from Grupo Sazón. If you're still interested in the delivery driver role, reply to this message and we'll be done in 3 minutes. Shall we start?"
+    last:
+      es: "Último recordatorio de Grupo Sazón: si aún te interesa el puesto de repartidor/a, responde cuando quieras y empezamos. ¡Gracias!"
+      en: "Last reminder from Grupo Sazón: if you're still interested in the delivery driver role, just reply whenever you like and we'll start. Thanks!"
+  screening:
+    first:
+      es: "¿Seguimos, {name}? Solo quedan {remaining} preguntas. {question}"
+      en: "Shall we continue, {name}? Only {remaining} questions left. {question}"
+    second:
+      es: "Hola, {name}: tu solicitud en Grupo Sazón está casi lista, quedan {remaining} preguntas (2 minutos). {question}"
+      en: "Hi {name}, your Grupo Sazón application is almost done: {remaining} questions left (2 minutes). {question}"
+    last:
+      es: "Último recordatorio, {name}: si te sigue interesando el puesto, responde a este mensaje y seguimos donde lo dejamos. ¡Gracias!"
+      en: "Last reminder, {name}: if you're still interested, reply to this message and we'll pick up where we left off. Thanks!"
+  confirming:
+    first:
+      es: "¿Me confirmas si tus datos están bien, {name}? Es lo último que falta."
+      en: "Could you confirm your details are right, {name}? It's the last step."
+    second:
+      es: "Hola, {name}: solo falta que confirmes tus datos para pasar tu solicitud al equipo. ¿Está todo correcto?"
+      en: "Hi {name}, we only need you to confirm your details to pass your application to the team. Is everything correct?"
+    last:
+      es: "Último recordatorio, {name}: responde «sí» si tus datos están bien y pasamos tu solicitud al equipo. ¡Gracias!"
+      en: "Last reminder, {name}: reply \"yes\" if your details are right and we'll pass your application to the team. Thanks!"
+
 recap:
   title:
     es: "Antes de terminar, revisa tus datos:"

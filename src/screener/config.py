@@ -58,6 +58,17 @@ class AgentSettings(BaseModel):
     default_timezone: str = "Europe/Madrid"
 
 
+class FollowUpSettings(BaseModel):
+    """Re-engagement of silent candidates (all times in the candidate's timezone)."""
+
+    schedule_hours: list[float] = Field(default_factory=lambda: [2, 24, 72])  # after their last message
+    quiet_hours_start: int = 21            # no messages from 21:00...
+    quiet_hours_end: int = 9               # ...to 09:00 local time
+    abandon_after_hours: float = 24        # silence after the last follow-up => abandoned
+    whatsapp_window_hours: float = 24      # after this, WhatsApp only allows pre-approved templates
+    scheduler_interval_seconds: int = 60
+
+
 class ModelSettings(BaseModel):
     understand: str
     speak: str
@@ -114,6 +125,7 @@ class ClientConfig(BaseModel):
     role: dict[str, str]
     agent: AgentSettings
     models: ModelSettings
+    followups: FollowUpSettings = Field(default_factory=FollowUpSettings)
     next_steps: dict[str, str]
     platforms: list[Platform]
     service_areas: list[ServiceArea]

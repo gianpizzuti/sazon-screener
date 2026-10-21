@@ -48,6 +48,11 @@ class Analytics(BaseModel):
     llm_errors: int
     guard_rejections: int
     human_overrides: int
+    followups_sent: int
+    candidates_nudged: int             # received at least one follow-up
+    candidates_recovered: int          # replied after a follow-up
+    recovery_rate: float | None        # recovered / nudged: does re-engagement work?
+    recovered_by_followup: dict[str, int]
 
 
 def compute(repo: Repository, now: datetime | None = None) -> Analytics:
@@ -61,7 +66,6 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
     totals = Counter(statuses.values())
     totals["started"] = len(states)
     finished = sum(totals[s] for s in FINISHED)
-    still_active = totals["in_progress"]
 
     candidate_msgs = Counter(m.conversation_id for m in messages if m.role == "candidate")
     funnel = [FunnelStep(step="Started", count=len(states)),
@@ -84,11 +88,13 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
 
     agent_sources = [m.meta.get("source") for m in messages if m.role == "agent" and m.meta.get("kind") not in ("greeting", "recap")]
     by_type = Counter(e.type for e in events)
+    nudged = {e.conversation_id for e in events if e.type == "followup_sent"}
+    recovered = [e for e in events if e.type == "resumed" and e.payload.get("after_followups", 0) > 0]
     unanswered = [q for s in sorted(states, key=lambda s: s.updated_at, reverse=True) for q in s.pending_questions]
 
     return Analytics(
-        totals={k: totals[k] for k in ["started", "in_progress", "abandoned", *sorted(FINISHED)]},
-        completion_rate=_ratio(finished, len(states) - still_active),
+        totals={k: totals[k] for k in ["started", "in_progress", "awaiting_reply", "abandoned", *sorted(FINISHED)]},
+        completion_rate=_ratio(finished, finished + totals["abandoned"]),
         qualified_rate=_ratio(totals["qualified"], finished),
         funnel=funnel,
         drop_off=dict(drop_off.most_common()),
@@ -107,6 +113,11 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
         llm_errors=by_type["llm_error"],
         guard_rejections=by_type["guard_rejected"],
         human_overrides=by_type["human_override"],
+        followups_sent=by_type["followup_sent"],
+        candidates_nudged=len(nudged),
+        candidates_recovered=len({e.conversation_id for e in recovered}),
+        recovery_rate=_ratio(len({e.conversation_id for e in recovered}), len(nudged)),
+        recovered_by_followup=dict(sorted(Counter(f"After follow-up {e.payload['after_followups']}" for e in recovered).items())),
     )
 
 

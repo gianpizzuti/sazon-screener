@@ -12,7 +12,9 @@ Run:  uvicorn screener.api.app:app --port 8000
 
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
+import asyncio
+import logging
+from contextlib import asynccontextmanager, suppress
 from typing import Literal
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
@@ -33,13 +35,20 @@ class MessageRequest(BaseModel):
     text: str = Field(min_length=1, max_length=4000)
 
 
+class AdvanceRequest(BaseModel):
+    hours: float = Field(gt=0, le=24 * 14)
+
+
 class ReviewRequest(BaseModel):
     status: Literal[REVIEW_STATUSES]  # type: ignore[valid-type]
     note: str = ""
     by: str = ""
 
 
-def create_app(engine: ScreeningEngine | None = None) -> FastAPI:
+log = logging.getLogger(__name__)
+
+
+def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         if engine is not None:
@@ -48,7 +57,12 @@ def create_app(engine: ScreeningEngine | None = None) -> FastAPI:
             from screener.factory import build_engine
 
             app.state.engine = build_engine()
+        task = asyncio.create_task(_followup_loop(app.state.engine)) if scheduler else None
         yield
+        if task:
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
 
     app = FastAPI(
         title="Sazón Screener API",
@@ -61,8 +75,9 @@ def create_app(engine: ScreeningEngine | None = None) -> FastAPI:
         return request.app.state.engine
 
     @app.get("/health")
-    def health() -> dict:
-        return {"status": "ok"}
+    def health(request: Request) -> dict:
+        """Also returns the engine's clock, so clients show times consistently (demo clock included)."""
+        return {"status": "ok", "now": get_engine(request).clock().isoformat()}
 
     # ------------------------------------------------------------------ channel side
     @app.post("/conversations", response_model=TurnResult, tags=["channel"])
@@ -101,7 +116,8 @@ def create_app(engine: ScreeningEngine | None = None) -> FastAPI:
         needs_review: bool | None = None,
     ) -> list[CandidateRow]:
         """The recruiter queue, most actionable first."""
-        rows = build_rows(get_engine(request).repo)
+        engine = get_engine(request)
+        rows = build_rows(engine.repo, now=engine.clock(), next_followup=engine.next_followup_at)
         return [
             r for r in rows
             if (not status or r.status in status)
@@ -112,8 +128,9 @@ def create_app(engine: ScreeningEngine | None = None) -> FastAPI:
 
     @app.get("/candidates/{conversation_id}", response_model=CandidateDetail, tags=["recruiter"])
     def get_candidate(conversation_id: str, request: Request) -> CandidateDetail:
+        engine = get_engine(request)
         try:
-            return build_detail(get_engine(request).repo, conversation_id)
+            return build_detail(engine.repo, conversation_id, now=engine.clock(), next_followup=engine.next_followup_at)
         except ConversationNotFound:
             raise HTTPException(404, "candidate not found")
 
@@ -145,9 +162,53 @@ def create_app(engine: ScreeningEngine | None = None) -> FastAPI:
 
     @app.get("/analytics", response_model=Analytics, tags=["recruiter"])
     def analytics(request: Request) -> Analytics:
-        return compute(get_engine(request).repo)
+        engine = get_engine(request)
+        return compute(engine.repo, now=engine.clock())
+
+    @app.post("/followups/run", tags=["operations"])
+    def run_followups(request: Request) -> list[dict]:
+        """Send due follow-ups now (normally done every minute by the scheduler)."""
+        return get_engine(request).run_followups()
+
+    # ------------------------------------------------------------------ demo only
+    @app.get("/demo/clock", tags=["demo"])
+    def demo_clock(request: Request) -> dict:
+        clock = _demo_clock(request)
+        return {"now": clock().isoformat(), "offset_hours": clock.offset_hours}
+
+    @app.post("/demo/advance", tags=["demo"])
+    def demo_advance(body: AdvanceRequest, request: Request) -> dict:
+        """Move the simulated clock forward hour by hour, running the scheduler at each step
+        (exactly what a day of real time would do)."""
+        engine, clock, done, left = get_engine(request), _demo_clock(request), [], body.hours
+        while left > 0:
+            step = min(1.0, left)
+            clock.advance(step)
+            left -= step
+            done += engine.run_followups()
+        return {"now": clock().isoformat(), "offset_hours": clock.offset_hours, "actions": done}
 
     return app
+
+
+def _demo_clock(request: Request):
+    from screener.engine.clock import DemoClock
+
+    clock = request.app.state.engine.clock
+    if not isinstance(clock, DemoClock):
+        raise HTTPException(404, "demo tools are disabled (set SCREENER_DEMO_TOOLS=1)")
+    return clock
+
+
+async def _followup_loop(engine: ScreeningEngine) -> None:
+    """Pilot scheduler: one loop in the API process. Production: one scheduled job with an
+    idempotency constraint, so several API workers can't send the same follow-up twice."""
+    while True:
+        await asyncio.sleep(engine.cfg.followups.scheduler_interval_seconds)
+        try:
+            await asyncio.to_thread(engine.run_followups)
+        except Exception:  # never let one bad run stop re-engagement
+            log.exception("follow-up run failed")
 
 
 app = create_app()
