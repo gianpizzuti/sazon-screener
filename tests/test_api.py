@@ -155,3 +155,17 @@ def test_workspace_config_exposes_the_rules_but_no_secrets(client_for):
         assert cfg["client"] == "Grupo Sazón" and sum(a["restaurants"] for a in cfg["service_areas"]) == 45
         assert cfg["followups"]["schedule_hours"] == [2, 24, 72] and cfg["thresholds"]["max_failed_attempts"] == 2
         assert "key" not in str(cfg).lower()
+
+
+def test_the_web_app_is_revalidated_and_its_hashed_assets_are_cached(client_for):
+    from screener.api.app import WEB_DIST
+
+    if not (WEB_DIST / "index.html").exists():
+        pytest.skip("web app not built")
+    client, _ = client_for([])
+    with client:
+        page = client.get("/how-it-works")
+        assert page.status_code == 200 and page.headers["cache-control"] == "no-cache"
+        asset = next((WEB_DIST / "assets").iterdir()).name
+        assert "immutable" in client.get(f"/assets/{asset}").headers["cache-control"]
+

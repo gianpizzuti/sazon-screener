@@ -2,9 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MotionConfig } from "motion/react";
 import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
 import { Layout } from "./components/Layout";
+import { RouteErrorBoundary } from "./components/RouteErrorBoundary";
 import "./index.css";
 import { PipelinePage } from "./pages/Pipeline";
 
@@ -13,6 +14,24 @@ const CandidatePage = lazy(() => import("./pages/Candidate").then((m) => ({ defa
 const AnalyticsPage = lazy(() => import("./pages/Analytics").then((m) => ({ default: m.AnalyticsPage })));
 const TryAgentPage = lazy(() => import("./pages/TryAgent").then((m) => ({ default: m.TryAgentPage })));
 const HowItWorksPage = lazy(() => import("./pages/HowItWorks").then((m) => ({ default: m.HowItWorksPage })));
+
+/** One boundary per page (keyed by path): a page that fails shows its error, the app keeps working. */
+function Pages() {
+  const { pathname } = useLocation();
+  return (
+    <RouteErrorBoundary key={pathname}>
+      <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-surface-2" />}>
+        <Routes>
+          <Route path="/" element={<PipelinePage />} />
+          <Route path="/candidates/:id" element={<CandidatePage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/try" element={<TryAgentPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+        </Routes>
+      </Suspense>
+    </RouteErrorBoundary>
+  );
+}
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 5_000, retry: 1 } } });
 
@@ -23,15 +42,7 @@ createRoot(document.getElementById("root")!).render(
       <MotionConfig reducedMotion="user">
         <BrowserRouter>
           <Layout>
-            <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-surface-2" />}>
-              <Routes>
-                <Route path="/" element={<PipelinePage />} />
-                <Route path="/candidates/:id" element={<CandidatePage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/try" element={<TryAgentPage />} />
-                <Route path="/how-it-works" element={<HowItWorksPage />} />
-              </Routes>
-            </Suspense>
+            <Pages />
           </Layout>
         </BrowserRouter>
       </MotionConfig>

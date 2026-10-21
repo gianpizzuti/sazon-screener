@@ -245,3 +245,11 @@ Every decision taken while building the agent, large or small (132 so far), with
 | D162 | The licence type (car, motorbike, both) is recorded when the candidate says it and shown in the recap ("Sí (moto)") | Found by the conversation eval: candidates kept "correcting" a recap that only said "Sí". Recruiters need it too: it decides which vehicle and routes. Not a knock-out, never asked: only recorded when said | Asking it as an extra question (one more turn for everyone) | `Extracted.license_type`, `recap` |
 | D163 | A recap re-sent after a correction opens with "Listo, he actualizado tus datos" | The same title made candidates think nothing changed | An LLM-written acknowledgement (one more call, and less precise) | `copy.recap.title_updated` |
 
+## Serving the web app reliably (found when "How it works" stopped loading)
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D164 | `index.html` is served with `Cache-Control: no-cache`; built assets (content-hashed names) as `immutable` for a year | Without headers the browser kept an old `index.html`, which pointed to the previous build's file names: after a rebuild, pages loaded on demand ("How it works") got a 404 and the page went blank. Standard SPA caching: always revalidate the HTML, never the hashed files | No caching at all (slower, and still no fix for tabs already open) | `api._serve_web_app`, `test_the_web_app_is_revalidated_...` |
+| D165 | One error boundary per page: a page that fails shows "This page couldn't load" with a Reload button, and the rest of the app keeps working; a missing file after a new build triggers one automatic reload, only if the server answers | React unmounts the whole app on an uncaught render error: one failed page blanked everything. Reloading with the server down would only swap our message for the browser's error page | A global boundary (one failure still hides the whole app) | `components/RouteErrorBoundary.tsx` |
+| D166 | The flowchart animates as a whole once any part is visible, not node by node as each scrolls into view | With a trigger per node, nodes below the fold stayed invisible until scrolled to: the chart looked broken. Key content must not depend on scrolling to appear | Per-node reveal (nicer on a long page, fragile for a diagram) | `HowItWorks.Flowchart` |
+

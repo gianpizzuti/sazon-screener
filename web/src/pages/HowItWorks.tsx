@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { type KeyboardEvent, useEffect, useMemo, useState } from "react";
 
 import { Reveal } from "../components/charts";
-import { Card, CardTitle, Chip, PageHeader, Skeleton } from "../components/ui";
+import { Card, CardTitle, Chip, ErrorState, PageHeader, Skeleton } from "../components/ui";
 import { api, type WorkspaceConfig } from "../lib/api";
 
 // ------------------------------------------------------------------ flowchart model
@@ -100,7 +100,10 @@ function Flowchart({ selected, onSelect, trail }: { selected: string; onSelect: 
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(id); }
   };
   return (
-    <svg viewBox="60 0 800 1160" className="mx-auto h-auto w-full max-w-[860px]" role="img"
+    // One trigger for the whole chart (as soon as any of it is visible): with a trigger per node,
+    // nodes below the fold stayed invisible until scrolled to, and the chart looked broken.
+    <motion.svg viewBox="60 0 800 1160" className="mx-auto h-auto w-full max-w-[860px]" role="img"
+      initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.01 }}
       aria-label="Screening flow: greeting, name, driver's license (knock-out), city in a service area (knock-out), zone, availability, shift, experience and platforms, start date, recap, then qualified or needs review. A correction at the recap asks that question again.">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -119,8 +122,7 @@ function Flowchart({ selected, onSelect, trail }: { selected: string; onSelect: 
               stroke={on ? "var(--series)" : "var(--ink-3)"} strokeOpacity={on ? 1 : 0.55}
               strokeDasharray={e.to === "name" && e.from === "recap" ? "5 5" : undefined}
               markerEnd={`url(#${on ? "arrow-lit" : "arrow"})`}
-              initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.05 * i, ease: "easeOut" }} />
+              variants={{ hidden: { pathLength: 0 }, shown: { pathLength: 1, transition: { duration: 0.4, delay: 0.25 + 0.03 * i, ease: "easeOut" } } }} />
             {e.label && (
               e.from === "recap" && e.to === "name" ? (
                 <text x={e.lx} y={e.ly} transform={`rotate(-90 ${e.lx} ${e.ly})`} textAnchor="middle" className="fill-ink-3 text-[13px]">{e.label}</text>
@@ -142,8 +144,7 @@ function Flowchart({ selected, onSelect, trail }: { selected: string; onSelect: 
         return (
           <motion.g key={n.id} role="button" tabIndex={0} aria-pressed={isSel} aria-label={`${n.title}${n.sub ? `, ${n.sub}` : ""}`}
             onClick={() => onSelect(n.id)} onKeyDown={keyHandler(n.id)} className="cursor-pointer outline-none"
-            initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.35, delay: 0.04 * i }}>
+            variants={{ hidden: { opacity: 0, y: 6 }, shown: { opacity: 1, y: 0, transition: { duration: 0.3, delay: 0.02 * i } } }}>
             {n.kind === "decision" ? (
               <polygon points={`${n.x},${n.y - h / 2} ${n.x + w / 2},${n.y} ${n.x},${n.y + h / 2} ${n.x - w / 2},${n.y}`}
                 fill={isLit ? "var(--brand-soft)" : "var(--surface-2)"} stroke={stroke} strokeWidth={isSel || isLit ? 2.5 : 1.5}
@@ -157,7 +158,7 @@ function Flowchart({ selected, onSelect, trail }: { selected: string; onSelect: 
           </motion.g>
         );
       })}
-    </svg>
+    </motion.svg>
   );
 }
 
@@ -191,7 +192,7 @@ function NodeDetails({ id, cfg, compact = false }: { id: string; cfg?: Workspace
 
 // ------------------------------------------------------------------ page
 export function HowItWorksPage() {
-  const { data: cfg, isLoading } = useQuery({ queryKey: ["config"], queryFn: api.config });
+  const { data: cfg, isLoading, error } = useQuery({ queryKey: ["config"], queryFn: api.config });
   const [selected, setSelected] = useState("start");
   const [scenario, setScenario] = useState<string | null>(null);
   const [step, setStep] = useState(0);
@@ -328,7 +329,7 @@ export function HowItWorksPage() {
       <Reveal className="mt-6">
         <Card>
           <CardTitle number={4} aside={<span className="text-xs text-ink-3">Live from the workspace configuration</span>}>This workspace</CardTitle>
-          {isLoading || !cfg ? <Skeleton className="h-40" /> : (
+          {error ? <ErrorState error={error} /> : isLoading || !cfg ? <Skeleton className="h-40" /> : (
             <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
               <div>
                 <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-heading"><MapPinned className="size-4 text-brand-ink" />

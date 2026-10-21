@@ -230,7 +230,7 @@ def _serve_web_app(app: FastAPI) -> None:
     One process in production; during development Vite serves it and proxies /api."""
     if not (WEB_DIST / "index.html").exists():
         return
-    app.mount("/assets", StaticFiles(directory=WEB_DIST / "assets"), name="assets")
+    app.mount("/assets", ImmutableStaticFiles(directory=WEB_DIST / "assets"), name="assets")
 
     @app.get("/{path:path}", include_in_schema=False)
     def web_app(path: str):
@@ -239,7 +239,18 @@ def _serve_web_app(app: FastAPI) -> None:
             return FileResponse(file)
         if path.startswith("api/"):
             raise HTTPException(404, "not found")
-        return FileResponse(WEB_DIST / "index.html")
+        # Always revalidated: a cached index.html points to the previous build's file names, which
+        # no longer exist after a new build, so pages loaded on demand failed (found after a rebuild).
+        return FileResponse(WEB_DIST / "index.html", headers={"Cache-Control": "no-cache"})
+
+
+class ImmutableStaticFiles(StaticFiles):
+    """Built assets have a content hash in their name: a new build means a new name, so cache forever."""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        return response
 
 
 def _demo_clock(request: Request):
