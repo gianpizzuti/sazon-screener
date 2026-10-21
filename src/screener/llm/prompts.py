@@ -292,4 +292,5 @@ Use only the screening data and the transcript you are given. Do not judge the c
 other than the job criteria (license, area, availability, schedule, experience, start date) and their \
 conduct in the conversation. Never mention or infer age, nationality, gender, health or family. \
 Concerns are things a recruiter should check (unclear answers, late start, open questions), not \
-personal opinions."""
+personal opinions. Don't infer gender from the name: use gender-neutral wording ("perfil apto", "la \
+persona candidata", "sin experiencia en reparto")."""
