@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (76 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (79 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -112,3 +112,11 @@ Every decision taken while building the agent, large or small (76 so far), with 
 | D74 | Neutral Spanish (city unknown) uses "auto o moto" | "vehículo o moto" sounded wrong; "auto" is understood in Spain and Mexico | "coche" (Spain only), "carro" (Mexico only) | `copy.yaml`, `prompts.py` |
 | D75 | FAQ entry for "can we do this in English?" | The answer is known; "the team will confirm" was unhelpful | n/a | `faq.yaml: language` |
 | D76 | "Not a job offer" is a prohibition for the writer, not content | Phrased as content, it reached the candidate verbatim and sounded cold | n/a | `prompts.OUTCOME_FACTS` |
+
+## Sentiment
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D77 | Sentiment comes from the same understanding call, as 4 categories (neutral, positive, confused, frustrated) | Zero extra latency or cost; each category maps to a behaviour | A separate sentiment model, or a 0-1 score that changes nothing | `schemas.TurnAnalysis.sentiment` |
+| D78 | Confused → simpler words and options; frustrated → brief empathy, shorter, "N questions left" (N computed by code) | Adjusting tone is what keeps a candidate from dropping off | One tone for everyone | `policy.TONE_BY_SENTIMENT`, `prompts.TONE_HINTS` |
+| D79 | Sentiment changes the tone only, never eligibility or ordering | Fairness: a frustrated candidate must not be penalised or favoured | Using it as a screening signal. Limitation: per message, no trend over the conversation yet | `policy.decide` |
