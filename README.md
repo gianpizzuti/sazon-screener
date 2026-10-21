@@ -11,6 +11,8 @@ The client has two different problems, and the design addresses each one separat
 
 📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 📊 **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · 💬 **[Sample conversations](samples/README.md)**
 
+🏗️ Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** · **[Deployment and scaling](docs/design/deployment-and-scaling.md)** (from one process to 10,000 applications/week)
+
 ---
 
 ## Quick start
@@ -104,7 +106,7 @@ scripts/       run, seed demo data, export samples
 samples/       real conversations with highlights, transcript, data and summary
 tests/         policy, engine, API, validators, locations, eval datasets (offline, deterministic)
 evals/         extraction and conversation evals against the real models, with committed results
-docs/          process design, decision log, ADRs, live testing log
+docs/          process design, decision log, ADRs, live testing log, design docs (ATS, deployment)
 ```
 
 ## Key design decisions
