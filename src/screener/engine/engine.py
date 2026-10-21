@@ -1,0 +1,279 @@
+"""The screening engine: one candidate message in, the agent's replies out.
+
+    message -> UNDERSTAND (LLM, structured)
+            -> DECIDE     (policy, pure Python)
+            -> SPEAK      (LLM, guarded; templates as fallback)
+            -> PERSIST    (state + transcript + events, atomically)
+
+Channels (CLI, web, WhatsApp, voice) only call `start()` and `handle()`.
+"""
+
+from __future__ import annotations
+
+import logging
+import threading
+import uuid
+from collections import defaultdict
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
+
+from pydantic import BaseModel, Field
+
+from screener.config import ClientConfig
+from screener.domain.models import ConversationState, FieldName, ScreeningData, Stage, utcnow
+from screener.engine.directive import Directive, Event
+from screener.engine.policy import ScreeningPolicy
+from screener.engine.recap import render_recap
+from screener.llm.interfaces import (
+    ChatMessage,
+    LLMError,
+    Responder,
+    SpeakRequest,
+    Summarizer,
+    UnderstandRequest,
+    Understander,
+)
+from screener.llm.schemas import TurnAnalysis
+from screener.llm.templates import TemplateResponder
+from screener.storage.repository import Repository
+
+log = logging.getLogger(__name__)
+
+MAX_INBOUND_CHARS = 1000
+QUICK_REPLIES_BY_FIELD = {
+    FieldName.DRIVERS_LICENSE: "drivers_license",
+    FieldName.AVAILABILITY: "availability",
+    FieldName.SCHEDULE: "schedule",
+}
+
+
+class OutboundMessage(BaseModel):
+    text: str
+    quick_replies: list[str] = Field(default_factory=list)
+
+
+class TurnResult(BaseModel):
+    conversation_id: str
+    stage: Stage
+    messages: list[OutboundMessage]
+    completed: bool
+    data: ScreeningData
+    analysis: TurnAnalysis | None = None  # exposed for debugging / the dashboard
+
+
+class ScreeningEngine:
+    def __init__(
+        self,
+        config: ClientConfig,
+        repository: Repository,
+        understander: Understander,
+        responder: Responder,
+        summarizer: Summarizer | None = None,
+        clock=utcnow,
+    ):
+        self.cfg = config
+        self.repo = repository
+        self.understander = understander
+        self.responder = responder
+        self.summarizer = summarizer
+        self.templates = TemplateResponder(config)
+        self.policy = ScreeningPolicy(config)
+        self.clock = clock
+        self._locks: defaultdict[str, threading.Lock] = defaultdict(threading.Lock)
+        self._locks_guard = threading.Lock()
+
+    # ------------------------------------------------------------------ public API
+    def start(self, channel: str = "web", language: str | None = None) -> TurnResult:
+        """Open a conversation. The first message is a fixed template (as WhatsApp requires
+        for business-initiated messages) disclosing that the agent is an AI."""
+        state = ConversationState(
+            id=str(uuid.uuid4()),
+            client_id=self.cfg.id,
+            channel=channel,
+            language=language or self.cfg.agent.default_language,
+        )
+        greeting = OutboundMessage(
+            text=self.cfg.copy_.text("greeting", state.locale),
+            quick_replies=self.cfg.copy_.options("intro", state.locale),
+        )
+        self.repo.save_turn(
+            state,
+            [("agent", greeting.text, {"kind": "greeting", "source": "template"})],
+            [Event("conversation_started", {"channel": channel})],
+        )
+        return TurnResult(conversation_id=state.id, stage=state.stage, messages=[greeting], completed=False, data=state.data)
+
+    def handle(self, conversation_id: str, text: str) -> TurnResult:
+        with self._lock_for(conversation_id):  # one turn at a time per conversation
+            return self._handle(conversation_id, text)
+
+    def summarize(self, conversation_id: str) -> dict | None:
+        """Recruiter summary. Off the hot path: channels call it after the conversation ends."""
+        if not self.summarizer:
+            return None
+        state = self.repo.get_state(conversation_id)
+        try:
+            summary = self.summarizer.summarize(state, self.repo.transcript(conversation_id)).model_dump()
+            summary["source"] = "llm"
+        except LLMError as exc:
+            log.warning("summary failed for %s: %s", conversation_id, exc)
+            summary = self._fallback_summary(state)
+        self.repo.save_summary(conversation_id, summary)
+        return summary
+
+    # ------------------------------------------------------------------ turn
+    def _handle(self, conversation_id: str, text: str) -> TurnResult:
+        state = self.repo.get_state(conversation_id)
+        text = (text or "").strip()[:MAX_INBOUND_CHARS]
+        if not text:
+            return TurnResult(conversation_id=state.id, stage=state.stage, messages=[], completed=state.is_terminal, data=state.data)
+
+        history = self.repo.transcript(conversation_id)
+        state.last_candidate_message_at = self.clock()
+        today = self._today(state)
+        events: list[Event] = []
+
+        try:
+            analysis = self.understander.analyze(
+                UnderstandRequest(
+                    message=text,
+                    stage=state.stage,
+                    current_field=state.current_field,
+                    last_agent_message=next((m.text for m in reversed(history) if m.role == "agent"), None),
+                    known=self._known(state),
+                    today=today,
+                    language=state.language,
+                )
+            )
+        except LLMError as exc:
+            # We could not understand: say so and ask again. The attempt is not counted.
+            log.warning("understand failed: %s", exc)
+            reply = OutboundMessage(text=self.cfg.copy_.text("misc.technical_issue", state.locale))
+            self.repo.save_turn(
+                state,
+                [("candidate", text, {"error": "understand_failed"}), ("agent", reply.text, {"source": "template"})],
+                [Event("llm_error", {"step": "understand", "error": str(exc)[:300]})],
+            )
+            return TurnResult(conversation_id=state.id, stage=state.stage, messages=[reply], completed=False, data=state.data)
+
+        working = state.model_copy(deep=True)
+        decision = self.policy.decide(working, analysis, text, today)
+        events += decision.events
+
+        history.append(ChatMessage(role="candidate", text=text))
+        outbound, metas = self._render(working, decision.directive, history, today, events)
+
+        rows = [("candidate", text, {"analysis": analysis.model_dump(mode="json")})]
+        rows += [("agent", m.text, meta) for m, meta in zip(outbound, metas)]
+        self.repo.save_turn(working, rows, events)
+        return TurnResult(
+            conversation_id=working.id,
+            stage=working.stage,
+            messages=outbound,
+            completed=working.is_terminal,
+            data=working.data,
+            analysis=analysis,
+        )
+
+    # ------------------------------------------------------------------ speaking
+    def _render(self, state, directive: Directive, history, today, events):
+        if directive.kind == "silent":
+            return [], []
+        if directive.kind == "recap":
+            out, metas = [], []
+            if directive.answer or directive.notes:
+                interlude = directive.model_copy(update={"kind": "interlude"})
+                text, meta = self._speak(interlude, history, events)
+                out.append(OutboundMessage(text=text))
+                metas.append(meta)
+            out.append(
+                OutboundMessage(
+                    text=render_recap(state, self.cfg.copy_, today),
+                    quick_replies=self.cfg.copy_.options("confirm", state.locale),
+                )
+            )
+            metas.append({"kind": "recap", "source": "template", "directive": directive.model_dump(mode="json")})
+            return out, metas
+
+        text, meta = self._speak(directive, history, events)
+        return [OutboundMessage(text=text, quick_replies=self._quick_replies(directive))], [meta]
+
+    def _speak(self, directive: Directive, history, events) -> tuple[str, dict]:
+        """LLM draft -> output guard -> one retry with feedback -> template fallback."""
+        limit = self._char_limit(directive)
+        feedback = None
+        for _ in range(2):
+            try:
+                text = self.responder.compose(SpeakRequest(directive=directive, history=history, feedback=feedback))
+            except LLMError as exc:
+                events.append(Event("llm_error", {"step": "speak", "error": str(exc)[:300]}))
+                break
+            problem = self._guard(text, limit)
+            if problem is None:
+                return text, {"kind": directive.kind, "source": "llm", "directive": directive.model_dump(mode="json")}
+            events.append(Event("guard_rejected", {"problem": problem}))
+            feedback = problem
+        text = self.templates.compose(SpeakRequest(directive=directive, history=history))
+        return text, {"kind": directive.kind, "source": "template", "directive": directive.model_dump(mode="json")}
+
+    @staticmethod
+    def _guard(text: str, limit: int) -> str | None:
+        """Cheap deterministic output checks; the prompt is the first line of defence, not the only one."""
+        if len(text) > limit:
+            return f"{len(text)} characters, the limit is {limit}"
+        if any(marker in text for marker in ("**", "##", "TURN INSTRUCTIONS", "\n- ")):
+            return "it contains markdown or leaked instructions"
+        return None
+
+    def _char_limit(self, directive: Directive) -> int:
+        base = self.cfg.agent.max_message_chars
+        return int(base * 1.4) if directive.kind == "outcome" or directive.answer else base
+
+    def _quick_replies(self, directive: Directive) -> list[str]:
+        copy, loc = self.cfg.copy_, directive.locale
+        if directive.kind == "ask" and directive.ask_field in QUICK_REPLIES_BY_FIELD:
+            return copy.options(QUICK_REPLIES_BY_FIELD[directive.ask_field], loc)
+        if directive.kind == "outcome" and directive.outcome in ("no_license", "license_in_progress", "out_of_area"):
+            return copy.options("talent_pool", loc)
+        return []
+
+    # ------------------------------------------------------------------ helpers
+    def _today(self, state: ConversationState) -> date:
+        """'Today' in the candidate's timezone: Spain and Mexico can be on different dates."""
+        area = self.cfg.area(state.data.city_id)
+        tz = ZoneInfo(area.timezone if area else self.cfg.agent.default_timezone)
+        now: datetime = self.clock()
+        return now.replace(tzinfo=ZoneInfo("UTC")).astimezone(tz).date()
+
+    @staticmethod
+    def _known(state: ConversationState) -> dict[str, str]:
+        d = state.data
+        known = {
+            "name": d.full_name,
+            "licence": d.license_status.value if d.license_status else None,
+            "city": d.city,
+            "zone": d.zone,
+            "availability": ",".join(a.value for a in d.availability) or None,
+            "schedule": ",".join(s.value for s in d.preferred_schedule) or None,
+            "experience_years": f"{d.experience_years:g}" if d.experience_years is not None else None,
+            "platforms": ",".join(d.experience_platforms) or None,
+            "start_date": d.start_date.isoformat() if d.start_date else None,
+        }
+        return {k: v for k, v in known.items() if v}
+
+    def _fallback_summary(self, state: ConversationState) -> dict:
+        d = state.data
+        parts = [d.full_name or "?", d.city or d.location_raw or "?", ", ".join(a.value for a in d.availability) or "?"]
+        return {
+            "headline": " · ".join(parts),
+            "summary": f"Outcome: {state.stage.value}.",
+            "strengths": [],
+            "concerns": [f.code for f in state.flags],
+            "candidate_questions": state.pending_questions,
+            "recommended_action": "Review manually (automatic summary unavailable).",
+            "source": "template",
+        }
+
+    def _lock_for(self, conversation_id: str) -> threading.Lock:
+        with self._locks_guard:
+            return self._locks[conversation_id]
