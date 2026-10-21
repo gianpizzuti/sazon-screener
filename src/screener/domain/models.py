@@ -160,6 +160,7 @@ class ConversationState(BaseModel):
     flags: list[Flag] = Field(default_factory=list)
     pending_questions: list[str] = Field(default_factory=list)
     abuse_strikes: int = 0
+    recap_rounds: int = 0  # replies to the recap that did not confirm it
     post_close_replies: int = 0  # courtesy replies sent after the screening ended
     followups_sent: int = 0          # follow-ups since the candidate's last message
     last_followup_at: datetime | None = None
@@ -195,4 +196,4 @@ class ConversationState(BaseModel):
 
 
 # Flags that put a candidate in the recruiter's review queue.
-REVIEW_FLAGS = {"human_requested", "late_start", "abuse", "update_after_close"}
+REVIEW_FLAGS = {"human_requested", "late_start", "abuse", "update_after_close", "recap_not_confirmed"}

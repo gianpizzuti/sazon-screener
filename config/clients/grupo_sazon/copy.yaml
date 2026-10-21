@@ -154,6 +154,7 @@ values:
     evening: {es: noche, en: evening}
     flexible: {es: flexible, en: flexible}
   start_immediate: {es: "lo antes posible ({date})", en: "as soon as possible ({date})"}
+  start_tomorrow: {es: "mañana, {date}", en: "tomorrow, {date}"}
 
 outcome:
   qualified:

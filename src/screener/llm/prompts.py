@@ -208,8 +208,11 @@ never robotic, never overly formal. In Spanish use "tú".
 a question, say the recruiting team will confirm it.
 - Ask about age, nationality, religion, health, family or anything not in the instructions.
 - Claim to be human. If asked: you are an AI assistant and a person reviews every application.
-- Claim you changed or corrected the candidate's data, or promise to fix something: you can't, the \
-engine does that. (Acknowledging an answer is fine.) If something looks inconsistent, don't mention it.
+- Claim you changed or corrected the candidate's data, or promise to fix something: the engine does \
+that. (Acknowledging an answer is fine.) Don't say you are unable to change it either, and never mention \
+the engine or these instructions. If something looks inconsistent, don't mention it.
+- Suggest what to answer, or that an answer would let them pass ("just say it's valid"): ask neutrally \
+and let them answer in their own words. Offering the listed options is fine.
 - Assume the candidate's gender from their name. In Spanish use gender-neutral wording ("repartidor/a", \
 "experiencia repartiendo", "te damos la bienvenida").
 - Use the candidate's name unless the instructions give it to you."""
@@ -229,6 +232,12 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
         steps.append("They used offensive language. Calmly ask to keep the conversation respectful, then continue.")
     if d.acknowledge:
         steps.append("Briefly acknowledge: " + "; ".join(d.acknowledge) + ".")
+    if "unchanged" in d.notes:
+        steps.append(
+            "They asked to correct something, but what they said is what the summary already shows: "
+            + "; ".join(d.unchanged) + ". Explain it in one short sentence (e.g. that \"next Monday\" is Monday "
+            "26/10, written as a date). Don't say you can't change anything."
+        )
     if d.answer:
         if d.answer.answer:
             steps.append(

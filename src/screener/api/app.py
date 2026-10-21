@@ -32,6 +32,7 @@ from screener.views import CandidateDetail, CandidateRow, build_detail, build_ro
 class StartRequest(BaseModel):
     channel: str = "web"
     language: Literal["es", "en"] | None = None
+    country: Literal["ES", "MX"] | None = None  # of the restaurant applied to: sets Spain/Mexico Spanish
 
 
 class MessageRequest(BaseModel):
@@ -88,7 +89,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
     @api.post("/conversations", response_model=TurnResult, tags=["channel"])
     def start_conversation(body: StartRequest, request: Request) -> TurnResult:
         """Open a conversation: returns the fixed greeting (AI disclosure + privacy note)."""
-        return get_engine(request).start(channel=body.channel, language=body.language)
+        return get_engine(request).start(channel=body.channel, language=body.language, country=body.country)
 
     @api.post("/conversations/{conversation_id}/messages", response_model=TurnResult, tags=["channel"])
     def send_message(

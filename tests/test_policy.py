@@ -326,6 +326,37 @@ class TestRecapAndCorrections:
         d, _ = say(policy, state, "no", intents=("deny",))
         assert d.kind == "ask_correction"
 
+    def test_restating_a_value_at_the_recap_explains_it_instead_of_looping(self, policy, state):
+        # found by the conversation eval: "yo dije el lunes, no el 26/10" got the same recap five times
+        complete_until_recap(policy, state)
+        d, _ = say(policy, state, "yo dije el lunes, no el 26/10", intents=("correction",),
+                   start_date=start_expr("next_weekday", weekday=0))
+        assert (d.kind, state.stage) == ("recap", Stage.CONFIRMING)
+        assert "unchanged" in d.notes and "Monday 26/10" in d.unchanged[0]
+        say(policy, state, "ah vale, sí", intents=("affirm",))
+        assert state.stage == Stage.QUALIFIED
+
+    def test_a_confirmation_that_restates_a_detail_completes(self, policy, state):
+        complete_until_recap(policy, state)
+        say(policy, state, "sí, todo bien, tengo el carnet en vigor", intents=("affirm", "provide_info"), drivers_license="yes")
+        assert state.stage == Stage.QUALIFIED
+
+    def test_a_question_in_the_confirmation_is_answered_in_the_final_message(self, policy, state):
+        # regression: the final message was built from scratch and dropped the question
+        complete_until_recap(policy, state)
+        d, _ = say(policy, state, "sí, correcto. ¿Cuánto se cobra?", intents=("affirm", "question"),
+                   question="¿Cuánto se cobra?", faq_id="pay")
+        assert (state.stage, d.kind) == (Stage.QUALIFIED, "outcome") and d.answer.faq_id == "pay"
+
+    def test_the_recap_hands_over_to_a_person_after_three_unconfirmed_replies(self, policy, state):
+        complete_until_recap(policy, state)
+        for _ in range(2):
+            say(policy, state, "no sé, no me cuadra", intents=("deny",))
+            assert state.stage == Stage.CONFIRMING
+        d, events = say(policy, state, "sigue sin cuadrar", intents=("deny",))
+        assert (state.stage, d.outcome) == (Stage.NEEDS_REVIEW, "needs_review")
+        assert "recap_not_confirmed" in events and state.needs_review
+
     def test_correction_that_breaks_a_knockout_disqualifies(self, policy, state):
         complete_until_recap(policy, state)
         say(policy, state, "en realidad no tengo carnet", intents=("correction",), drivers_license="no")

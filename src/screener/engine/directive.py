@@ -54,6 +54,7 @@ class Directive(BaseModel):
     ask_options: list[str] = Field(default_factory=list)
     zone_city: str | None = None
     remaining_questions: int = 0
+    unchanged: list[str] = Field(default_factory=list)  # restated values at the recap
     tone: Literal["normal", "simplify", "reassuring"] = "normal"
     outcome: Outcome | None = None
     outcome_place: str | None = None

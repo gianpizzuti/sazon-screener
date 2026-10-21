@@ -44,6 +44,8 @@ from screener.llm.schemas import Extracted, TurnAnalysis
 DONE = {FieldStatus.VALID, FieldStatus.SKIPPED, FieldStatus.UNCLEAR}
 MIN_WORDS_WITHOUT_SIGNAL = 4
 # Intents that mean "I did not try to answer your question" (no failed attempt counted).
+# Replies to the recap that don't confirm it before a person takes over (needs review).
+MAX_RECAP_ROUNDS = 3
 NON_ATTEMPT_INTENTS = {"question", "smalltalk", "human_request", "postpone", "abuse"}
 TONE_BY_SENTIMENT = {"confused": "simplify", "frustrated": "reassuring"}
 
@@ -136,13 +138,17 @@ class ScreeningPolicy:
 
         reason = self._knockout(state)
         if reason:
-            return self._finish(state, Stage.DISQUALIFIED, reason.value, events, reason=reason)
+            return self._finish(state, Stage.DISQUALIFIED, reason.value, events, reason=reason, answer=directive.answer)
+
+        if state.stage == Stage.CONFIRMING:
+            if handoff := self._recap_round(state, analysis, captured, directive, events, message):
+                return handoff
 
         if state.stage == Stage.CONFIRMING and not captured:
             if self.next_field(state) is not None:  # a correction reopened a field
                 return self._next_step(state, directive, events, captured)
             if "affirm" in intents and "deny" not in intents:
-                return self._complete(state, events)
+                return self._complete(state, events, directive.answer)
             if intents & {"deny", "correction"}:
                 directive.kind = "ask_correction"
                 return self._done(state, directive, events)
@@ -235,12 +241,38 @@ class ScreeningPolicy:
             return DisqualificationReason.OUT_OF_AREA
         return None
 
-    def _complete(self, state, events) -> Decision:
-        if any(state.field(f).status == FieldStatus.UNCLEAR for f in KNOCKOUT_FIELDS):
-            return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events)
-        return self._finish(state, Stage.QUALIFIED, "qualified", events)
+    def _recap_round(self, state, analysis, captured, directive, events, message) -> Decision | None:
+        """The recap always ends: confirmed, corrected, or handed to a person.
 
-    def _finish(self, state, stage, outcome, events, reason=None) -> Decision:
+        Found by the conversation eval: candidates "corrected" a date by restating it ("mañana"
+        for "miércoles 21/10") and got the same recap five times, then gave up.
+        """
+        intents = set(analysis.intents)
+        if "affirm" in intents and "deny" not in intents and not captured:
+            return None  # confirmed: the normal path completes the screening
+        state.recap_rounds += 1
+        if state.recap_rounds >= MAX_RECAP_ROUNDS:
+            state.add_flag("recap_not_confirmed", message[:160])
+            events.append(Event("recap_not_confirmed", {"rounds": state.recap_rounds}))
+            return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events)
+        changed = {e.payload.get("field") for e in events if e.type == "field_corrected"}
+        restated = [f for f in captured if f not in changed]
+        if captured and len(restated) == len(captured):
+            if "affirm" in intents and not intents & {"deny", "correction"}:
+                return self._complete(state, events, directive.answer)  # confirmed, restating a detail
+            # What they "corrected" is what the summary already says: explain, then show it again.
+            directive.kind = "recap"
+            directive.notes.append("unchanged")
+            directive.unchanged = [self.describe(state, f) + f' (they said: "{state.field(f).evidence}")' for f in restated]
+            return self._done(state, directive, events)
+        return None
+
+    def _complete(self, state, events, answer=None) -> Decision:
+        if any(state.field(f).status == FieldStatus.UNCLEAR for f in KNOCKOUT_FIELDS):
+            return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events, answer=answer)
+        return self._finish(state, Stage.QUALIFIED, "qualified", events, answer=answer)
+
+    def _finish(self, state, stage, outcome, events, reason=None, answer=None) -> Decision:
         self._set_stage(state, stage, events)
         state.current_field = None
         state.completed_at = utcnow()
@@ -254,6 +286,7 @@ class ScreeningPolicy:
             candidate_name=_first_name(state.data),
             outcome=outcome,
             outcome_place=state.data.location_raw,
+            answer=answer,  # "sí, todo correcto, ¿hay parking?": the question is still answered
         )
         return Decision(directive, events)
 
@@ -522,7 +555,7 @@ class ScreeningPolicy:
             case FieldName.EXPERIENCE_PLATFORMS:
                 return "worked with " + ", ".join(d.experience_platforms)
             case FieldName.START_DATE:
-                return f"can start on {d.start_date.isoformat()}"
+                return f"can start on {d.start_date.strftime('%A %d/%m')}"
         return name.value
 
 

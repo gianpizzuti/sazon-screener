@@ -241,6 +241,7 @@ const EVENT_LABELS: Record<string, string> = {
   review_status_changed: "Recruiter status changed", human_override: "Human override", sentiment: "Sentiment", talent_pool: "Talent pool answer",
   llm_error: "LLM error", guard_rejected: "Draft rejected by guard", ungrounded_value: "Ungrounded value discarded", abuse_strike: "Abusive message",
   update_after_close: "New info after close", ignored_after_close: "Ignored small talk after close", field_skipped: "Optional field skipped",
+  recap_not_confirmed: "Summary not confirmed", knockout_deferred: "Knock-out deferred (not asked yet)", unsolicited_value_ignored: "Value mentioned in passing ignored",
 };
 
 function EraseButton({ id }: { id: string }) {

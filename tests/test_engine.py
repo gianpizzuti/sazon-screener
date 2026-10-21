@@ -86,6 +86,25 @@ def test_recap_shows_months_exactly(make_engine, config):
     assert "8 meses (Glovo)" in render_recap(state, config.copy_, TODAY)
 
 
+def test_recap_says_tomorrow_next_to_tomorrows_date(config):
+    from datetime import timedelta
+
+    from screener.domain.models import ConversationState
+    from screener.engine.recap import render_recap
+    from conftest import TODAY
+
+    state = ConversationState(id="r", client_id="x", channel="t")
+    state.data.start_date = TODAY + timedelta(days=1)
+    assert "mañana, miércoles 21/10" in render_recap(state, config.copy_, TODAY)
+
+
+def test_the_applications_country_sets_the_spanish_variant_from_the_first_message(make_engine):
+    engine = make_engine([])
+    result = engine.start(country="MX")
+    assert engine.repo.get_state(result.conversation_id).locale == "es-MX"
+    assert engine.repo.get_state(engine.start().conversation_id).locale == "es"  # unknown: neutral Spanish
+
+
 def test_empty_messages_are_ignored(make_engine):
     engine = make_engine([])
     cid = engine.start().conversation_id

@@ -63,6 +63,8 @@ def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
         start = format_date(d.start_date, loc, today)
         if d.start_date == today:
             start = copy.text("values.start_immediate", loc, date=start)
+        elif (d.start_date - today).days == 1:
+            start = copy.text("values.start_tomorrow", loc, date=start)
 
     lines = [
         copy.text("recap.title", loc),

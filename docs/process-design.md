@@ -128,6 +128,7 @@ Knock-outs are objective rules set by the client, explained to the candidate and
 |---|---|
 | Are bicycles / e-bikes accepted? No licence is needed for them, so this knock-out could reject valid candidates. | No: licence required, as specified |
 | Which licence types count (car, motorbike, moped)? Is an own vehicle required? | Any valid car or motorbike licence; vehicle not asked |
+| Do foreign licences count (e.g. Venezuelan, Colombian)? Spain recognises some only for six months of residency. Found by the conversation eval. | The agent never judges validity: an unsure answer ends in *needs review* and the question is logged for the recruiter |
 | Is "zone" where the candidate lives or where they can work? | Where they can work |
 | Who contacts qualified candidates, and how fast? | A recruiter, within 48 h |
 | Pay, contract and benefits per country | FAQ uses placeholder answers to be confirmed |

@@ -35,7 +35,8 @@ models:
 
 # What happens after a candidate qualifies (said by the agent, never invented by the model)
 next_steps:
-  es: Un/a recruiter de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano.
+  es: Una persona del equipo de selección de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano.
+  es-MX: Una persona del equipo de reclutamiento de Grupo Sazón te escribirá en menos de 48 horas para agendar una breve entrevista en el restaurante más cercano.
   en: A Grupo Sazón recruiter will message you within 48 hours to set up a short interview at the nearest restaurant.
 
 platforms:

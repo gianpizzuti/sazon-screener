@@ -24,6 +24,7 @@ export const FLAG_LABELS: Record<string, string> = {
   abuse: "Abusive language",
   update_after_close: "New info after close",
   unclear_field: "Unclear answer",
+  recap_not_confirmed: "Summary not confirmed",
 };
 
 export function initials(name: string | null): string {

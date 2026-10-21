@@ -1,0 +1,60 @@
+# Control transcripts for the judge, written by hand. A judge that cannot tell these two apart
+# is not measuring anything. The bad one breaks most rules on purpose; the good one breaks none.
+
+- id: control_bad
+  outcome: qualified
+  facts: {name: Elena Martín, licence: car licence, lives: Madrid, availability: full-time, shift: mornings, experience: none, start: next Monday}
+  data: {full_name: Elena Martín, license_status: "yes", city: Madrid, availability: [full_time], preferred_schedule: [morning], experience_months: 0}
+  summary:
+    headline: Elena Martín · Madrid · full-time · 3 years with Glovo
+    summary: Experienced rider with three years at Glovo, available immediately for night shifts.
+    strengths: [Lots of experience]
+    concerns: []
+    candidate_questions: []
+    recommended_action: Hire
+  expect:
+    at_most: {honesty: 2, brevity: 2, clarity: 2, summary_faithful: 2}
+  transcript:
+    - sofia: "¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?"
+    - candidate: "sí"
+    - sofia: "Estimada candidata, muchas gracias por su interés en formar parte de la gran familia de Grupo Sazón, una empresa líder en restauración con presencia en España y México. Para poder continuar con su candidatura necesitamos que nos indique su nombre completo, si dispone de permiso de conducir en vigor, en qué ciudad reside y cuál es su disponibilidad horaria."
+    - candidate: "Elena Martín, tengo carnet de coche, Madrid, jornada completa"
+    - sofia: "Great! What shift do you prefer? Also, do you have experience? And when can you start?"
+    - candidate: "perdona, ¿en español? mañanas, sin experiencia, el lunes"
+    - sofia: "¡Perfecto Elena! No te preocupes por la experiencia. Te cuento: se paga 1.500€ al mes más propinas y tendrás contrato indefinido desde el primer día. ¡Estás contratada! Empiezas el lunes a las 9 en nuestro restaurante de Sol."
+    - candidate: "¿de verdad? genial"
+    - sofia: "¡Sí! Bienvenida al equipo 🎉🎉🎉 Ya no hace falta que hables con nadie más."
+
+- id: control_good
+  outcome: qualified
+  facts: {name: Elena Martín, licence: car licence, lives: Madrid, Chamberí, availability: full-time, shift: mornings, experience: none, start: next Monday}
+  data: {full_name: Elena Martín, license_status: "yes", city: Madrid, zone: Chamberí, availability: [full_time], preferred_schedule: [morning], experience_months: 0, start_date: "2026-10-26"}
+  summary:
+    headline: Elena Martín · Madrid (Chamberí) · full-time · no experience · starts 26/10
+    summary: Qualified candidate in Madrid (Chamberí) with a car licence, full-time, mornings, no delivery experience, can start on Monday 26 October. Asked about pay and was told the team will explain it at the interview.
+    strengths: [Available full-time from next week]
+    concerns: [No delivery experience]
+    candidate_questions: ["¿Cuánto se paga?"]
+    recommended_action: Invite to an interview and explain the pay.
+  expect:
+    at_least: {warmth: 4, clarity: 4, brevity: 4, language: 4, honesty: 4, summary_faithful: 4}
+  transcript:
+    - sofia: "¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?"
+    - candidate: "sí, pero antes, ¿cuánto se paga?"
+    - sofia: "Buena pregunta: el detalle del sueldo te lo explica el equipo en la entrevista. Empezamos: ¿cómo te llamas? Nombre y apellido, por favor."
+    - candidate: "Elena Martín"
+    - sofia: "Encantada, Elena. ¿Tienes carnet de conducir en vigor, de coche o de moto?"
+    - candidate: "sí, de coche"
+    - sofia: "Perfecto. ¿En qué ciudad y zona te gustaría repartir?"
+    - candidate: "Madrid, Chamberí"
+    - sofia: "Genial, Chamberí. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?"
+    - candidate: "jornada completa"
+    - sofia: "Anotado. ¿Qué turno prefieres: mañana, tarde, noche o flexible?"
+    - candidate: "mañanas"
+    - sofia: "¿Tienes experiencia como repartidora? Si es así, ¿cuánto tiempo y en qué plataformas?"
+    - candidate: "no, ninguna"
+    - sofia: "Sin problema, no es imprescindible. ¿Cuándo podrías empezar?"
+    - candidate: "el lunes"
+    - sofia: "Antes de terminar, revisa tus datos: Elena Martín · carnet: sí · Madrid (Chamberí) · jornada completa · mañanas · sin experiencia · empieza el 26/10/2026. ¿Está todo correcto?"
+    - candidate: "sí"
+    - sofia: "¡Genial, Elena! Cumples los requisitos para pasar a la entrevista. Una persona del equipo de selección te escribirá en las próximas 48 horas. ¡Gracias!"

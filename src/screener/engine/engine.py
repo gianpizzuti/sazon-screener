@@ -86,14 +86,18 @@ class ScreeningEngine:
         self._locks_guard = threading.Lock()
 
     # ------------------------------------------------------------------ public API
-    def start(self, channel: str = "web", language: str | None = None) -> TurnResult:
+    def start(self, channel: str = "web", language: str | None = None, country: str | None = None) -> TurnResult:
         """Open a conversation. The first message is a fixed template (as WhatsApp requires
-        for business-initiated messages) disclosing that the agent is an AI."""
+        for business-initiated messages) disclosing that the agent is an AI.
+
+        `country` comes from the application (the restaurant applied to): it sets Spain or Mexico
+        Spanish from the first message instead of neutral Spanish until the city is known."""
         state = ConversationState(
             id=str(uuid.uuid4()),
             client_id=self.cfg.id,
             channel=channel,
             language=language or self.cfg.agent.default_language,
+            spanish_variant={"ES": "es-ES", "MX": "es-MX"}.get((country or "").upper()),
             created_at=self.clock(),
         )
         greeting = OutboundMessage(
