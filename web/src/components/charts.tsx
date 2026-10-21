@@ -140,7 +140,7 @@ export function Meter({ value, label, size = 148 }: { value: number | null; labe
         />
       </svg>
       <div className="absolute text-center">
-        <div className="font-display text-3xl text-ink">
+        <div className="font-display text-3xl font-semibold text-heading">
           {value === null ? "–" : <CountUp value={ratio * 100} format={(v) => `${Math.round(v)}%`} />}
         </div>
         <div className="text-xs text-ink-3">{label}</div>

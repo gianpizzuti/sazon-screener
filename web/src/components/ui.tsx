@@ -16,17 +16,20 @@ import type { Status } from "../lib/api";
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <section className={clsx("rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)]", className)}>
+    <section className={clsx("rounded-xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)]", className)}>
       {children}
     </section>
   );
 }
 
-export function CardTitle({ icon: Icon, children, aside }: { icon?: LucideIcon; children: ReactNode; aside?: ReactNode }) {
+export function CardTitle({ icon: Icon, children, aside, number }: { icon?: LucideIcon; children: ReactNode; aside?: ReactNode; number?: number }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h2 className="flex items-center gap-2 text-[15px] font-semibold text-ink">
-        {Icon && <Icon className="size-4 text-brand" aria-hidden />}
+      <h2 className="flex items-center gap-2.5 text-[15px] font-semibold text-heading">
+        {number !== undefined ? (
+          // Numbered mint badge, as in Orbio's documents ("01 About Orbio")
+          <span className="num grid size-7 shrink-0 place-items-center rounded-full bg-brand text-xs font-semibold text-heading">{String(number).padStart(2, "0")}</span>
+        ) : Icon && <Icon className="size-4 text-brand-ink" aria-hidden />}
         {children}
       </h2>
       {aside}
@@ -46,9 +49,9 @@ export function Button({ variant = "secondary", icon: Icon, loading, className, 
       {...rest}
       disabled={disabled || loading}
       className={clsx(
-        "inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium",
+        "inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium",
         "transition-[background-color,transform,box-shadow] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50",
-        variant === "primary" && "bg-brand-btn text-white shadow-sm hover:brightness-110",
+        variant === "primary" && "bg-brand-btn text-on-brand shadow-sm hover:brightness-110",
         variant === "secondary" && "border border-line bg-surface text-ink hover:bg-surface-2",
         variant === "ghost" && "text-ink-2 hover:bg-surface-2 hover:text-ink",
         variant === "danger" && "bg-rose-700 text-white hover:bg-rose-800",
@@ -62,7 +65,7 @@ export function Button({ variant = "secondary", icon: Icon, loading, className, 
 }
 
 const STATUS: Record<Status, { label: string; icon: LucideIcon; tone: string }> = {
-  qualified: { label: "Qualified", icon: CircleCheck, tone: "bg-emerald-50 text-emerald-800 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/25" },
+  qualified: { label: "Qualified", icon: CircleCheck, tone: "bg-brand-soft text-heading ring-brand dark:text-brand-ink" },
   needs_review: { label: "Needs review", icon: TriangleAlert, tone: "bg-amber-50 text-amber-900 ring-amber-600/25 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/25" },
   in_progress: { label: "In progress", icon: MessageCircle, tone: "bg-sky-50 text-sky-800 ring-sky-600/20 dark:bg-sky-400/10 dark:text-sky-300 dark:ring-sky-400/25" },
   awaiting_reply: { label: "Awaiting reply", icon: Hourglass, tone: "bg-violet-50 text-violet-800 ring-violet-600/20 dark:bg-violet-400/10 dark:text-violet-300 dark:ring-violet-400/25" },
@@ -125,9 +128,9 @@ export function ErrorState({ error }: { error: unknown }) {
 
 export function PageHeader({ title, subtitle, aside }: { title: string; subtitle?: ReactNode; aside?: ReactNode }) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <header className="hero mb-6 flex flex-wrap items-end justify-between gap-4 rounded-xl border border-line px-6 py-7">
       <div>
-        <h1 className="font-display text-3xl tracking-tight text-ink sm:text-[34px]">{title}</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-heading sm:text-[34px]">{title}</h1>
         {subtitle && <p className="mt-1.5 max-w-2xl text-[15px] text-ink-2">{subtitle}</p>}
       </div>
       {aside}

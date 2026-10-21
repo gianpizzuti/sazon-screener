@@ -1,4 +1,4 @@
-import { Activity, Ban, Brain, CircleHelp, Hourglass, MessageCircle, Route, Table2, TriangleAlert, Users } from "lucide-react";
+import { Table2 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
 import { BarList, type BarRow, CountUp, DataTable, Meter, Reveal } from "../components/charts";
@@ -11,21 +11,21 @@ const toRows = (obj: Record<string, number>, label: (k: string) => string = (k) 
 
 function Kpi({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04)]" title={hint}>
+    <div className="rounded-xl border border-line bg-surface p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04)]" title={hint}>
       <div className="text-[13px] font-medium text-ink-2">{label}</div>
-      <div className="mt-1 font-display text-[30px] leading-tight text-ink">{children}</div>
+      <div className="mt-1 font-display text-[30px] leading-tight font-semibold text-heading">{children}</div>
       {hint && <div className="mt-0.5 text-xs text-ink-3">{hint}</div>}
     </div>
   );
 }
 
-function ChartCard({ icon, title, caption, rows, unit, asTable, total, keepOrder, delay = 0 }: {
-  icon: typeof Activity; title: string; caption: string; rows: BarRow[]; unit: string; asTable: boolean; total?: number; keepOrder?: boolean; delay?: number;
+function ChartCard({ number, title, caption, rows, unit, asTable, total, keepOrder, delay = 0 }: {
+  number: number; title: string; caption: string; rows: BarRow[]; unit: string; asTable: boolean; total?: number; keepOrder?: boolean; delay?: number;
 }) {
   return (
     <Reveal delay={delay}>
       <Card className="h-full">
-        <CardTitle icon={icon}>{title}</CardTitle>
+        <CardTitle number={number}>{title}</CardTitle>
         <p className="-mt-2 mb-4 text-[13px] text-ink-3">{caption}</p>
         {asTable ? <DataTable rows={rows} unit={unit} /> : <BarList rows={rows} unit={unit} total={total} keepOrder={keepOrder} />}
       </Card>
@@ -83,25 +83,25 @@ export function AnalyticsPage() {
       </div>
 
       <div className="mt-6">
-        <ChartCard icon={Route} title="Funnel" unit="candidates" asTable={asTable} total={started} keepOrder
+        <ChartCard number={1} title="Funnel" unit="candidates" asTable={asTable} total={started} keepOrder
           caption="Candidates who got past each question. The drops at License and City are the knock-outs doing their job."
           rows={a.funnel.map((s) => ({ label: s.step, value: s.count }))} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <ChartCard icon={Ban} title="Why candidates are knocked out" unit="candidates" asTable={asTable}
+        <ChartCard number={2} title="Why candidates are knocked out" unit="candidates" asTable={asTable}
           caption="Disqualification reasons. Each one is a rule set by the client." rows={toRows(a.knockout_reasons, (k) => REASONS[k] ?? k)} />
-        <ChartCard icon={Hourglass} title="Where abandoned candidates stopped" unit="candidates" asTable={asTable} delay={0.08}
+        <ChartCard number={3} title="Where abandoned candidates stopped" unit="candidates" asTable={asTable} delay={0.08}
           caption="The pending question when the last reminder went unanswered." rows={toRows(a.drop_off)} />
-        <ChartCard icon={TriangleAlert} title="Where candidates get frustrated" unit="messages" asTable={asTable}
+        <ChartCard number={4} title="Where candidates get frustrated" unit="messages" asTable={asTable}
           caption="Frustrated messages by the question being asked: candidates for rewording." rows={toRows(a.frustration_by_field)} />
-        <ChartCard icon={CircleHelp} title="What candidates ask" unit="questions" asTable={asTable} delay={0.08}
+        <ChartCard number={5} title="What candidates ask" unit="questions" asTable={asTable} delay={0.08}
           caption="Questions answered from the client's FAQ, by topic." rows={toRows(a.faq_usage, titleCase)} />
       </div>
 
       <Reveal className="mt-6">
         <Card>
-          <CardTitle icon={Users}>Re-engagement</CardTitle>
+          <CardTitle number={6}>Re-engagement</CardTitle>
           <p className="-mt-2 mb-6 max-w-3xl text-[13px] text-ink-3">
             Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in their timezone. Recovery rate = candidates who replied after a reminder: the direct measure of the 60% no-answer problem.
           </p>
@@ -122,7 +122,7 @@ export function AnalyticsPage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <Reveal>
           <Card className="h-full">
-            <CardTitle icon={MessageCircle}>Questions Sofía couldn't answer</CardTitle>
+            <CardTitle number={7}>Questions Sofía couldn't answer</CardTitle>
             <p className="-mt-2 mb-3 text-[13px] text-ink-3">She never improvises: each one is a candidate for the FAQ.</p>
             {a.unanswered_questions.length ? (
               <ul className="divide-y divide-line">
@@ -133,7 +133,7 @@ export function AnalyticsPage() {
         </Reveal>
         <Reveal delay={0.08}>
           <Card className="h-full">
-            <CardTitle icon={Brain}>AI health</CardTitle>
+            <CardTitle number={8}>AI health</CardTitle>
             <dl className="grid grid-cols-2 gap-4">
               {[
                 ["Template fallback rate", pct(a.template_fallback_rate), "Messages written by templates because the model failed or its draft was rejected"],

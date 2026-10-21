@@ -14,13 +14,14 @@ const NAV = [
   { to: "/try", label: "Try the agent", icon: MessagesSquare },
 ];
 
-function Logo({ compact = false }: { compact?: boolean }) {
+/** The client's workspace: recruiters work "in Grupo Sazón" (each client is a config folder). */
+function Workspace({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-2.5 px-2">
-      <div className="grid size-9 place-items-center rounded-xl bg-brand font-display text-lg text-white shadow-sm">S</div>
-      <div className={clsx("leading-tight", compact && "hidden sm:block")}>
-        <div className="font-display text-[17px] text-ink">Sazón</div>
-        <div className="text-[11px] font-medium tracking-wide text-ink-3 uppercase">Screener</div>
+      <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-btn font-display text-[15px] font-semibold text-on-brand shadow-sm">GS</div>
+      <div className={clsx("min-w-0 leading-tight", compact && "hidden sm:block")}>
+        <div className="truncate font-display text-[17px] font-semibold text-heading">Grupo Sazón</div>
+        <div className="text-[11px] font-medium tracking-wide text-ink-3 uppercase">Recruiting · Sofía AI</div>
       </div>
     </div>
   );
@@ -65,7 +66,7 @@ function DemoClock({ notify }: { notify: (text: string) => void }) {
       {/* Phones: a compact button with a menu, so the top bar never overflows. */}
       <div className="relative sm:hidden">
         <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Demo clock"
-          className="grid size-10 cursor-pointer place-items-center rounded-xl border border-line bg-surface text-brand">
+          className="grid size-10 cursor-pointer place-items-center rounded-xl border border-line bg-surface text-brand-ink">
           <Clock className="size-4" />
         </button>
         <AnimatePresence>
@@ -84,7 +85,7 @@ function DemoClock({ notify }: { notify: (text: string) => void }) {
         </AnimatePresence>
       </div>
     <div className="hidden items-center gap-1 rounded-xl border border-line bg-surface p-1 pl-3 shadow-sm sm:flex">
-      <Clock className="size-4 text-brand" aria-hidden />
+      <Clock className="size-4 text-brand-ink" aria-hidden />
       <div className="mr-1 leading-tight">
         <div className="text-[11px] font-medium tracking-wide text-ink-3 uppercase">Demo clock{clock.offset_hours ? ` · +${Math.round(clock.offset_hours)} h` : ""}</div>
         <div className="num text-[13px] font-medium text-ink">
@@ -117,7 +118,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">Skip to content</a>
       <div className="min-h-dvh lg:grid lg:grid-cols-[232px_1fr]">
         <aside className="sticky top-0 hidden h-dvh flex-col gap-8 border-r border-line bg-surface/60 px-4 py-6 backdrop-blur lg:flex">
-          <Logo />
+          <Workspace />
           <nav aria-label="Main" className="flex flex-col gap-1">
             {NAV.map(({ to, label, icon: Icon, end }) => (
               <NavLink key={to} to={to} end={end}
@@ -128,7 +129,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 {({ isActive }) => (
                   <>
                     {isActive && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-xl bg-brand-soft ring-1 ring-brand/20" transition={{ type: "spring", stiffness: 380, damping: 32 }} />}
-                    <Icon className={clsx("relative size-[18px]", isActive && "text-brand")} aria-hidden />
+                    <Icon className={clsx("relative size-[18px]", isActive && "text-brand-ink")} aria-hidden />
                     <span className="relative">{label}</span>
                   </>
                 )}
@@ -136,7 +137,7 @@ export function Layout({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <div className="mt-auto rounded-2xl bg-surface-2 p-3.5 text-[13px] leading-snug text-ink-2">
-            <div className="mb-1 flex items-center gap-1.5 font-semibold text-ink"><Info className="size-3.5 text-brand" />Human in the loop</div>
+            <div className="mb-1 flex items-center gap-1.5 font-semibold text-ink"><Info className="size-3.5 text-brand-ink" />Human in the loop</div>
             Sofía (AI) screens; every outcome can be overridden by a recruiter, and every override is logged.
           </div>
         </aside>
@@ -144,11 +145,11 @@ export function Layout({ children }: { children: ReactNode }) {
         <div className="min-w-0">
           <header className="sticky top-0 z-20 border-b border-line bg-bg/80 backdrop-blur-md">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
-              <div className="flex items-center gap-2 lg:hidden"><Logo compact /></div>
+              <div className="flex items-center gap-2 lg:hidden"><Workspace compact /></div>
               <nav aria-label="Main mobile" className="flex gap-1 lg:hidden">
                 {NAV.map(({ to, icon: Icon, label, end }) => (
                   <NavLink key={to} to={to} end={end} aria-label={label}
-                    className={({ isActive }) => clsx("grid size-10 place-items-center rounded-xl", isActive ? "bg-brand-soft text-brand" : "text-ink-2")}>
+                    className={({ isActive }) => clsx("grid size-10 place-items-center rounded-xl", isActive ? "bg-brand-soft text-brand-ink" : "text-ink-2")}>
                     <Icon className="size-[18px]" />
                   </NavLink>
                 ))}

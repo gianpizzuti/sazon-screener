@@ -13,7 +13,7 @@ Streamlit re-runs the whole script on every interaction and renders charts in if
 ## Decision
 - **Stack:** React 19 + TypeScript + Vite + Tailwind CSS 4 + Motion, with TanStack Query for server state and React Router.
 - **Served by FastAPI.** The built app (`web/dist`) is served at `/`, and the API moved under `/api`. Production is **one process**. During development Vite serves the app and proxies `/api`.
-- **Design system as tokens.** Semantic colour tokens are defined for light and dark together, and every text/surface pair is checked for **WCAG AA contrast** (one muted text token was darkened, and the primary button uses a darker orange so white labels reach 5.2:1). Data colour is separate from brand colour. Fonts: Calistoga (display), Inter (text), JetBrains Mono (data).
+- **Design system as tokens.** Semantic colour tokens are defined for light and dark together, and every text/surface pair is checked for **WCAG AA contrast**. The palette is sampled from Orbio's own brand materials, with the client shown as the workspace (D123–D129). Fonts: Source Serif 4 (titles), Inter (text), IBM Plex Mono (data). Re-theming from orange to Orbio green changed the tokens, not the components.
 - **Charts built in-house** instead of a chart library:
   - bars grow as they scroll into view by animating `transform: scaleX`, never `width`, so there are no layout shifts;
   - thin bars with a rounded data end and the value at the tip;

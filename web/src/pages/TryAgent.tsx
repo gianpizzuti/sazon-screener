@@ -101,7 +101,7 @@ export function TryAgentPage() {
         <div className="flex h-[640px] flex-col overflow-hidden rounded-[28px] border border-line bg-surface shadow-xl shadow-black/5">
           <div className="flex items-center gap-3 border-b border-line bg-surface-2/60 px-5 py-3.5">
             <div className="relative">
-              <div className="grid size-10 place-items-center rounded-full bg-brand font-display text-white">S</div>
+              <div className="grid size-10 place-items-center rounded-full bg-brand-btn font-display text-on-brand">S</div>
               <span className="absolute right-0 bottom-0 size-3 rounded-full bg-emerald-500 ring-2 ring-surface" aria-hidden />
             </div>
             <div className="leading-tight">
@@ -115,7 +115,7 @@ export function TryAgentPage() {
             {!session && (
               <div className="grid h-full place-items-center text-center">
                 <div>
-                  <div className="mx-auto mb-3 grid size-14 place-items-center rounded-2xl bg-brand-soft"><MessageCircle className="size-6 text-brand" /></div>
+                  <div className="mx-auto mb-3 grid size-14 place-items-center rounded-2xl bg-brand-soft"><MessageCircle className="size-6 text-brand-ink" /></div>
                   <p className="font-medium text-ink">Apply as a delivery driver</p>
                   <p className="mt-1 text-sm text-ink-3">Start a conversation to receive Sofía's first message.</p>
                 </div>
@@ -129,7 +129,7 @@ export function TryAgentPage() {
                     className={clsx("flex", agent ? "justify-start" : "justify-end")}>
                     <div className={clsx("max-w-[82%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed whitespace-pre-line",
                       agent ? m.meta.kind === "followup" ? "rounded-tl-md bg-violet-50 text-ink ring-1 ring-violet-500/20 dark:bg-violet-400/10" : "rounded-tl-md bg-surface-2 text-ink"
-                        : "rounded-tr-md bg-brand-btn text-white")}>
+                        : "rounded-tr-md bg-brand-btn text-on-brand")}>
                       {m.text}
                       {m.meta.kind === "followup" && <div className="mt-1 flex items-center gap-1 text-xs text-violet-700 dark:text-violet-300"><Hourglass className="size-3" />Automatic reminder · you went silent</div>}
                     </div>
@@ -138,7 +138,7 @@ export function TryAgentPage() {
               })}
               {pending && (
                 <motion.div key="pending" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
-                  <div className="max-w-[82%] rounded-2xl rounded-tr-md bg-brand-btn px-4 py-2.5 text-[15px] text-white opacity-80">{pending}</div>
+                  <div className="max-w-[82%] rounded-2xl rounded-tr-md bg-brand-btn px-4 py-2.5 text-[15px] text-on-brand opacity-80">{pending}</div>
                 </motion.div>
               )}
               {send.isPending && <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex"><TypingDots /></motion.div>}
@@ -159,7 +159,7 @@ export function TryAgentPage() {
                 {showQuick && (
                   <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-2 flex flex-wrap gap-1.5">
                     {session.quick.map((q) => (
-                      <button key={q} onClick={() => submit(q)} className="min-h-9 cursor-pointer rounded-full border border-brand/40 bg-brand-soft px-3.5 text-[13px] font-medium text-brand-ink transition hover:bg-brand hover:text-white">{q}</button>
+                      <button key={q} onClick={() => submit(q)} className="min-h-9 cursor-pointer rounded-full border border-brand/40 bg-brand-soft px-3.5 text-[13px] font-medium text-brand-ink transition hover:bg-brand-btn hover:text-on-brand">{q}</button>
                     ))}
                   </motion.div>
                 )}
@@ -167,9 +167,9 @@ export function TryAgentPage() {
               <form onSubmit={(e) => { e.preventDefault(); submit(text); }} className="flex items-center gap-2">
                 <label htmlFor="msg" className="sr-only">Your message</label>
                 <input id="msg" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write as the candidate…" autoComplete="off"
-                  className="h-11 flex-1 rounded-full border border-line bg-surface-2 px-4 text-[15px] text-ink placeholder:text-ink-3 focus:border-brand/60 focus:outline-none" />
+                  className="h-11 flex-1 rounded-full border border-line bg-surface-2 px-4 text-[15px] text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
                 <button type="submit" disabled={!text.trim() || send.isPending} aria-label="Send"
-                  className="grid size-11 cursor-pointer place-items-center rounded-full bg-brand-btn text-white transition active:scale-95 disabled:opacity-40">
+                  className="grid size-11 cursor-pointer place-items-center rounded-full bg-brand-btn text-on-brand transition active:scale-95 disabled:opacity-40">
                   <Send className="size-4" />
                 </button>
               </form>
@@ -185,7 +185,7 @@ export function TryAgentPage() {
                 const value = detail ? item.value(detail.data) : null;
                 return (
                   <li key={item.label} className="flex items-center gap-3 rounded-xl px-2 py-2">
-                    <motion.span className={clsx("grid size-6 shrink-0 place-items-center rounded-full", value ? "bg-emerald-600 text-white" : "bg-surface-2 ring-1 ring-line")}
+                    <motion.span className={clsx("grid size-6 shrink-0 place-items-center rounded-full", value ? "bg-brand text-heading" : "bg-surface-2 ring-1 ring-line")}
                       animate={value ? { scale: [0.6, 1.15, 1] } : { scale: 1 }} transition={{ duration: 0.35 }}>
                       {value && <Check className="size-3.5" strokeWidth={3} />}
                     </motion.span>
@@ -214,7 +214,7 @@ export function TryAgentPage() {
                   {a.faq_id && <Chip>FAQ: {titleCase(a.faq_id)}</Chip>}
                 </div>
                 {a.evidence.length ? a.evidence.map((e, i) => (
-                  <div key={i} className="flex gap-2 text-sm text-ink-2"><Quote className="mt-0.5 size-3.5 shrink-0 text-brand" /><span><span className="text-ink-3">{titleCase(e.field)}:</span> “{e.quote}”</span></div>
+                  <div key={i} className="flex gap-2 text-sm text-ink-2"><Quote className="mt-0.5 size-3.5 shrink-0 text-brand-ink" /><span><span className="text-ink-3">{titleCase(e.field)}:</span> “{e.quote}”</span></div>
                 )) : <p className="text-sm text-ink-3">No screening data in this message.</p>}
                 <p className="text-xs text-ink-3">Every value must quote your words, or it is discarded. The model reads; the rules decide.</p>
               </motion.div>

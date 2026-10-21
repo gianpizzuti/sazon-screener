@@ -115,7 +115,7 @@ docs/          process design, decision log, ADRs, live testing log
 | Templates for recap and fallback | Data shown back to the candidate is never paraphrased; the conversation never breaks | [0006](docs/decisions/0006-templates-where-precision-matters.md) |
 | FAQ without a vector DB | 13 entries don't need retrieval infrastructure; the writer only sees the one approved answer | [0007](docs/decisions/0007-faq-without-vector-db.md) |
 | API-first, the UI is a client | Logic in one place, ready for WhatsApp/voice/ATS; the UI was replaced (Streamlit → React) without touching the core | [0008](docs/decisions/0008-api-first-recruiter-tool.md) |
-| React web app with a design system | Motion that explains, accessible charts, light/dark tokens checked for contrast; one process in production | [0009](docs/decisions/0009-react-web-app.md) |
+| React web app with a design system | Orbio's visual language with the client as workspace; motion that explains, accessible charts, light/dark tokens checked for contrast; one process in production | [0009](docs/decisions/0009-react-web-app.md) |
 
 ## Structured output
 

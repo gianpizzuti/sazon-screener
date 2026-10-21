@@ -23,13 +23,13 @@ function KpiTile({ status, count, index, onClick, active }: { status: Status; co
       transition={{ duration: 0.35, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -2 }}
       className={clsx(
-        "cursor-pointer rounded-2xl border bg-surface p-4 text-left shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition-colors",
+        "cursor-pointer rounded-xl border bg-surface p-4 text-left shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition-colors",
         active ? "border-brand/50 ring-2 ring-brand/15" : "border-line hover:border-ink-3/40",
       )}
       aria-pressed={active}
     >
       <div className="flex items-center gap-1.5 text-[13px] font-medium text-ink-2"><Icon className="size-3.5" aria-hidden />{label}</div>
-      <CountUp value={count} className="mt-1 block font-display text-[32px] leading-tight text-ink" />
+      <CountUp value={count} className="mt-1 block font-display text-[32px] leading-tight font-semibold text-heading" />
     </motion.button>
   );
 }
@@ -158,11 +158,11 @@ export function PipelinePage() {
           <span className="sr-only">Search by name or city</span>
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name or city"
-            className="h-10 w-full rounded-xl border border-line bg-surface pr-3 pl-9 text-sm text-ink placeholder:text-ink-3 focus:border-brand/60 focus:outline-none" />
+            className="h-10 w-full rounded-lg border border-line bg-surface pr-3 pl-9 text-sm text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
         </label>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
+      <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
         {isLoading ? (
           <div className="space-y-3 p-5">{Array.from({ length: 6 }, (_, i) => <Skeleton key={i} className="h-12" />)}</div>
         ) : !shown.length ? (

@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (122 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (129 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -173,8 +173,8 @@ Every decision taken while building the agent, large or small (122 so far), with
 | D110 | The API moves under `/api`; FastAPI serves the built app at `/` | One process in production, no route collisions with client-side pages, API versioning room | Separate static server + CORS | `api/app.py` |
 | D111 | `web/dist` is not committed; `make install` builds it when Node is available | Build artefacts in git go stale | Committing dist (works without Node). Trade-off: Node 18+ needed for the UI | `Makefile`, `.gitignore` |
 | D112 | Semantic colour tokens for light and dark, every text/surface pair checked for AA contrast | Accessible by construction; one muted token was darkened (4.44 → 5.14:1) | Tailwind colours used ad hoc | `web/src/index.css` |
-| D113 | Primary buttons use a darker orange (#c2410c) than the brand accent (#ea580c) | White on #ea580c is 3.56:1 (fails AA); on #c2410c it is 5.18:1 | Brand orange everywhere | `--brand-btn` |
-| D114 | Data colour (validated blue) separate from brand colour (orange) | Charts stay colour-blind safe and never compete with actions | Orange bars | `--series` |
+| D113 | ~~Primary buttons use a darker orange (#c2410c) than the brand accent~~ (superseded by D125) | White on #ea580c is 3.56:1 (fails AA); on #c2410c it is 5.18:1 | Brand orange everywhere | `--brand-btn` |
+| D114 | ~~Data colour (validated blue) separate from brand colour (orange)~~ (superseded by D127) | Charts stay colour-blind safe and never compete with actions | Orange bars | `--series` |
 | D115 | Charts built in-house; bars animate `scaleX` when they scroll into view | Exactly the effect asked for, no layout shift, full control over accessibility | A chart library | `components/charts.tsx` |
 | D116 | Every chart has keyboard focus, a screen-reader summary and a table alternative | Charts alone are not accessible | Charts only | `BarList`, `DataTable` |
 | D117 | Motion respects `prefers-reduced-motion` (MotionConfig + CSS) | Some users get sick from motion; the data must be readable immediately | Always animating | `main.tsx`, `index.css` |
@@ -183,3 +183,15 @@ Every decision taken while building the agent, large or small (122 so far), with
 | D120 | The screening checklist ticks live in "Try the agent" | Makes slot filling visible: the clearest demo of what the agent does | A JSON dump | `pages/TryAgent.tsx` |
 | D121 | Template fallback rate excludes follow-ups | Reminders are templates by design; counting them made the AI look 10% less healthy than it was | Counting every template | `analytics.py` |
 | D122 | TypeScript 5, not 7 | 7 is the new native compiler; with a deadline, the established toolchain wins | Latest major | `web/package.json` |
+
+## Visual identity: Orbio platform, Grupo Sazón workspace
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D123 | The UI uses Orbio's visual language; the top-left shows the client workspace ("Grupo Sazón · Recruiting · Sofía AI") | In reality this is an Orbio product used by Grupo Sazón's recruiters: platform look, client workspace, like Slack shows the workspace name | A restaurant-branded tool (orange); or Orbio's logo and name on the product (not ours to reproduce, and presumptuous) | `Layout.Workspace`, `index.css` |
+| D124 | Palette sampled from Orbio's own documents: the exact fill colours parsed from the Candidate FAQs PDF (#2e3f28 forest, #a9d3ae mint, #2b2f2a text, #3f7a47 link green, #e6f1e6 cards), cover gradient sampled from pixels | Exact values instead of eyeballing a screenshot | Website palette (olive + bright lime): close, but the PDF is the reference the user gave | `index.css` |
+| D125 | Forest-green primary buttons with white labels (11.3:1); in dark mode mint buttons with forest labels (9.3:1), via an `on-brand` token | One token flips the label colour with the theme; hard-coded white text would vanish on mint | Same button colour in both themes | `--brand-btn`, `--on-brand` |
+| D126 | Mint is decoration only (badge fills, dividers): never text or icons | Mint on white is 1.7:1; icons and links use a darker green (#356a3d, 5.5–6.4:1) | Mint icons (unreadable) | `--brand`, `--brand-ink` |
+| D127 | Data bars in Orbio's link green (#3f7a47 light, mint dark) | Cohesive with the identity; single series, so contrast with the surface (5.1:1 / 9.6:1) is what matters | Blue data bars (validated, but foreign to the identity) | `--series` |
+| D128 | Muted text darkened from Orbio's #6b776a to #5f6b5e | #6b776a is 4.05:1 on mint surfaces (fails AA); #5f6b5e is >= 4.8:1 everywhere | Exact brand value | `--ink-3` |
+| D129 | Source Serif 4 for titles (Orbio's serif), numbered mint section badges and the cover gradient behind page headers | Recognisable editorial touches from their documents, applied sparingly | Copying layouts wholesale | `ui.CardTitle(number)`, `.hero` |

@@ -78,7 +78,7 @@ function SummaryCard({ detail }: { detail: CandidateDetail }) {
             </div>
           </div>
           <div className="mt-4 flex gap-2.5 rounded-xl bg-brand-soft p-3.5 text-sm text-ink ring-1 ring-brand/15">
-            <Gavel className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden /><span><span className="font-medium">Next step: </span>{s.recommended_action}</span>
+            <Gavel className="mt-0.5 size-4 shrink-0 text-brand-ink" aria-hidden /><span><span className="font-medium">Next step: </span>{s.recommended_action}</span>
           </div>
           {s.source === "template" && <p className="mt-2 text-xs text-ink-3">The AI summary was unavailable: fallback shown.</p>}
         </div>
@@ -130,10 +130,10 @@ function DecisionCard({ detail }: { detail: CandidateDetail }) {
       </AnimatePresence>
       <label className="mt-4 block text-[13px] font-medium text-ink-2" htmlFor="note">Note</label>
       <textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="e.g. Called, interview Thursday 11:00 at Chamberí"
-        className="mt-1.5 w-full resize-none rounded-xl border border-line bg-surface p-3 text-sm text-ink placeholder:text-ink-3 focus:border-brand/60 focus:outline-none" />
+        className="mt-1.5 w-full resize-none rounded-xl border border-line bg-surface p-3 text-sm text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
       <label className="mt-3 block text-[13px] font-medium text-ink-2" htmlFor="by">Your name</label>
       <input id="by" value={by} onChange={(e) => setBy(e.target.value)} placeholder="Recruiter name"
-        className="mt-1.5 h-10 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink placeholder:text-ink-3 focus:border-brand/60 focus:outline-none" />
+        className="mt-1.5 h-10 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
       <div className="mt-4 flex items-center justify-between gap-3">
         <span className="text-xs text-ink-3">{detail.review.updated_at ? `Updated ${ago(detail.review.updated_at, new Date())}${detail.review.updated_by ? ` by ${detail.review.updated_by}` : ""}` : "No decision yet"}</span>
         <Button variant="primary" icon={Check} loading={save.isPending} disabled={!dirty} onClick={() => save.mutate()}>Save decision</Button>
@@ -164,7 +164,7 @@ function WhyPanel({ message }: { message: Message }) {
           </div>
         )}
         {a.evidence.map((e, i) => (
-          <div key={i} className="flex gap-2 text-ink-2"><Quote className="mt-0.5 size-3.5 shrink-0 text-brand" aria-hidden /><span><span className="text-ink-3">{titleCase(e.field)}:</span> “{e.quote}”</span></div>
+          <div key={i} className="flex gap-2 text-ink-2"><Quote className="mt-0.5 size-3.5 shrink-0 text-brand-ink" aria-hidden /><span><span className="text-ink-3">{titleCase(e.field)}:</span> “{e.quote}”</span></div>
         ))}
       </div>
     );
@@ -204,7 +204,7 @@ function Bubble({ message, index }: { message: Message; index: number }) {
     <motion.div initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.3, delay: Math.min(index, 6) * 0.03 }}
       className={clsx("flex gap-2.5", agent ? "justify-start" : "justify-end")}>
-      {agent && <div className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-brand font-display text-sm text-white">S</div>}
+      {agent && <div className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-brand-btn font-display text-sm text-on-brand">S</div>}
       <div className={clsx("max-w-[78%]", !agent && "items-end text-right")}>
         <div className={clsx("rounded-2xl px-4 py-2.5 text-left text-[15px] leading-relaxed whitespace-pre-line",
           agent ? followup ? "rounded-tl-md bg-violet-50 text-ink ring-1 ring-violet-500/20 dark:bg-violet-400/10" : "rounded-tl-md bg-surface-2 text-ink"
@@ -258,7 +258,7 @@ function EraseButton({ id }: { id: string }) {
             <motion.div role="alertdialog" aria-modal="true" aria-labelledby="erase-title" initial={{ scale: 0.96, y: 8 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.98 }}
               onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-2xl ring-1 ring-line">
               <div className="flex items-start justify-between gap-4">
-                <h2 id="erase-title" className="font-display text-xl text-ink">Erase this candidate?</h2>
+                <h2 id="erase-title" className="font-display text-xl font-semibold text-heading">Erase this candidate?</h2>
                 <button onClick={() => setConfirming(false)} aria-label="Cancel" className="cursor-pointer rounded-lg p-1 text-ink-3 hover:text-ink"><X className="size-5" /></button>
               </div>
               <p className="mt-2 text-sm text-ink-2">Right to erasure (GDPR): the transcript, data, summary and audit trail are deleted permanently. This cannot be undone.</p>
@@ -300,7 +300,7 @@ export function CandidatePage() {
         <div className="grid size-16 place-items-center rounded-2xl bg-brand-soft font-display text-2xl text-brand-ink ring-1 ring-brand/15">{initials(row.name)}</div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-display text-3xl text-ink">{row.name ?? "Unnamed candidate"}</h1>
+            <h1 className="font-display text-3xl font-semibold text-heading">{row.name ?? "Unnamed candidate"}</h1>
             <StatusBadge status={row.status} />
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-2">
