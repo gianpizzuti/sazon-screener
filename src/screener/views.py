@@ -11,7 +11,7 @@ from datetime import date, datetime, timedelta
 from pydantic import BaseModel
 
 from screener.domain.models import ConversationState, Flag, ScreeningData, Stage, utcnow
-from screener.storage.repository import ConversationNotFound, Repository
+from screener.storage.repository import ConversationNotFound, Repository, is_override
 
 # A conversation silent for longer than this is "awaiting reply" (follow-ups under way);
 # it becomes "abandoned" only when the follow-up scheduler gives up (state.abandoned_at).
@@ -35,6 +35,7 @@ class CandidateRow(BaseModel):
     status: str            # qualified | needs_review | in_progress | awaiting_reply | abandoned | disqualified | withdrawn | terminated
     needs_review: bool
     review_status: str     # what the recruiter did: new | contacted | interview | hired | rejected
+    overridden: bool       # the recruiter's decision contradicts the bot's outcome
     name: str | None
     city: str | None
     zone: str | None
@@ -108,6 +109,7 @@ def build_row(state: ConversationState, summary: dict | None, review: dict, now:
         status=status,
         needs_review=state.needs_review,
         review_status=review.get("status", "new"),
+        overridden=is_override(state.stage.value, review.get("status", "new")),
         name=d.full_name,
         city=d.city or d.location_raw,
         zone=d.zone,

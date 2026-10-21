@@ -17,6 +17,7 @@ export interface CandidateRow {
   status: Status;
   needs_review: boolean;
   review_status: ReviewStatus;
+  overridden: boolean;
   name: string | null;
   city: string | null;
   zone: string | null;

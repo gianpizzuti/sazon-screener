@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Reveal } from "../components/charts";
-import { Button, Card, CardTitle, Chip, ErrorState, Skeleton, StatusBadge } from "../components/ui";
+import { Button, Card, CardTitle, Chip, ErrorState, ReviewBadge, Skeleton, StatusBadge } from "../components/ui";
 import { api, type CandidateDetail, type Message, type ReviewStatus } from "../lib/api";
 import { AVAILABILITY, FIELD_LABELS, FLAG_LABELS, REASONS, SCHEDULE, ago, experience, initials, parseUtc, shortDate, titleCase, until } from "../lib/format";
 import { useCandidate, useNow, useToast } from "../lib/hooks";
@@ -302,6 +302,7 @@ export function CandidatePage() {
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="font-display text-3xl font-semibold text-heading">{row.name ?? "Unnamed candidate"}</h1>
             <StatusBadge status={row.status} />
+            <ReviewBadge status={row.review_status} overridden={row.overridden} />
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-2">
             {row.city && <span className="inline-flex items-center gap-1"><MapPin className="size-4 text-ink-3" />{row.city}{row.zone && ` · ${row.zone}`}</span>}

@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (129 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (132 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -195,3 +195,11 @@ Every decision taken while building the agent, large or small (129 so far), with
 | D127 | Data bars in Orbio's link green (#3f7a47 light, mint dark) | Cohesive with the identity; single series, so contrast with the surface (5.1:1 / 9.6:1) is what matters | Blue data bars (validated, but foreign to the identity) | `--series` |
 | D128 | Muted text darkened from Orbio's #6b776a to #5f6b5e | #6b776a is 4.05:1 on mint surfaces (fails AA); #5f6b5e is >= 4.8:1 everywhere | Exact brand value | `--ink-3` |
 | D129 | Source Serif 4 for titles (Orbio's serif), numbered mint section badges and the cover gradient behind page headers | Recognisable editorial touches from their documents, applied sparingly | Copying layouts wholesale | `ui.CardTitle(number)`, `.hero` |
+
+## Recruiter decisions in the queue (found in manual testing, L18)
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D130 | "Action needed" = qualified or flagged **and not yet decided by a recruiter** | A recruiter's queue is who is waiting for a person; a rejected candidate is done | Filtering on the bot outcome only (a rejected candidate looked "still to do", just lower) | `Pipeline.needsAction` |
+| D131 | The recruiter decision is shown next to the bot outcome (row and header), labelled "override" when it contradicts it, with its own filters | Both decisions must be visible: what the AI decided and what a person decided | Replacing the bot outcome with the human one (hides the audit story) | `ReviewBadge`, pipeline chips |
+| D132 | One `is_override()` rule in the backend, used by the audit log and exposed to the UI | The audit trail and the screen can never disagree on what counts as an override | Re-implementing the rule in the frontend | `repository.is_override`, `CandidateRow.overridden` |

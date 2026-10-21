@@ -1,18 +1,22 @@
 import clsx from "clsx";
 import {
   Ban,
+  Calendar,
   CircleCheck,
+  CircleX,
+  Gavel,
   Hourglass,
   type LucideIcon,
   MessageCircle,
   MoonStar,
+  Phone,
   ShieldOff,
   TriangleAlert,
   Undo2,
 } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-import type { Status } from "../lib/api";
+import type { ReviewStatus, Status } from "../lib/api";
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
@@ -89,6 +93,29 @@ export function StatusBadge({ status, size = "md" }: { status: Status; size?: "s
       size === "sm" ? "px-2 py-0.5 text-xs" : "px-2.5 py-1 text-[13px]")}>
       <Icon className={size === "sm" ? "size-3" : "size-3.5"} aria-hidden />
       {label}
+    </span>
+  );
+}
+
+const REVIEW_META: Record<Exclude<ReviewStatus, "new">, { label: string; icon: LucideIcon; tone: string }> = {
+  contacted: { label: "Contacted", icon: Phone, tone: "bg-sky-50 text-sky-800 ring-sky-600/20 dark:bg-sky-400/10 dark:text-sky-300 dark:ring-sky-400/25" },
+  interview: { label: "Interview", icon: Calendar, tone: "bg-violet-50 text-violet-800 ring-violet-600/20 dark:bg-violet-400/10 dark:text-violet-300 dark:ring-violet-400/25" },
+  hired: { label: "Hired", icon: CircleCheck, tone: "bg-brand-btn text-on-brand ring-transparent" },
+  rejected: { label: "Rejected", icon: CircleX, tone: "bg-rose-50 text-rose-800 ring-rose-600/20 dark:bg-rose-400/10 dark:text-rose-300 dark:ring-rose-400/25" },
+};
+export const REVIEW_LABELS: Record<ReviewStatus, string> = { new: "Not reviewed", contacted: "Contacted", interview: "Interview", hired: "Hired", rejected: "Rejected" };
+
+/** What a person decided, next to what the bot decided. Overrides are labelled as such. */
+export function ReviewBadge({ status, overridden, size = "md" }: { status: ReviewStatus; overridden: boolean; size?: "sm" | "md" }) {
+  if (status === "new") return null;
+  const { label, icon: Icon, tone } = REVIEW_META[status];
+  return (
+    <span title={overridden ? "Recruiter decision that overrides the automated outcome (logged)" : "Recruiter decision"}
+      className={clsx("inline-flex shrink-0 items-center gap-1.5 rounded-full font-medium ring-1 ring-inset", tone,
+        size === "sm" ? "px-2 py-0.5 text-xs" : "px-2.5 py-1 text-[13px]")}>
+      <Icon className={size === "sm" ? "size-3" : "size-3.5"} aria-hidden />
+      {label}
+      {overridden && <span className="inline-flex items-center gap-0.5 border-l border-current/30 pl-1.5 opacity-90"><Gavel className="size-3" aria-hidden />override</span>}
     </span>
   );
 }

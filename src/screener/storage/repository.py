@@ -86,6 +86,14 @@ REVIEW_STATUSES = ("new", "contacted", "interview", "hired", "rejected")
 ADVANCING = {"contacted", "interview", "hired"}
 
 
+def is_override(bot_stage: str, review_status: str) -> bool:
+    """A human decision that contradicts the automated outcome. One definition, used by the
+    audit log and by the UI, so they can never disagree."""
+    return (bot_stage in ("disqualified", "withdrawn") and review_status in ADVANCING) or (
+        bot_stage == "qualified" and review_status == "rejected"
+    )
+
+
 class ConversationNotFound(KeyError):
     pass
 
@@ -149,9 +157,7 @@ class Repository:
                 s.add(EventRow(conversation_id=conversation_id, type="review_status_changed",
                                payload={"from": previous, "to": status, "by": by}))
             bot_outcome = conversation.stage
-            if (bot_outcome in ("disqualified", "withdrawn") and status in ADVANCING) or (
-                bot_outcome == "qualified" and status == "rejected"
-            ):
+            if is_override(bot_outcome, status):
                 s.add(EventRow(conversation_id=conversation_id, type="human_override",
                                payload={"bot_outcome": bot_outcome, "recruiter_status": status, "by": by, "note": note}))
             return _review_dict(review)

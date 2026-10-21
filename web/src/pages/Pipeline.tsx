@@ -5,12 +5,16 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CountUp } from "../components/charts";
-import { Chip, EmptyState, ErrorState, PageHeader, Skeleton, StatusBadge, STATUS_ORDER, statusMeta } from "../components/ui";
-import type { CandidateRow, Status } from "../lib/api";
+import { Chip, EmptyState, ErrorState, PageHeader, REVIEW_LABELS, ReviewBadge, Skeleton, StatusBadge, STATUS_ORDER, statusMeta } from "../components/ui";
+import type { CandidateRow, ReviewStatus, Status } from "../lib/api";
 import { AVAILABILITY, FLAG_LABELS, SCHEDULE, ago, experience, initials, shortDate, until } from "../lib/format";
 import { useCandidates, useNow } from "../lib/hooks";
 
-type Filter = "action" | "all" | Status;
+type Filter = "action" | "all" | Status | `review:${ReviewStatus}`;
+const REVIEWED: ReviewStatus[] = ["contacted", "interview", "hired", "rejected"];
+
+/** Action needed: the bot qualified or flagged them, and no recruiter has decided yet. */
+const needsAction = (r: CandidateRow) => (r.status === "qualified" || r.status === "needs_review") && r.review_status === "new";
 const KPIS: Status[] = ["qualified", "needs_review", "in_progress", "awaiting_reply", "abandoned", "disqualified"];
 
 function KpiTile({ status, count, index, onClick, active }: { status: Status; count: number; index: number; onClick: () => void; active: boolean }) {
@@ -64,7 +68,12 @@ function Row({ row, index, now, onOpen }: { row: CandidateRow; index: number; no
           </div>
         </div>
       </td>
-      <td className="px-3 py-3"><StatusBadge status={row.status} size="sm" /></td>
+      <td className="px-3 py-3">
+        <div className="flex flex-col items-start gap-1">
+          <StatusBadge status={row.status} size="sm" />
+          <ReviewBadge status={row.review_status} overridden={row.overridden} size="sm" />
+        </div>
+      </td>
       <td className="px-3 py-3 text-sm">
         {row.city ? (
           <div className="flex items-start gap-1.5">
@@ -114,28 +123,36 @@ export function PipelinePage() {
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {};
-    rows?.forEach((r) => (c[r.status] = (c[r.status] ?? 0) + 1));
+    rows?.forEach((r) => {
+      c[r.status] = (c[r.status] ?? 0) + 1;
+      c[`review:${r.review_status}`] = (c[`review:${r.review_status}`] ?? 0) + 1;
+    });
     return c;
   }, [rows]);
 
   const shown = useMemo(() => (rows ?? []).filter((r) => {
-    const byFilter = filter === "all" ? true : filter === "action" ? r.status === "qualified" || r.status === "needs_review" : r.status === filter;
+    const byFilter = filter === "all" ? true
+      : filter === "action" ? needsAction(r)
+      : filter.startsWith("review:") ? r.review_status === filter.slice(7)
+      : r.status === filter;
     return byFilter && (!query || (r.name ?? "").toLowerCase().includes(query.toLowerCase()) || (r.city ?? "").toLowerCase().includes(query.toLowerCase()));
   }), [rows, filter, query]);
 
   if (error) return <ErrorState error={error} />;
 
-  const chips: { key: Filter; label: string; count: number }[] = [
-    { key: "action", label: "Action needed", count: (counts.qualified ?? 0) + (counts.needs_review ?? 0) },
+  const chips: { key: Filter; label: string; count: number; human?: boolean }[] = [
+    { key: "action", label: "Action needed", count: rows?.filter(needsAction).length ?? 0 },
     { key: "all", label: "All", count: rows?.length ?? 0 },
     ...STATUS_ORDER.filter((s) => counts[s]).map((s) => ({ key: s as Filter, label: statusMeta(s).label, count: counts[s] })),
+    // What recruiters decided, kept separate from what the bot decided
+    ...REVIEWED.filter((r) => counts[`review:${r}`]).map((r) => ({ key: `review:${r}` as Filter, label: REVIEW_LABELS[r], count: counts[`review:${r}`], human: true })),
   ];
 
   return (
     <div>
       <PageHeader
         title="Candidate pipeline"
-        subtitle="Every applicant is screened by Sofía within seconds. Recruiters start from the top: qualified candidates with the soonest start date, then the ones that need a human look."
+        subtitle="Every applicant is screened by Sofía within seconds. Action needed lists who is waiting for a person: qualified candidates (soonest start first), then the ones flagged for review."
       />
 
       <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
@@ -146,12 +163,15 @@ export function PipelinePage() {
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div role="tablist" aria-label="Filter candidates" className="flex flex-wrap gap-1.5">
-          {chips.map((c) => (
-            <button key={c.key} role="tab" aria-selected={filter === c.key} onClick={() => setFilter(c.key)}
-              className={clsx("inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors",
-                filter === c.key ? "bg-ink text-surface" : "bg-surface text-ink-2 ring-1 ring-line hover:text-ink")}>
-              {c.label}<span className={clsx("num rounded-full px-1.5 text-[11px]", filter === c.key ? "bg-surface/20" : "bg-surface-2")}>{c.count}</span>
-            </button>
+          {chips.map((c, i) => (
+            <span key={c.key} className="contents">
+              {c.human && !chips[i - 1]?.human && <span className="mx-1 self-center text-xs font-medium text-ink-3">Recruiter:</span>}
+              <button role="tab" aria-selected={filter === c.key} onClick={() => setFilter(c.key)}
+                className={clsx("inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors",
+                  filter === c.key ? "bg-heading text-surface" : "bg-surface text-ink-2 ring-1 ring-line hover:text-ink")}>
+                {c.label}<span className={clsx("num rounded-full px-1.5 text-[11px]", filter === c.key ? "bg-surface/20" : "bg-surface-2")}>{c.count}</span>
+              </button>
+            </span>
           ))}
         </div>
         <label className="relative ml-auto w-full sm:w-64">

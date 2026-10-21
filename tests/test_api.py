@@ -93,6 +93,8 @@ def test_overriding_the_bot_is_audited(client_for):
         types = [e.type for e in engine.repo.events(cid)]
         assert "human_override" in types and "review_status_changed" in types
         assert client.get("/api/analytics").json()["human_overrides"] == 1
+        row = client.get("/api/candidates").json()[0]
+        assert (row["status"], row["review_status"], row["overridden"]) == ("disqualified", "interview", True)
         assert client.put(f"/api/candidates/{cid}/review", json={"status": "maybe"}).status_code == 422
 
 
