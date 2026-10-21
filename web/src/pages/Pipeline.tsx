@@ -148,6 +148,14 @@ export function PipelinePage() {
     ...REVIEWED.filter((r) => counts[`review:${r}`]).map((r) => ({ key: `review:${r}` as Filter, label: REVIEW_LABELS[r], count: counts[`review:${r}`], human: true })),
   ];
 
+  const renderChip = (c: (typeof chips)[number]) => (
+    <button key={c.key} role="tab" aria-selected={filter === c.key} onClick={() => setFilter(c.key)}
+      className={clsx("inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors",
+        filter === c.key ? "bg-heading text-surface" : "bg-surface text-ink-2 ring-1 ring-line hover:text-ink")}>
+      {c.label}<span className={clsx("num rounded-full px-1.5 text-[11px]", filter === c.key ? "bg-surface/20" : "bg-surface-2")}>{c.count}</span>
+    </button>
+  );
+
   return (
     <div>
       <PageHeader
@@ -161,25 +169,25 @@ export function PipelinePage() {
           : KPIS.map((s, i) => <KpiTile key={s} status={s} count={counts[s] ?? 0} index={i} active={filter === s} onClick={() => setFilter(filter === s ? "action" : s)} />)}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <div role="tablist" aria-label="Filter candidates" className="flex flex-wrap gap-1.5">
-          {chips.map((c, i) => (
-            <span key={c.key} className="contents">
-              {c.human && !chips[i - 1]?.human && <span className="mx-1 self-center text-xs font-medium text-ink-3">Recruiter:</span>}
-              <button role="tab" aria-selected={filter === c.key} onClick={() => setFilter(c.key)}
-                className={clsx("inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium transition-colors",
-                  filter === c.key ? "bg-heading text-surface" : "bg-surface text-ink-2 ring-1 ring-line hover:text-ink")}>
-                {c.label}<span className={clsx("num rounded-full px-1.5 text-[11px]", filter === c.key ? "bg-surface/20" : "bg-surface-2")}>{c.count}</span>
-              </button>
-            </span>
-          ))}
+      <div className="mb-4 space-y-2.5">
+        <div role="tablist" aria-label="Filter by screening outcome" className="flex flex-wrap gap-1.5">
+          {chips.filter((c) => !c.human).map(renderChip)}
         </div>
-        <label className="relative ml-auto w-full sm:w-64">
-          <span className="sr-only">Search by name or city</span>
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name or city"
-            className="h-10 w-full rounded-lg border border-line bg-surface pr-3 pl-9 text-sm text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
-        </label>
+        <div className="flex flex-wrap items-center gap-2">
+          {chips.some((c) => c.human) && (
+            // What recruiters decided: its own row, apart from what the bot decided
+            <div role="tablist" aria-label="Filter by recruiter decision" className="flex flex-wrap items-center gap-1.5">
+              <span className="mr-1 text-xs font-medium text-ink-3">Recruiter:</span>
+              {chips.filter((c) => c.human).map(renderChip)}
+            </div>
+          )}
+          <label className="relative ml-auto w-full sm:w-64">
+            <span className="sr-only">Search by name or city</span>
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search name or city"
+              className="h-10 w-full rounded-lg border border-line bg-surface pr-3 pl-9 text-sm text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
+          </label>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
