@@ -1,0 +1,133 @@
+# 45 restaurants in 9 cities. Zones are the districts each city's restaurants deliver to.
+# Aliases are matched accent- and case-insensitively, as whole words.
+# Values are illustrative: the real list comes from the client (see docs/process-design.md §8).
+
+service_areas:
+  # ---------------- Spain ----------------
+  - id: madrid
+    name: Madrid
+    country: ES
+    timezone: Europe/Madrid
+    restaurants: 9
+    aliases: [madrid]
+    zones:
+      - {name: Centro, aliases: [centro, sol, malasaña, malasana, lavapiés, chueca, la latina]}
+      - {name: Chamberí, aliases: [chamberí, chamberi]}
+      - {name: Salamanca, aliases: [barrio de salamanca]}  # not "salamanca": also a city outside the area
+      - {name: Retiro, aliases: [retiro]}
+      - {name: Chamartín, aliases: [chamartín, chamartin]}
+      - {name: Tetuán, aliases: [tetuán, tetuan]}
+      - {name: Arganzuela, aliases: [arganzuela, delicias]}
+      - {name: Carabanchel, aliases: [carabanchel]}
+      - {name: Puente de Vallecas, aliases: [vallecas, puente de vallecas]}
+      - {name: Ciudad Lineal, aliases: [ciudad lineal]}
+      - {name: Getafe, aliases: [getafe]}
+      - {name: Leganés, aliases: [leganés, leganes]}
+      - {name: Alcobendas, aliases: [alcobendas]}
+
+  - id: barcelona
+    name: Barcelona
+    country: ES
+    timezone: Europe/Madrid
+    restaurants: 7
+    aliases: [barcelona, bcn]
+    zones:
+      - {name: Ciutat Vella, aliases: [ciutat vella, gótico, gotico, raval, born]}
+      - {name: Eixample, aliases: [eixample, ensanche]}
+      - {name: Gràcia, aliases: [gràcia, gracia]}
+      - {name: Sants-Montjuïc, aliases: [sants, montjuïc, montjuic]}
+      - {name: Sant Martí, aliases: [sant martí, sant marti, poblenou]}
+      - {name: Nou Barris, aliases: [nou barris]}
+      - {name: L'Hospitalet, aliases: [hospitalet, l'hospitalet]}
+      - {name: Badalona, aliases: [badalona]}
+
+  - id: valencia
+    name: Valencia
+    country: ES
+    timezone: Europe/Madrid
+    restaurants: 4
+    aliases: [valencia, valència]
+    zones:
+      - {name: Ciutat Vella, aliases: [ciutat vella, el carmen, el carme]}
+      - {name: Ruzafa, aliases: [ruzafa, russafa]}
+      - {name: Benimaclet, aliases: [benimaclet]}
+      - {name: Campanar, aliases: [campanar]}
+      - {name: El Cabanyal, aliases: [cabanyal, el cabanyal, poblats marítims]}
+
+  - id: sevilla
+    name: Sevilla
+    country: ES
+    timezone: Europe/Madrid
+    restaurants: 3
+    aliases: [sevilla, seville]
+    zones:
+      - {name: Casco Antiguo, aliases: [casco antiguo]}
+      - {name: Triana, aliases: [triana]}
+      - {name: Nervión, aliases: [nervión, nervion]}
+      - {name: Macarena, aliases: [macarena]}
+      - {name: Sevilla Este, aliases: [sevilla este]}
+
+  - id: malaga
+    name: Málaga
+    country: ES
+    timezone: Europe/Madrid
+    restaurants: 2
+    aliases: [málaga, malaga]
+    zones:
+      - {name: Centro, aliases: [centro]}
+      - {name: Teatinos, aliases: [teatinos]}
+      - {name: El Palo, aliases: [el palo]}
+
+  - id: bilbao
+    name: Bilbao
+    country: ES
+    timezone: Europe/Madrid
+    restaurants: 2
+    aliases: [bilbao, bilbo]
+    zones:
+      - {name: Abando, aliases: [abando]}
+      - {name: Indautxu, aliases: [indautxu]}
+      - {name: Deusto, aliases: [deusto]}
+
+  # ---------------- Mexico ----------------
+  - id: cdmx
+    name: Ciudad de México
+    country: MX
+    timezone: America/Mexico_City
+    restaurants: 9
+    aliases: [cdmx, ciudad de méxico, ciudad de mexico, df, mexico city, chilangolandia]
+    zones:
+      - {name: Cuauhtémoc, aliases: [cuauhtémoc, cuauhtemoc, roma, roma norte, condesa, juárez, centro histórico, centro historico]}
+      - {name: Benito Juárez, aliases: [benito juárez, benito juarez, narvarte, del valle]}
+      - {name: Miguel Hidalgo, aliases: [miguel hidalgo, polanco, anzures]}
+      - {name: Coyoacán, aliases: [coyoacán, coyoacan]}
+      - {name: Álvaro Obregón, aliases: [álvaro obregón, alvaro obregon, san ángel, san angel]}
+      - {name: Iztapalapa, aliases: [iztapalapa]}
+      - {name: Gustavo A. Madero, aliases: [gustavo a. madero, gam, lindavista]}
+      - {name: Tlalpan, aliases: [tlalpan]}
+
+  - id: guadalajara
+    name: Guadalajara
+    country: MX
+    timezone: America/Mexico_City
+    restaurants: 5
+    aliases: [guadalajara, gdl]
+    zones:
+      - {name: Centro, aliases: [centro]}
+      - {name: Providencia, aliases: [providencia]}
+      - {name: Chapalita, aliases: [chapalita]}
+      - {name: Zapopan, aliases: [zapopan]}
+      - {name: Tlaquepaque, aliases: [tlaquepaque]}
+
+  - id: monterrey
+    name: Monterrey
+    country: MX
+    timezone: America/Monterrey
+    restaurants: 4
+    aliases: [monterrey, mty]
+    zones:
+      - {name: Centro, aliases: [centro]}
+      - {name: San Pedro Garza García, aliases: [san pedro, san pedro garza garcía, san pedro garza garcia]}
+      - {name: San Nicolás, aliases: [san nicolás, san nicolas]}
+      - {name: Guadalupe, aliases: [guadalupe nl, guadalupe nuevo león, guadalupe nuevo leon]}  # "guadalupe" alone is ambiguous
+      - {name: Cumbres, aliases: [cumbres]}

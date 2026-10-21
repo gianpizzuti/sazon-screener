@@ -1,0 +1,50 @@
+# Client-specific configuration. Everything that changes between clients lives here,
+# not in code: a new client means a new folder under config/clients/.
+
+id: grupo_sazon
+name: Grupo Sazón
+description: restaurant group with 45 restaurants in Spain and Mexico
+role:
+  es: repartidor/a
+  en: delivery driver
+
+agent:
+  name: Sofía
+  default_language: es
+  recruiter_language: es        # language of the summaries shown to recruiters
+  max_message_chars: 350        # chat, not email
+  max_failed_attempts: 2        # after this, a required field is marked "unclear" and flagged
+  late_start_days: 90           # start dates further away are accepted but flagged
+  history_window: 30            # messages of history given to the response model
+  default_timezone: Europe/Madrid
+
+# One model per task. Rationale in docs/decisions/0002-llm-per-task.md
+models:
+  understand: claude-haiku-5-5  # hot path, narrow structured extraction: speed matters most
+  speak: claude-sonnet-5-5      # hot path, candidate-facing text: tone matters most
+  summary: claude-opus-5-5      # off the hot path (runs after the conversation): quality matters most
+
+# What happens after a candidate qualifies (said by the agent, never invented by the model)
+next_steps:
+  es: Un/a recruiter de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano.
+  en: A Grupo Sazón recruiter will message you within 48 hours to set up a short interview at the nearest restaurant.
+
+platforms:
+  - name: Glovo
+    aliases: [glovo]
+  - name: Uber Eats
+    aliases: [uber eats, ubereats, uber]
+  - name: Just Eat
+    aliases: [just eat, justeat]
+  - name: Deliveroo
+    aliases: [deliveroo]
+  - name: Stuart
+    aliases: [stuart]
+  - name: Rappi
+    aliases: [rappi]
+  - name: DiDi Food
+    aliases: [didi food, didi]
+  - name: Amazon Flex
+    aliases: [amazon flex, amazon]
+  - name: Paack
+    aliases: [paack]

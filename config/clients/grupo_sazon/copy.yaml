@@ -1,0 +1,184 @@
+# Fixed copy, per locale. Locales: es (neutral), es-ES, es-MX, en.
+# Lookup falls back es-ES/es-MX -> es. Used for:
+#   1. messages where precision beats naturalness (greeting, recap): always these templates;
+#   2. reference wording handed to the response model;
+#   3. the degraded mode: if the LLM is down, the conversation continues with these.
+
+greeting:
+  es: "¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?"
+  en: "Hi! 👋 I'm Sofía, Grupo Sazón's virtual (AI) assistant. I'm writing about your delivery driver application: 7 quick questions, about 3 minutes. Your data is only used for this hiring process. Shall we start?"
+
+options:
+  intro:
+    es: ["¡Empezamos!", "Tengo una pregunta"]
+    en: ["Let's start!", "I have a question"]
+  drivers_license:
+    es: ["Sí", "No"]
+    en: ["Yes", "No"]
+  availability:
+    es-ES: ["Jornada completa", "Media jornada", "Fines de semana"]
+    es-MX: ["Tiempo completo", "Medio tiempo", "Fines de semana"]
+    es: ["Jornada completa", "Media jornada", "Fines de semana"]
+    en: ["Full-time", "Part-time", "Weekends"]
+  schedule:
+    es: ["Mañana", "Tarde", "Noche", "Flexible"]
+    en: ["Morning", "Afternoon", "Evening", "Flexible"]
+  confirm:
+    es: ["Sí, todo correcto", "Quiero corregir algo"]
+    en: ["Yes, all correct", "I want to fix something"]
+  talent_pool:
+    es: ["Sí, avisadme", "No, gracias"]
+    es-MX: ["Sí, avísenme", "No, gracias"]
+    en: ["Yes, let me know", "No, thanks"]
+
+ask:
+  full_name:
+    es: "¿Cómo te llamas? Nombre y apellido, por favor."
+    en: "What's your full name (first name and surname)?"
+  drivers_license:
+    es-ES: "¿Tienes carnet de conducir en vigor (coche o moto)?"
+    es-MX: "¿Tienes licencia de manejo vigente (carro o moto)?"
+    es: "¿Tienes licencia de conducir en vigor (coche o moto)?"
+    en: "Do you have a valid driver's license (car or motorbike)?"
+  location:
+    es: "¿En qué ciudad y zona te gustaría repartir?"
+    en: "Which city and area would you like to deliver in?"
+  zone:
+    es: "¿Y en qué zona o barrio de {city}? Así te asignamos el restaurante más cercano."
+    en: "And which area or neighbourhood of {city}? That way we match you with the nearest restaurant."
+  availability:
+    es-ES: "¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?"
+    es-MX: "¿Qué disponibilidad tienes: tiempo completo, medio tiempo o fines de semana?"
+    es: "¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?"
+    en: "What's your availability: full-time, part-time or weekends?"
+  schedule:
+    es: "¿Qué turno prefieres: mañana, tarde, noche o flexible?"
+    en: "Which shift do you prefer: morning, afternoon, evening or flexible?"
+  experience_years:
+    es: "¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?"
+    en: "Do you have delivery experience? If so, for how long and on which platforms?"
+  experience_platforms:
+    es: "¿Con qué plataformas o empresas has repartido?"
+    en: "Which platforms or companies have you delivered for?"
+  start_date:
+    es: "¿Cuándo podrías empezar?"
+    en: "When could you start?"
+
+# Re-ask wording for specific validation problems (template mode; reference for the model).
+issue:
+  name_needs_surname:
+    es: "Gracias. ¿Y tu apellido?"
+    en: "Thanks. And your surname?"
+  location_ambiguous:
+    es: "¿A cuál te refieres: {options}?"
+    en: "Which one do you mean: {options}?"
+  location_unknown:
+    es: "No he reconocido el lugar. ¿En qué ciudad sería?"
+    en: "I didn't recognise that place. Which city would it be?"
+  availability_contradiction:
+    es: "¿Prefieres jornada completa o media jornada? Los fines de semana se pueden sumar a cualquiera de las dos."
+    es-MX: "¿Prefieres tiempo completo o medio tiempo? Los fines de semana se pueden sumar a cualquiera de los dos."
+    en: "Would you prefer full-time or part-time? Weekends can be added to either."
+  start_date_past:
+    es: "Esa fecha ya ha pasado. ¿A partir de qué día podrías empezar?"
+    en: "That date has already passed. From which day could you start?"
+  start_date_unclear:
+    es: "¿Me das una fecha aproximada? Por ejemplo, «el lunes» o «en dos semanas»."
+    en: "Could you give me an approximate date? For example, 'next Monday' or 'in two weeks'."
+
+recap:
+  title:
+    es: "Antes de terminar, revisa tus datos:"
+    en: "Before we finish, please check your details:"
+  question:
+    es: "¿Está todo correcto?"
+    en: "Is everything correct?"
+  labels:
+    full_name: {es: Nombre, en: Name}
+    drivers_license: {es-ES: Carnet de conducir, es-MX: Licencia de manejo, es: Licencia de conducir, en: Driver's license}
+    location: {es: Zona, en: Area}
+    availability: {es: Disponibilidad, en: Availability}
+    schedule: {es: Turno, en: Shift}
+    experience: {es: Experiencia, en: Experience}
+    start_date: {es: Inicio, en: Start}
+
+values:
+  "yes": {es: Sí, en: "Yes"}
+  "no": {es: "No", en: "No"}
+  unclear: {es: "(por confirmar)", en: "(to be confirmed)"}
+  no_experience: {es: Sin experiencia previa, en: No previous experience}
+  years: {es: "{n} años", en: "{n} years"}
+  one_year: {es: 1 año, en: 1 year}
+  months: {es: "{n} meses", en: "{n} months"}
+  availability:
+    full_time: {es-ES: jornada completa, es-MX: tiempo completo, es: jornada completa, en: full-time}
+    part_time: {es-ES: media jornada, es-MX: medio tiempo, es: media jornada, en: part-time}
+    weekends: {es: fines de semana, en: weekends}
+  schedule:
+    morning: {es: mañana, en: morning}
+    afternoon: {es: tarde, en: afternoon}
+    evening: {es: noche, en: evening}
+    flexible: {es: flexible, en: flexible}
+  start_immediate: {es: "lo antes posible ({date})", en: "as soon as possible ({date})"}
+
+outcome:
+  qualified:
+    es: "¡Genial, {name}! Cumples los requisitos. {next_steps}"
+    en: "Great, {name}! You meet the requirements. {next_steps}"
+  no_license:
+    es-ES: "Gracias, {name}. Para este puesto es imprescindible tener carnet de conducir en vigor, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
+    es-MX: "Gracias, {name}. Para este puesto es indispensable tener licencia de manejo vigente, así que por ahora no podemos continuar. ¿Quieres que guardemos tus datos para avisarte de futuras vacantes?"
+    es: "Gracias, {name}. Para este puesto es imprescindible tener licencia de conducir en vigor, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
+    en: "Thanks, {name}. A valid driver's license is required for this role, so we can't continue right now. Would you like us to keep your details and let you know about future openings?"
+  license_in_progress:
+    es: "Gracias, {name}. Necesitamos que ya tengas la licencia en vigor para empezar. ¿Quieres que guardemos tus datos para escribirte cuando la tengas?"
+    en: "Thanks, {name}. You need to already hold a valid license to start. Would you like us to keep your details and contact you once you have it?"
+  out_of_area:
+    es: "Gracias, {name}. Ahora mismo no repartimos en {place}. ¿Quieres que guardemos tus datos para avisarte si abrimos en tu zona?"
+    en: "Thanks, {name}. We don't deliver in {place} yet. Would you like us to keep your details and let you know if we open in your area?"
+  needs_review:
+    es: "Gracias, {name}. Un/a recruiter revisará tus respuestas y te contactará pronto."
+    en: "Thanks, {name}. A recruiter will review your answers and get back to you soon."
+  withdrawn:
+    es: "Entendido, no te escribiré más. Si cambias de opinión, escríbeme cuando quieras. ¡Mucha suerte!"
+    en: "Understood, I won't message you again. If you change your mind, just write to me. Good luck!"
+  terminated:
+    es: "Voy a cerrar la conversación aquí. Si quieres retomar el proceso más adelante, puedes volver a escribirnos. Gracias."
+    en: "I'm going to close the conversation here. If you'd like to resume the process later, you can write to us again. Thanks."
+
+talent_pool:
+  "yes":
+    es: "¡Hecho! Te avisaremos. Gracias por tu tiempo."
+    en: "Done! We'll let you know. Thanks for your time."
+  "no":
+    es: "Entendido. ¡Gracias por tu tiempo y mucha suerte!"
+    en: "Understood. Thanks for your time and good luck!"
+
+misc:
+  closing_followup:
+    es: "Tu solicitud ya está registrada. Si tienes alguna duda, pregúntame."
+    en: "Your application is already registered. If you have any questions, just ask."
+  postpone_ack:
+    es: "Sin problema. Escríbeme cuando puedas y seguimos donde lo dejamos."
+    en: "No problem. Write to me whenever you can and we'll pick up where we left off."
+  technical_issue:
+    es: "Perdona, he tenido un problema técnico. ¿Me lo repites, por favor?"
+    en: "Sorry, I had a technical issue. Could you say that again, please?"
+  unanswered_question:
+    es: "Eso te lo confirmará el equipo de selección."
+    en: "The recruiting team will confirm that for you."
+  abuse_warning:
+    es: "Entiendo que puedas estar molesto/a, pero te pido que mantengamos el respeto."
+    en: "I understand you may be upset, but please let's keep it respectful."
+  human_request:
+    es: "Claro, una persona del equipo revisará tu conversación y podrá contactarte."
+    en: "Of course, someone from the team will review your conversation and can contact you."
+  retry_prefix:
+    es: "Perdona, no me ha quedado claro."
+    en: "Sorry, I didn't quite get that."
+  ask_correction:
+    es: "Claro, ¿qué dato quieres corregir?"
+    en: "Sure, which detail would you like to fix?"
+  resume:
+    es: "¡Qué bien que sigas interesado/a! Seguimos donde lo dejamos."
+    en: "Glad you're still interested! Let's pick up where we left off."

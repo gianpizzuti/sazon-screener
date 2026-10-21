@@ -1,0 +1,75 @@
+# Knowledge base used to answer candidate questions.
+# The response model only ever sees the ONE answer selected for the question, so it cannot
+# improvise on pay or benefits. Answers are written in Spanish; the model adapts language
+# and regional variant. `ES` / `MX` override `default` per country.
+#
+# PLACEHOLDERS: contents are plausible examples to be validated with Grupo Sazón.
+
+faq:
+  - id: pay
+    question: ¿Cuánto se cobra? ¿Cómo es el sueldo? ¿Hay propinas?
+    answer:
+      ES: Es un contrato laboral con Grupo Sazón (no como autónomo), con el salario del convenio de hostelería de tu provincia, más propinas. El importe exacto según horas te lo confirma el equipo en la entrevista.
+      MX: Es una contratación directa con Grupo Sazón con prestaciones de ley (IMSS, aguinaldo y vacaciones), sueldo base más propinas. El monto exacto según tu horario te lo confirma el equipo en la entrevista.
+
+  - id: contract
+    question: ¿Qué tipo de contrato es? ¿Soy autónomo o empleado?
+    answer:
+      ES: Trabajas como empleado/a de Grupo Sazón, con contrato laboral y alta en la Seguridad Social. No necesitas darte de alta como autónomo.
+      MX: Trabajas como empleado/a de Grupo Sazón, con contrato y alta en el IMSS desde el primer día.
+
+  - id: vehicle
+    question: ¿Necesito vehículo propio? ¿Me dan moto?
+    answer:
+      default: Puedes repartir con tu propia moto o coche y te compensamos el combustible por kilómetro. En algunos restaurantes también hay motos de la empresa; el equipo te lo confirma según tu zona.
+
+  - id: shifts
+    question: ¿Cuántas horas son los turnos? ¿Cuáles son los horarios?
+    answer:
+      default: Hay turnos de mediodía (aprox. 12:00-16:00) y de noche (aprox. 19:00-00:00), de lunes a domingo. Puedes combinarlos según tu disponibilidad; el horario final se acuerda contigo.
+
+  - id: equipment
+    question: ¿Dan uniforme, casco o mochila?
+    answer:
+      default: Sí, te damos uniforme, mochila o caja térmica y soporte para el móvil. Si usas moto, el casco debe estar homologado; si no tienes, el equipo te dice cómo conseguirlo.
+
+  - id: insurance
+    question: ¿Tengo seguro si tengo un accidente?
+    answer:
+      default: Sí. Al ser contrato laboral estás cubierto/a por el seguro de accidentes de trabajo durante tus turnos.
+
+  - id: process
+    question: ¿Qué pasa después? ¿Cuáles son los siguientes pasos? ¿Cuándo me contestan?
+    answer:
+      default: Al terminar estas preguntas, si cumples los requisitos, un/a recruiter te escribe en menos de 48 horas para una entrevista breve (unos 20 minutos) en el restaurante más cercano.
+
+  - id: documents
+    question: ¿Qué documentos necesito?
+    answer:
+      ES: Para la contratación necesitarás tu DNI o NIE con permiso de trabajo, el carnet de conducir y tu número de la Seguridad Social.
+      MX: Para la contratación necesitarás tu INE, la licencia de manejo vigente, CURP, RFC y número de seguro social (NSS).
+
+  - id: requirements
+    question: ¿Cuáles son los requisitos? ¿Hay edad mínima? ¿Necesito papeles?
+    answer:
+      default: Los requisitos son ser mayor de edad, tener permiso para trabajar en el país, carnet o licencia de conducir en vigor y repartir en una de nuestras zonas. No hace falta experiencia previa.
+
+  - id: training
+    question: ¿Hay formación? ¿Necesito experiencia?
+    answer:
+      default: No necesitas experiencia. El primer día haces una formación pagada en el restaurante, con un compañero que te enseña rutas, la app y el protocolo de entrega.
+
+  - id: company
+    question: ¿Qué es Grupo Sazón? ¿Dónde están los restaurantes?
+    answer:
+      default: Grupo Sazón es un grupo de 45 restaurantes en España (Madrid, Barcelona, Valencia, Sevilla, Málaga y Bilbao) y México (Ciudad de México, Guadalajara y Monterrey). Repartimos nuestros propios pedidos con un equipo propio.
+
+  - id: is_bot
+    question: ¿Eres un bot? ¿Hablo con una persona?
+    answer:
+      default: Soy una asistente virtual con inteligencia artificial. Te hago estas preguntas para agilizar el proceso, y una persona del equipo de selección revisa siempre cada candidatura.
+
+  - id: privacy
+    question: ¿Qué hacéis con mis datos? ¿Podéis borrarlos?
+    answer:
+      default: Tus datos solo se usan para este proceso de selección de Grupo Sazón y no se comparten con terceros. Puedes pedir que los borremos cuando quieras y el equipo lo hará.
