@@ -58,3 +58,22 @@ class TestGrounding:
 
     def test_small_respellings_are_tolerated(self):
         assert is_grounded("dos años en glovo", "llevo dos años en Glovo más o menos")
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("en la noche", "es"),                      # the LLM once called this English
+        ("full time y part time", "es"),            # Spanish with English loanwords
+        ("mañanas y tardes", "es"),
+        ("Hi! Can we do this in English?", "en"),
+        ("two years with Rappi and a bit of DiDi", "en"),
+        ("Sí, I have license de moto", None),       # genuinely mixed: no opinion, the model decides
+        ("flexible", None),
+        ("Lucía Fernández", None),
+    ],
+)
+def test_function_word_second_opinion(text, expected):
+    from screener.domain.text import function_word_language
+
+    assert function_word_language(text) == expected

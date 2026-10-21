@@ -27,13 +27,13 @@ from screener.domain.models import (
     Stage,
     utcnow,
 )
-from screener.domain.text import is_grounded
+from screener.domain.text import function_word_language, is_grounded
 from screener.domain.validators import (
     Validation,
     normalize_platforms,
     resolve_start_date,
     validate_availability,
-    validate_experience_years,
+    validate_experience_months,
     validate_full_name,
     validate_schedule,
     validate_start_date,
@@ -91,7 +91,7 @@ class ScreeningPolicy:
             state.completed_at = None
             notes.append("resume")
 
-        self._update_language(state, analysis, events)
+        self._update_language(state, analysis, message, events)
         directive = Directive(kind="ask", locale=state.locale, notes=notes)
 
         if "abuse" in intents:
@@ -274,14 +274,21 @@ class ScreeningPolicy:
 
     def _done(self, state, directive, events, captured=()) -> Decision:
         directive.locale = state.locale
-        directive.candidate_name = _first_name(state.data)
+        # The name is offered to the writer only right after we learn it (and in the final
+        # message): otherwise models put it in every single message.
+        directive.candidate_name = _first_name(state.data) if FieldName.FULL_NAME in captured else None
         directive.acknowledge = [self.describe(state, f) for f in captured]
         return Decision(directive, events)
 
     # ------------------------------------------------------------------ understanding -> state
-    def _update_language(self, state, analysis: TurnAnalysis, events) -> None:
-        # Hysteresis: only a message that clearly carries a language can switch it.
-        if analysis.language_is_clear and analysis.language != state.language:
+    def _update_language(self, state, analysis: TurnAnalysis, message: str, events) -> None:
+        # Hysteresis: only a message that clearly carries a language can switch it, and a
+        # deterministic second opinion must not say it's still the current language.
+        if (
+            analysis.language_is_clear
+            and analysis.language != state.language
+            and function_word_language(message) != state.language
+        ):
             events.append(Event("language_switched", {"from": state.language, "to": analysis.language}))
             state.language = analysis.language
         if state.data.country is None and analysis.spanish_variant != "unknown":
@@ -336,11 +343,15 @@ class ScreeningPolicy:
             self._record(state, FieldName.SCHEDULE, validate_schedule(x.schedule), q,
                          lambda v: setattr(data, "preferred_schedule", v), captured, events)
 
-        if (x.experience_years is not None or x.experience_platforms) and (q := grounded("experience")):
-            if x.experience_years is not None:
-                result = validate_experience_years(x.experience_years)
-                self._record(state, FieldName.EXPERIENCE_YEARS, result, q,
-                             lambda v: setattr(data, "experience_years", v), captured, events)
+        if (x.experience_months is not None or x.experience_platforms) and (q := grounded("experience")):
+            if x.experience_months is not None:
+                result = validate_experience_months(x.experience_months)
+
+                def set_experience(months: int) -> None:
+                    data.experience_months = months
+                    data.experience_years = round(months / 12, 2)
+
+                self._record(state, FieldName.EXPERIENCE_YEARS, result, q, set_experience, captured, events)
                 if result.ok and result.value == 0:
                     data.experience_platforms = []
                     state.field(FieldName.EXPERIENCE_PLATFORMS).status = FieldStatus.SKIPPED
@@ -458,7 +469,7 @@ class ScreeningPolicy:
             case FieldName.FULL_NAME:
                 return f"their name is {d.full_name}"
             case FieldName.DRIVERS_LICENSE:
-                return "they have a valid driving licence" if d.has_drivers_license else "they don't have a valid licence"
+                return "they have a valid driver's license" if d.has_drivers_license else "they don't have a valid license"
             case FieldName.LOCATION:
                 return f"they would deliver in {d.city}" if d.in_service_area else f"they are in {d.location_raw}"
             case FieldName.ZONE:
@@ -468,7 +479,9 @@ class ScreeningPolicy:
             case FieldName.SCHEDULE:
                 return "preferred shift: " + ", ".join(s.value for s in d.preferred_schedule)
             case FieldName.EXPERIENCE_YEARS:
-                return f"{d.experience_years:g} years of delivery experience"
+                if not d.experience_months:
+                    return "no previous delivery experience"
+                return f"{d.experience_months} months of delivery experience"
             case FieldName.EXPERIENCE_PLATFORMS:
                 return "worked with " + ", ".join(d.experience_platforms)
             case FieldName.START_DATE:

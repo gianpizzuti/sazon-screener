@@ -17,6 +17,33 @@ def normalize(text: str) -> str:
     return _SPACES.sub(" ", text).strip()
 
 
+# Function words that exist in only one of the two languages ("a", "no", "me" are in both).
+_ES_WORDS_RAW = """el la los las un una unos unas y o que de del en con por para pero muy mas tambien
+es soy estoy tengo vivo puedo quiero hola gracias si mi mis tu su sus al lo le les nos ya bueno vale
+porque cuando donde como desde hace hasta sin sobre este esta eso esto mañana tarde noche"""
+_EN_WORDS_RAW = """the and or of to in on at with for but very also is am are was have has had do does
+can could would will i you we they my your our it this that these those hi hello thanks thank yes
+please because when where how from since near like just"""
+
+
+def function_word_language(text: str) -> str | None:
+    """Cheap, deterministic language guess from function words; None when there's no signal.
+
+    Used as a second opinion: the LLM alone once read "en la noche" and "full time y part
+    time" as English. A language switch now needs the model AND this not to disagree.
+    """
+    tokens = normalize(text).split()
+    es = sum(t in _ES_WORDS for t in tokens)
+    en = sum(t in _EN_WORDS for t in tokens)
+    if es == en:
+        return None
+    return "es" if es > en else "en"
+
+
+_ES_WORDS = {normalize(w) for w in _ES_WORDS_RAW.split()}
+_EN_WORDS = {normalize(w) for w in _EN_WORDS_RAW.split()}
+
+
 def contains_phrase(haystack_norm: str, phrase: str) -> bool:
     """Whole-word phrase match on already-normalised text."""
     needle = normalize(phrase)

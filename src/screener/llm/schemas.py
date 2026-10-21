@@ -51,7 +51,7 @@ class Extracted(BaseModel):
     location_outside_service_area: bool | None
     availability: list[Availability] | None
     schedule: list[Schedule] | None
-    experience_years: float | None
+    experience_months: int | None
     experience_platforms: list[str] | None
     start_date: StartDateExpr | None
 
@@ -64,7 +64,10 @@ class TurnAnalysis(BaseModel):
     """The understanding of ONE candidate message."""
 
     language: Literal["es", "en"]
-    language_is_clear: bool
+    language_is_clear: bool = Field(
+        description="True if the message has ordinary words of its language (a phrase or sentence). "
+        "False only if it is just names, numbers, sí/no/ok, a single word, emojis or proper nouns."
+    )
     spanish_variant: Literal["es-ES", "es-MX", "unknown"]
     intents: list[Intent]
     sentiment: Literal["neutral", "positive", "confused", "frustrated"]

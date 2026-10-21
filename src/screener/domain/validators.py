@@ -30,6 +30,8 @@ class Validation(Generic[T]):
         return self.error is None
 
 
+PAST_DATE_ROLLOVER_DAYS = 60
+
 _NAME_CHARS = re.compile(r"^[^\W\d_]+(?:[-'][^\W\d_]+)*$", re.UNICODE)
 
 
@@ -74,12 +76,13 @@ def validate_schedule(values: list[str] | None) -> Validation[list[Schedule]]:
     return Validation(value=items)
 
 
-def validate_experience_years(years: float | None) -> Validation[float]:
-    if years is None:
+def validate_experience_months(months: int | None) -> Validation[int]:
+    """The model reports total months ("año y medio" -> 18); years are derived by code."""
+    if months is None:
         return Validation(error="experience_unclear")
-    if years < 0 or years > 50:
+    if months < 0 or months > 600:
         return Validation(error="experience_invalid")
-    return Validation(value=round(float(years), 1))
+    return Validation(value=int(months))
 
 
 def normalize_platforms(raw: list[str] | None, known: list[Platform]) -> list[str]:
@@ -112,9 +115,17 @@ def resolve_start_date(expr: StartDateExpr, today: date) -> Validation[date]:
         return Validation(value=today + timedelta(days=days_ahead))
     if kind == StartDateKind.EXACT_DATE and expr.exact_date:
         try:
-            return Validation(value=date.fromisoformat(expr.exact_date))
+            value = date.fromisoformat(expr.exact_date)
         except ValueError:
             return Validation(error="start_date_unclear")
+        # "el 10 de enero" said in December means next year; "el 1 de octubre" said on
+        # 21 October is a mistake to clarify, not a start date eleven months away.
+        if value < today - timedelta(days=PAST_DATE_ROLLOVER_DAYS):
+            try:
+                value = value.replace(year=value.year + 1)
+            except ValueError:  # 29 February
+                value = value.replace(year=value.year + 1, day=28)
+        return Validation(value=value)
     return Validation(error="start_date_unclear")
 
 

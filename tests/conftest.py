@@ -27,7 +27,7 @@ EVIDENCE_GROUP = {
     "location_outside_service_area": "location",
     "availability": "availability",
     "schedule": "schedule",
-    "experience_years": "experience",
+    "experience_months": "experience",
     "experience_platforms": "experience",
     "start_date": "start_date",
 }

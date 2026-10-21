@@ -32,6 +32,10 @@ log = logging.getLogger(__name__)
 # Server-side refusal fallback (Claude API). Harmless for this domain, but a declined
 # request then gets a second chance instead of falling straight to templates.
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
+# Writing one short message from explicit instructions needs no extended thinking. Measured on
+# Sonnet 5.5: 1.3 s vs 6.0 s median with adaptive thinking, and instructions followed better.
+# `between_tools` is Sonnet 5.5's "thinking off" (other models reject it, so it is model-gated).
+THINKING_OFF_MODELS = {"claude-sonnet-5-5"}
 CONVERSATION_OPENER = "[The candidate applied online for the delivery driver role. The assistant opened the conversation.]"
 
 
@@ -90,6 +94,7 @@ class ClaudeResponder:
         # Per-turn instructions travel as a mid-conversation system message: an operator
         # channel the candidate cannot imitate, and the cached prefix stays intact.
         messages.append({"role": "system", "content": render_directive(request.directive, self.config, request.feedback)})
+        extra = {"thinking": {"type": "between_tools"}} if self.model in THINKING_OFF_MODELS else {}
         try:
             response = self.client.beta.messages.create(
                 model=self.model,
@@ -99,6 +104,7 @@ class ClaudeResponder:
                 output_config={"effort": "low"},
                 betas=[FALLBACK_BETA],
                 fallbacks="default",
+                **extra,
             )
         except anthropic.APIError as exc:
             raise LLMError(f"speak failed: {exc}") from exc

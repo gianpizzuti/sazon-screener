@@ -255,7 +255,7 @@ class ScreeningEngine:
             "zone": d.zone,
             "availability": ",".join(a.value for a in d.availability) or None,
             "schedule": ",".join(s.value for s in d.preferred_schedule) or None,
-            "experience_years": f"{d.experience_years:g}" if d.experience_years is not None else None,
+            "experience_months": str(d.experience_months) if d.experience_months is not None else None,
             "platforms": ",".join(d.experience_platforms) or None,
             "start_date": d.start_date.isoformat() if d.start_date else None,
         }

@@ -18,11 +18,12 @@ WEEKDAYS = {
 MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 
-def format_date(d: date, locale: str) -> str:
+def format_date(d: date, locale: str, today: date | None = None) -> str:
     lang = locale.split("-")[0]
+    show_year = today is not None and d.year != today.year
     if lang == "en":
-        return f"{WEEKDAYS['en'][d.weekday()]} {d.day} {MONTHS_EN[d.month - 1]}"
-    return f"{WEEKDAYS['es'][d.weekday()]} {d.day:02d}/{d.month:02d}"
+        return f"{WEEKDAYS['en'][d.weekday()]} {d.day} {MONTHS_EN[d.month - 1]}" + (f" {d.year}" if show_year else "")
+    return f"{WEEKDAYS['es'][d.weekday()]} {d.day:02d}/{d.month:02d}" + (f"/{d.year}" if show_year else "")
 
 
 def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
@@ -49,17 +50,17 @@ def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
     schedule = ", ".join(copy.text(f"values.schedule.{s.value}", loc) for s in d.preferred_schedule)
 
     experience = None
-    if d.experience_years is not None:
-        if d.experience_years == 0:
+    if d.experience_months is not None:
+        if d.experience_months == 0:
             experience = copy.text("values.no_experience", loc)
         else:
-            experience = _duration(d.experience_years, copy, loc)
+            experience = _duration(d.experience_months, copy, loc)
             if d.experience_platforms:
                 experience += f" ({', '.join(d.experience_platforms)})"
 
     start = None
     if d.start_date:
-        start = format_date(d.start_date, loc)
+        start = format_date(d.start_date, loc, today)
         if d.start_date == today:
             start = copy.text("values.start_immediate", loc, date=start)
 
@@ -78,9 +79,10 @@ def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
     return "\n".join(lines)
 
 
-def _duration(years: float, copy: Copy, loc: str) -> str:
-    if years < 1:
-        return copy.text("values.months", loc, n=str(max(1, round(years * 12))))
-    if years == 1:
+def _duration(months: int, copy: Copy, loc: str) -> str:
+    if months < 12:
+        return copy.text("values.months", loc, n=str(months))
+    if months == 12:
         return copy.text("values.one_year", loc)
-    return copy.text("values.years", loc, n=f"{years:g}")
+    years = f"{round(months / 12, 1):g}"
+    return copy.text("values.years", loc, n=years if loc == "en" else years.replace(".", ","))

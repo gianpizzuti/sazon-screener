@@ -64,6 +64,11 @@ faq:
     answer:
       default: Grupo Sazón es un grupo de 45 restaurantes en España (Madrid, Barcelona, Valencia, Sevilla, Málaga y Bilbao) y México (Ciudad de México, Guadalajara y Monterrey). Repartimos nuestros propios pedidos con un equipo propio.
 
+  - id: language
+    question: ¿Podemos hablar en inglés? ¿En qué idioma es el proceso?
+    answer:
+      default: Sí, podemos seguir en español o en inglés, como prefieras. La entrevista suele ser en español; si lo necesitas, el equipo te confirma si puede ser en inglés.
+
   - id: is_bot
     question: ¿Eres un bot? ¿Hablo con una persona?
     answer:

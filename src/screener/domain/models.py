@@ -121,7 +121,8 @@ class ScreeningData(BaseModel):
     in_service_area: bool | None = None
     availability: list[Availability] = Field(default_factory=list)
     preferred_schedule: list[Schedule] = Field(default_factory=list)
-    experience_years: float | None = None
+    experience_years: float | None = None   # derived from months
+    experience_months: int | None = None    # as the candidate said it ("8 meses" -> 8)
     experience_platforms: list[str] = Field(default_factory=list)
     start_date: date | None = None
     start_date_raw: str | None = None

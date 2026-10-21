@@ -32,7 +32,7 @@ def complete_until_recap(policy, state):
     say(policy, state, "Chamberí", location_text="Chamberí")
     say(policy, state, "media jornada", availability=["part_time"])
     say(policy, state, "por la noche", schedule=["evening"])
-    say(policy, state, "2 años en Glovo", experience_years=2, experience_platforms=["glovo"])
+    say(policy, state, "2 años en Glovo", experience_months=24, experience_platforms=["glovo"])
     d, _ = say(policy, state, "el lunes", start_date=start_expr("next_weekday", weekday=0))
     return d
 
@@ -53,7 +53,7 @@ class TestHappyPath:
         assert d.ask_field == FieldName.SCHEDULE
         d, _ = say(policy, state, "noches", schedule=["evening"])
         assert d.ask_field == FieldName.EXPERIENCE_YEARS
-        d, _ = say(policy, state, "2 años", experience_years=2)
+        d, _ = say(policy, state, "2 años", experience_months=24)
         assert d.ask_field == FieldName.EXPERIENCE_PLATFORMS  # only because years > 0
         d, _ = say(policy, state, "Glovo y Uber", experience_platforms=["Glovo", "uber"])
         assert d.ask_field == FieldName.START_DATE
@@ -74,10 +74,23 @@ class TestHappyPath:
         assert state.data.zone == "Getafe" and state.data.city == "Madrid"
         assert len(d.acknowledge) == 4
 
+    def test_experience_is_stored_in_exact_months(self, policy, state):
+        # regression: "8 meses" once became 0.5 years and the recap said "6 meses"
+        to_screening(policy, state)
+        say(policy, state, "8 meses con Glovo", experience_months=8, experience_platforms=["Glovo"])
+        assert (state.data.experience_months, state.data.experience_years) == (8, 0.67)
+
+    def test_name_is_offered_to_the_writer_only_when_just_learned(self, policy, state):
+        to_screening(policy, state)
+        d, _ = say(policy, state, "Ana López", full_name="Ana López")
+        assert d.candidate_name == "Ana"
+        d, _ = say(policy, state, "sí", drivers_license="yes")
+        assert d.candidate_name is None
+
     def test_no_experience_skips_platforms(self, policy, state):
         to_screening(policy, state)
         state.current_field = FieldName.EXPERIENCE_YEARS
-        say(policy, state, "nunca he repartido", experience_years=0)
+        say(policy, state, "nunca he repartido", experience_months=0)
         assert state.field(FieldName.EXPERIENCE_PLATFORMS).status == FieldStatus.SKIPPED
 
 
@@ -127,7 +140,7 @@ class TestValidationAndLoops:
         say(policy, state, "Deusto", location_text="Deusto")
         say(policy, state, "full time", availability=["full_time"])
         say(policy, state, "mañanas", schedule=["morning"])
-        d, _ = say(policy, state, "nunca", experience_years=0)
+        d, _ = say(policy, state, "nunca", experience_months=0)
         assert d.ask_field == FieldName.START_DATE
         d, _ = say(policy, state, "el 1 de octubre", start_date=start_expr("exact_date", exact_date="2026-10-01"))
         assert (d.ask_field, d.ask_issue) == (FieldName.START_DATE, "start_date_past")
@@ -235,6 +248,12 @@ class TestLanguage:
     def test_clear_english_switches(self, policy, state):
         d, events = say(policy, state, "Yes, let's do it", intents=("affirm",), language="en", language_is_clear=True)
         assert state.language == "en" and d.locale == "en" and "language_switched" in events
+
+    def test_model_mistake_is_vetoed_by_the_second_opinion(self, policy, state):
+        # regression: Haiku labelled "full time y part time" as clear English
+        to_screening(policy, state)
+        say(policy, state, "full time y part time", availability=["full_time", "part_time"], language="en", language_is_clear=True)
+        assert state.language == "es"
 
     def test_city_sets_the_spanish_variant(self, policy, state):
         to_screening(policy, state)

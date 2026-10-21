@@ -62,7 +62,7 @@ def test_recap_is_rendered_from_state_with_confirm_buttons(make_engine):
         analysis("Soy Ana López, tengo carnet y reparto en Getafe", full_name="Ana López", drivers_license="yes", location_text="Getafe"),
         analysis("media jornada", availability=["part_time"]),
         analysis("tardes", schedule=["afternoon"]),
-        analysis("nunca", experience_years=0),
+        analysis("nunca", experience_months=0),
         analysis("ya", start_date=start_expr("immediate")),
     ]
     engine = make_engine(script)
@@ -74,6 +74,16 @@ def test_recap_is_rendered_from_state_with_confirm_buttons(make_engine):
     assert result.stage == Stage.CONFIRMING
     assert "Madrid (Getafe)" in recap.text and "Sin experiencia previa" in recap.text
     assert "lo antes posible" in recap.text and recap.quick_replies
+
+
+def test_recap_shows_months_exactly(make_engine, config):
+    from screener.domain.models import ConversationState
+    from screener.engine.recap import render_recap
+    from conftest import TODAY
+
+    state = ConversationState(id="r", client_id="x", channel="t")
+    state.data.experience_months, state.data.experience_platforms = 8, ["Glovo"]
+    assert "8 meses (Glovo)" in render_recap(state, config.copy_, TODAY)
 
 
 def test_empty_messages_are_ignored(make_engine):
@@ -92,3 +102,16 @@ def test_summary_failure_saves_a_fallback(make_engine):
     engine.handle(cid, "no")
     summary = engine.summarize(cid)
     assert summary["source"] == "template" and engine.repo.get_summary(cid) == summary
+
+
+
+def test_recap_formats_years_and_decimals_for_the_locale(config):
+    from datetime import date
+    from screener.domain.models import ConversationState
+    from screener.engine.recap import render_recap
+    from conftest import TODAY
+
+    state = ConversationState(id="r", client_id="x", channel="t")
+    state.data.experience_months, state.data.start_date = 18, date(2027, 1, 11)
+    text = render_recap(state, config.copy_, TODAY)
+    assert "1,5 años" in text and "11/01/2027" in text
