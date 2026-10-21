@@ -42,6 +42,7 @@ from screener.engine.directive import AnswerToQuestion, Decision, Directive, Eve
 from screener.llm.schemas import Extracted, TurnAnalysis
 
 DONE = {FieldStatus.VALID, FieldStatus.SKIPPED, FieldStatus.UNCLEAR}
+MIN_WORDS_WITHOUT_SIGNAL = 4
 # Intents that mean "I did not try to answer your question" (no failed attempt counted).
 NON_ATTEMPT_INTENTS = {"question", "smalltalk", "human_request", "postpone", "abuse"}
 TONE_BY_SENTIMENT = {"confused": "simplify", "frustrated": "reassuring"}
@@ -117,6 +118,8 @@ class ScreeningPolicy:
             events.append(Event("human_requested"))
 
         directive.tone = TONE_BY_SENTIMENT.get(analysis.sentiment, "normal")
+        if analysis.sentiment in TONE_BY_SENTIMENT:
+            events.append(Event("sentiment", {"value": analysis.sentiment, "field": state.current_field}))
 
         captured = self._apply_extraction(state, analysis.extracted, analysis, message, today, events)
         if analysis.correction_target:
@@ -299,13 +302,14 @@ class ScreeningPolicy:
 
     # ------------------------------------------------------------------ understanding -> state
     def _update_language(self, state, analysis: TurnAnalysis, message: str, events) -> None:
-        # Hysteresis: only a message that clearly carries a language can switch it, and a
-        # deterministic second opinion must not say it's still the current language.
-        if (
-            analysis.language_is_clear
-            and analysis.language != state.language
-            and function_word_language(message) != state.language
-        ):
+        # Hysteresis: the model must see a clear new language AND the deterministic check must
+        # confirm it, or (for long mixed messages with no function-word signal) at least not
+        # contradict it. Short loanword answers ("full time", "flexible") never switch.
+        second_opinion = function_word_language(message)
+        confirmed = second_opinion == analysis.language or (
+            second_opinion is None and len(message.split()) >= MIN_WORDS_WITHOUT_SIGNAL
+        )
+        if analysis.language_is_clear and analysis.language != state.language and confirmed:
             events.append(Event("language_switched", {"from": state.language, "to": analysis.language}))
             state.language = analysis.language
         if state.data.country is None and analysis.spanish_variant != "unknown":

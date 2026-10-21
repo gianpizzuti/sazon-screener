@@ -59,6 +59,7 @@ class TurnResult(BaseModel):
     completed: bool
     data: ScreeningData
     analysis: TurnAnalysis | None = None  # exposed for debugging / the dashboard
+    event_types: list[str] = Field(default_factory=list)
 
 
 class ScreeningEngine:
@@ -91,6 +92,7 @@ class ScreeningEngine:
             client_id=self.cfg.id,
             channel=channel,
             language=language or self.cfg.agent.default_language,
+            created_at=self.clock(),
         )
         greeting = OutboundMessage(
             text=self.cfg.copy_.text("greeting", state.locale),
@@ -159,6 +161,8 @@ class ScreeningEngine:
         working = state.model_copy(deep=True)
         decision = self.policy.decide(working, analysis, text, today)
         events += decision.events
+        if working.is_terminal and not state.is_terminal:
+            working.completed_at = self.clock()  # one clock for the whole engine (testable, replayable)
 
         history.append(ChatMessage(role="candidate", text=text))
         outbound, metas = self._render(working, decision.directive, history, today, events)
@@ -173,6 +177,7 @@ class ScreeningEngine:
             completed=working.is_terminal,
             data=working.data,
             analysis=analysis,
+            event_types=[e.type for e in events],
         )
 
     # ------------------------------------------------------------------ speaking

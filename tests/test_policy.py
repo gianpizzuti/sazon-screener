@@ -312,3 +312,20 @@ class TestAfterTheEnd:
         d, events = say(policy, state, "¡ya tengo el carnet!", drivers_license="yes")
         assert "update_after_close" in d.notes and state.needs_review
         assert state.stage == Stage.DISQUALIFIED  # a human re-evaluates, the bot doesn't
+
+
+class TestLanguageLoanwords:
+    # regression: "full time" alone (a common loanword in Spain) switched the agent to English
+    def test_short_loanword_answers_never_switch(self, policy, state):
+        to_screening(policy, state)
+        say(policy, state, "full time", availability=["full_time"], language="en", language_is_clear=True)
+        assert state.language == "es"
+
+    def test_a_confirmed_english_message_switches(self, policy, state):
+        say(policy, state, "Hi! Can we do this in English?", intents=("affirm",), language="en", language_is_clear=True)
+        assert state.language == "en"
+
+    def test_long_mixed_message_without_signal_lets_the_model_decide(self, policy, state):
+        to_screening(policy, state)
+        say(policy, state, "Sí, I have license de moto", drivers_license="yes", language="en", language_is_clear=True)
+        assert state.language == "en"
