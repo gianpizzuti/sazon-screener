@@ -1,10 +1,10 @@
 """HTTP API.
 
-Two audiences, two groups of routes:
-  /conversations  channel side: what a web chat, a WhatsApp webhook or a voice agent calls
-  /candidates     recruiter side: what the dashboard (and an ATS) calls
+Two audiences, two groups of routes (all under /api):
+  /api/conversations  channel side: what a web chat, a WhatsApp webhook or a voice agent calls
+  /api/candidates     recruiter side: what the recruiter web app (and an ATS) calls
 
-The recruiter dashboard is just another client of this API, so business logic lives in
+The recruiter web app (served at /) is just another client of this API, so business logic lives in
 one place. Interactive docs (OpenAPI) at /docs: the starting point for an ATS integration.
 
 Run:  uvicorn screener.api.app:app --port 8000
@@ -15,9 +15,12 @@ from __future__ import annotations
 import asyncio
 import logging
 from contextlib import asynccontextmanager, suppress
+from pathlib import Path
 from typing import Literal
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
+from fastapi import APIRouter, BackgroundTasks, FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from screener.analytics import Analytics, compute
@@ -74,18 +77,20 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
     def get_engine(request: Request) -> ScreeningEngine:
         return request.app.state.engine
 
-    @app.get("/health")
+    api = APIRouter(prefix="/api")
+
+    @api.get("/health")
     def health(request: Request) -> dict:
         """Also returns the engine's clock, so clients show times consistently (demo clock included)."""
         return {"status": "ok", "now": get_engine(request).clock().isoformat()}
 
     # ------------------------------------------------------------------ channel side
-    @app.post("/conversations", response_model=TurnResult, tags=["channel"])
+    @api.post("/conversations", response_model=TurnResult, tags=["channel"])
     def start_conversation(body: StartRequest, request: Request) -> TurnResult:
         """Open a conversation: returns the fixed greeting (AI disclosure + privacy note)."""
         return get_engine(request).start(channel=body.channel, language=body.language)
 
-    @app.post("/conversations/{conversation_id}/messages", response_model=TurnResult, tags=["channel"])
+    @api.post("/conversations/{conversation_id}/messages", response_model=TurnResult, tags=["channel"])
     def send_message(
         conversation_id: str,
         body: MessageRequest,
@@ -107,7 +112,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
         return result
 
     # ------------------------------------------------------------------ recruiter side
-    @app.get("/candidates", response_model=list[CandidateRow], tags=["recruiter"])
+    @api.get("/candidates", response_model=list[CandidateRow], tags=["recruiter"])
     def list_candidates(
         request: Request,
         status: list[str] | None = Query(None, description="qualified, needs_review, in_progress, abandoned, disqualified, withdrawn, terminated"),
@@ -126,7 +131,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
             and (needs_review is None or r.needs_review == needs_review)
         ]
 
-    @app.get("/candidates/{conversation_id}", response_model=CandidateDetail, tags=["recruiter"])
+    @api.get("/candidates/{conversation_id}", response_model=CandidateDetail, tags=["recruiter"])
     def get_candidate(conversation_id: str, request: Request) -> CandidateDetail:
         engine = get_engine(request)
         try:
@@ -134,7 +139,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
         except ConversationNotFound:
             raise HTTPException(404, "candidate not found")
 
-    @app.put("/candidates/{conversation_id}/review", tags=["recruiter"])
+    @api.put("/candidates/{conversation_id}/review", tags=["recruiter"])
     def review_candidate(conversation_id: str, body: ReviewRequest, request: Request) -> dict:
         """Record what a recruiter decided. Overriding the bot's outcome is audited as a human override."""
         try:
@@ -142,7 +147,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
         except ConversationNotFound:
             raise HTTPException(404, "candidate not found")
 
-    @app.delete("/candidates/{conversation_id}", status_code=204, tags=["recruiter"])
+    @api.delete("/candidates/{conversation_id}", status_code=204, tags=["recruiter"])
     def erase_candidate(conversation_id: str, request: Request) -> None:
         """Erase all of a candidate's data on request (GDPR right to erasure)."""
         try:
@@ -150,7 +155,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
         except ConversationNotFound:
             raise HTTPException(404, "candidate not found")
 
-    @app.post("/candidates/{conversation_id}/summary", tags=["recruiter"])
+    @api.post("/candidates/{conversation_id}/summary", tags=["recruiter"])
     def regenerate_summary(conversation_id: str, request: Request) -> dict:
         try:
             summary = get_engine(request).summarize(conversation_id)
@@ -160,23 +165,23 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
             raise HTTPException(503, "no summarizer configured")
         return summary
 
-    @app.get("/analytics", response_model=Analytics, tags=["recruiter"])
+    @api.get("/analytics", response_model=Analytics, tags=["recruiter"])
     def analytics(request: Request) -> Analytics:
         engine = get_engine(request)
         return compute(engine.repo, now=engine.clock())
 
-    @app.post("/followups/run", tags=["operations"])
+    @api.post("/followups/run", tags=["operations"])
     def run_followups(request: Request) -> list[dict]:
         """Send due follow-ups now (normally done every minute by the scheduler)."""
         return get_engine(request).run_followups()
 
     # ------------------------------------------------------------------ demo only
-    @app.get("/demo/clock", tags=["demo"])
+    @api.get("/demo/clock", tags=["demo"])
     def demo_clock(request: Request) -> dict:
         clock = _demo_clock(request)
         return {"now": clock().isoformat(), "offset_hours": clock.offset_hours}
 
-    @app.post("/demo/advance", tags=["demo"])
+    @api.post("/demo/advance", tags=["demo"])
     def demo_advance(body: AdvanceRequest, request: Request) -> dict:
         """Move the simulated clock forward hour by hour, running the scheduler at each step
         (exactly what a day of real time would do)."""
@@ -188,7 +193,29 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
             done += engine.run_followups()
         return {"now": clock().isoformat(), "offset_hours": clock.offset_hours, "actions": done}
 
+    app.include_router(api)
+    _serve_web_app(app)
     return app
+
+
+WEB_DIST = Path(__file__).resolve().parents[3] / "web" / "dist"
+
+
+def _serve_web_app(app: FastAPI) -> None:
+    """Serve the built recruiter web app (web/dist) at /, with client-side routing fallback.
+    One process in production; during development Vite serves it and proxies /api."""
+    if not (WEB_DIST / "index.html").exists():
+        return
+    app.mount("/assets", StaticFiles(directory=WEB_DIST / "assets"), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def web_app(path: str):
+        file = WEB_DIST / path
+        if path and file.is_file() and WEB_DIST in file.resolve().parents:
+            return FileResponse(file)
+        if path.startswith("api/"):
+            raise HTTPException(404, "not found")
+        return FileResponse(WEB_DIST / "index.html")
 
 
 def _demo_clock(request: Request):

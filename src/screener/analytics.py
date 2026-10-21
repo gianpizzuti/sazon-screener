@@ -86,7 +86,7 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
         if s.completed_at and statuses[s.id] in FINISHED
     ]
 
-    agent_sources = [m.meta.get("source") for m in messages if m.role == "agent" and m.meta.get("kind") not in ("greeting", "recap")]
+    agent_sources = [m.meta.get("source") for m in messages if m.role == "agent" and m.meta.get("kind") not in ("greeting", "recap", "followup")]  # templates by design are not fallbacks
     by_type = Counter(e.type for e in events)
     nudged = {e.conversation_id for e in events if e.type == "followup_sent"}
     recovered = [e for e in events if e.type == "resumed" and e.payload.get("after_followups", 0) > 0]

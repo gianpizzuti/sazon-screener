@@ -1,26 +1,27 @@
 PY := .venv/bin/python
 
-.PHONY: install test chat run api dashboard seed samples reset-demo
+.PHONY: install web test chat run web-dev seed samples reset-demo
 
-install:
+install:       ## Python package + the web app (the web build needs Node 18+)
 	python3 -m venv .venv
 	$(PY) -m pip install --upgrade pip
 	$(PY) -m pip install -e ".[dev]"
+	@command -v npm >/dev/null && $(MAKE) web || echo "npm not found: the API works, the web app needs Node 18+ (then run: make web)"
+
+web:           ## build the recruiter web app into web/dist (served by the API)
+	cd web && npm ci && npm run build
 
 test:
 	$(PY) -m pytest -q
 
-chat:          ## talk to the agent in the terminal
-	$(PY) -m screener.channels.cli
-
-run:           ## API (port 8000) + recruiter dashboard (port 8501)
+run:           ## API + recruiter web app on http://localhost:8000 (demo clock enabled)
 	$(PY) scripts/run.py
 
-api:
-	$(PY) -m uvicorn screener.api.app:app --port 8000
+web-dev:       ## web app with hot reload on http://localhost:5173 (run `make run` too: it proxies /api)
+	cd web && npm run dev
 
-dashboard:
-	$(PY) -m streamlit run dashboard/app.py --server.port 8501
+chat:          ## talk to the agent in the terminal
+	$(PY) -m screener.channels.cli
 
 seed:          ## fill the database with demo candidates (real models, ~0.10 USD each)
 	$(PY) scripts/seed_demo.py

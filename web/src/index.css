@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Theme follows a .dark class on <html> (system default, user toggle wins). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Semantic tokens. Components never use raw hex: light and dark are designed together. */
+:root {
+  --bg: #f7f6f3;          /* page */
+  --surface: #ffffff;     /* cards */
+  --surface-2: #f2f0ec;   /* insets, hover */
+  --ink: #1c1917;         /* primary text   (17.5:1 on surface) */
+  --ink-2: #57534e;       /* secondary text (7.6:1) */
+  --ink-3: #6e6762;       /* muted text (>= 4.5:1 on bg, surface and surface-2) */
+  --line: #e7e5e4;
+  --brand: #ea580c;       /* Grupo Sazón accent: icons, focus, highlights */
+  --brand-btn: #c2410c;   /* primary button fill: white label at 5.2:1 (AA) */
+  --brand-ink: #c2410c;   /* brand as text  (5.2:1) */
+  --brand-soft: #fff1e8;
+  --series: #2a78d6;      /* data colour (validated, colour-blind safe), separate from brand */
+  --series-soft: #dbe8f8;
+  --grid: #ece9e4;
+}
+.dark {
+  --bg: #121211;
+  --surface: #1a1a19;
+  --surface-2: #242422;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --ink-3: #a19f97;
+  --line: #2f2e2b;
+  --brand: #f97316;
+  --brand-btn: #c2410c;
+  --brand-ink: #fdba74;
+  --brand-soft: #2b1b10;
+  --series: #3987e5;
+  --series-soft: #1c2c40;
+  --grid: #2a2927;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-btn: var(--brand-btn);
+  --color-brand-soft: var(--brand-soft);
+  --color-series: var(--series);
+  --color-series-soft: var(--series-soft);
+  --color-grid: var(--grid);
+  --font-display: "Calistoga", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html { background: var(--bg); color: var(--ink); }
+body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+.num { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+::selection { background: var(--brand-soft); color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
