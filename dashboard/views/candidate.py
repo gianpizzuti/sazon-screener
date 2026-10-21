@@ -102,7 +102,11 @@ def transcript_block(transcript: list[dict]) -> None:
             meta = m["meta"]
             if agent:
                 directive = meta.get("directive") or {}
-                st.caption(f'{meta.get("kind", "")} · written by {"the model" if meta.get("source") == "llm" else "a template"}')
+                if meta.get("kind") == "followup":
+                    template = " · WhatsApp template required (> 24 h since the candidate wrote)" if meta.get("whatsapp_template_required") else ""
+                    st.caption(f'⏳ follow-up {meta.get("attempt")} · fixed template{template}')
+                else:
+                    st.caption(f'{meta.get("kind", "")} · written by {"the model" if meta.get("source") == "llm" else "a template"}')
                 if directive:
                     with st.expander("Why this message"):
                         st.json(directive, expanded=False)
@@ -129,7 +133,7 @@ def page() -> None:
 
     detail = client.candidate(cid)
     row, data = detail["row"], detail["data"]
-    finished = row["status"] not in ("in_progress", "abandoned")
+    finished = row["status"] not in ("in_progress", "awaiting_reply")  # abandoned: a partial summary is still useful
 
     st.title(row["name"] or "Unnamed candidate")
     badge, info = st.columns([1, 6], vertical_alignment="center")
@@ -137,6 +141,12 @@ def page() -> None:
         ui.status_badge(row["status"])
     place = f'{row["city"]} · {row["zone"]}' if row["zone"] else (row["city"] or "city unknown")
     info.caption(f'{place} · speaks {row["language"].upper()} · via {row["channel"]} · started {ui.ago(row["created_at"])}')
+    if row["status"] in ("awaiting_reply", "abandoned"):
+        if row["status"] == "abandoned":
+            st.warning(f'No reply after {row["followups_sent"] or 3} follow-ups: marked abandoned. Any reply resumes the conversation.', icon="💤")
+        else:
+            nxt = f' Next follow-up {ui.until(row["next_followup_at"])}.' if row["next_followup_at"] else ""
+            st.info(f'Waiting for the candidate. Follow-ups sent: {row["followups_sent"]}/3.{nxt}', icon="⏳")
     if row["disqualification_reason"]:
         st.caption(f'Knock-out: **{ui.REASONS.get(row["disqualification_reason"], row["disqualification_reason"])}**'
                    + (f' · talent pool: {"yes" if detail["talent_pool_opt_in"] else "no"}' if detail["talent_pool_opt_in"] is not None else ""))

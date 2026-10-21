@@ -13,6 +13,7 @@ STATUS = {
     "qualified": ("✅", "Qualified", "green"),
     "needs_review": ("⚠️", "Needs review", "orange"),
     "in_progress": ("💬", "In progress", "blue"),
+    "awaiting_reply": ("⏳", "Awaiting reply", "violet"),
     "abandoned": ("💤", "Abandoned", "gray"),
     "disqualified": ("⛔", "Disqualified", "red"),
     "withdrawn": ("↩️", "Withdrawn", "gray"),
@@ -82,18 +83,44 @@ def short_date(value) -> str:
     return d.strftime("%a %d %b")
 
 
+def now() -> datetime:
+    """The server's clock (it may be a simulated demo clock), set once per run by app.py."""
+    value = st.session_state.get("server_now")
+    return datetime.fromisoformat(value).replace(tzinfo=timezone.utc) if value else datetime.now(timezone.utc)
+
+
+def _span(minutes: float) -> str:
+    if minutes < 1:
+        return "now"
+    if minutes < 60:
+        return f"{minutes:.0f} min"
+    if minutes < 48 * 60:
+        return f"{minutes / 60:.0f} h"
+    return f"{minutes / 1440:.0f} d"
+
+
 def ago(value: str | None) -> str:
     if not value:
         return "–"
-    then = datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
-    minutes = (datetime.now(timezone.utc) - then).total_seconds() / 60
-    if minutes < 1:
-        return "just now"
-    if minutes < 60:
-        return f"{minutes:.0f} min ago"
-    if minutes < 48 * 60:
-        return f"{minutes / 60:.0f} h ago"
-    return f"{minutes / 1440:.0f} d ago"
+    minutes = (now() - datetime.fromisoformat(value).replace(tzinfo=timezone.utc)).total_seconds() / 60
+    return "just now" if minutes < 1 else f"{_span(minutes)} ago"
+
+
+def until(value: str | None) -> str:
+    if not value:
+        return "–"
+    minutes = (datetime.fromisoformat(value).replace(tzinfo=timezone.utc) - now()).total_seconds() / 60
+    return "due now" if minutes <= 0 else f"in {_span(minutes)}"
+
+
+def followups(row: dict, total: int = 3) -> str:
+    """Reminder status for the pipeline: '1/3 · next in 21 h', '3/3 · gave up' or empty."""
+    if row["status"] == "abandoned":
+        return f"{total}/{total} · gave up"
+    if row["status"] != "awaiting_reply":
+        return ""
+    next_one = f" · next {until(row['next_followup_at'])}" if row["next_followup_at"] else ""
+    return f"{row['followups_sent']}/{total}{next_one}"
 
 
 def pct(value: float | None) -> str:

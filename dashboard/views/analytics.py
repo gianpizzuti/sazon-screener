@@ -30,7 +30,7 @@ def page() -> None:
         return
 
     k = st.columns(5)
-    k[0].metric("Completion rate", ui.pct(a["completion_rate"]), help="Finished conversations / all conversations no longer active")
+    k[0].metric("Completion rate", ui.pct(a["completion_rate"]), help="Finished / (finished + abandoned). Conversations still waiting are not counted yet")
     k[1].metric("Qualified", ui.pct(a["qualified_rate"]), help="Qualified / finished")
     k[2].metric("Median time to finish", "–" if a["median_minutes_to_finish"] is None else f'{a["median_minutes_to_finish"]:g} min')
     k[3].metric("Median replies", "–" if a["median_candidate_messages"] is None else f'{a["median_candidate_messages"]:g}', help="Candidate messages per finished conversation")
@@ -47,10 +47,21 @@ def page() -> None:
         chart_or_table("Where candidates get frustrated", "Frustrated messages by the question being asked: candidates for rewording.",
                        list(a["frustration_by_field"].items()), "Messages", as_table)
     with right:
-        chart_or_table("Where abandoned candidates stopped", f'Last question asked to candidates silent for over 2 hours.',
+        chart_or_table("Where abandoned candidates stopped", "Pending question when the last reminder went unanswered.",
                        list(a["drop_off"].items()), "Candidates", as_table)
         chart_or_table("What candidates ask", "Questions answered from the FAQ, by topic.",
                        [(k.replace("_", " ").capitalize(), v) for k, v in a["faq_usage"].items()], "Questions", as_table)
+
+    st.subheader("Re-engagement")
+    st.caption("Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h, never at night in their timezone). "
+               "Recovery = candidates who replied after a reminder: the direct measure of the 60% no-answer problem.")
+    r = st.columns(4)
+    r[0].metric("Candidates nudged", a["candidates_nudged"])
+    r[1].metric("Recovered", a["candidates_recovered"])
+    r[2].metric("Recovery rate", ui.pct(a["recovery_rate"]))
+    r[3].metric("Follow-ups sent", a["followups_sent"])
+    if a["recovered_by_followup"]:
+        chart_or_table("Which reminder brought them back", "", list(a["recovered_by_followup"].items()), "Candidates", as_table, keep_order=True)
 
     st.subheader("Questions Sofía couldn't answer")
     st.caption("Each one is a candidate for the FAQ.")

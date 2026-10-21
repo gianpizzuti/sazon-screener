@@ -48,6 +48,22 @@ def regenerate_summary(conversation_id: str) -> dict:
     return _call("POST", f"/candidates/{conversation_id}/summary")
 
 
+def server_now() -> str:
+    return _call("GET", "/health")["now"]
+
+
+def demo_clock() -> dict | None:
+    """The simulated clock, or None when demo tools are disabled."""
+    try:
+        return _call("GET", "/demo/clock")
+    except httpx.HTTPStatusError:
+        return None
+
+
+def advance(hours: float) -> dict:
+    return _call("POST", "/demo/advance", json={"hours": hours})
+
+
 def analytics() -> dict:
     return _call("GET", "/analytics")
 
