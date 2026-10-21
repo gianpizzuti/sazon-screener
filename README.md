@@ -119,9 +119,44 @@ docs/          process design, decision log, ADRs, live testing log, design docs
 | SQLite + event log | Zero setup for evaluators, real queries, an audit trail; Postgres is one URL away | [0004](docs/decisions/0004-sqlite-sqlalchemy.md) |
 | Grounded extraction | Structured output guarantees shape, not truth: every value must quote the candidate | [0005](docs/decisions/0005-grounding-and-layered-validation.md) |
 | Templates for recap and fallback | Data shown back to the candidate is never paraphrased; the conversation never breaks | [0006](docs/decisions/0006-templates-where-precision-matters.md) |
-| FAQ without a vector DB | 13 entries don't need retrieval infrastructure; the writer only sees the one approved answer | [0007](docs/decisions/0007-faq-without-vector-db.md) |
+| FAQ without a vector DB | 14 entries don't need retrieval infrastructure; the writer only sees the one approved answer | [0007](docs/decisions/0007-faq-without-vector-db.md) |
 | API-first, the UI is a client | Logic in one place, ready for WhatsApp/voice/ATS; the UI was replaced (Streamlit → React) without touching the core | [0008](docs/decisions/0008-api-first-recruiter-tool.md) |
 | React web app with a design system | Orbio's visual language with the client as workspace; motion that explains, accessible charts, light/dark tokens checked for contrast; one process in production | [0009](docs/decisions/0009-react-web-app.md) |
+
+## Potential improvements
+
+In the order I would do them with more time. Most come from what testing and the evals showed.
+
+### Before a pilot
+| Improvement | Why | Trade-off / note |
+|---|---|---|
+| **A real WhatsApp channel** (Cloud API) and **authentication** on the API | The channel the candidates actually use; today the API is an open local demo | Greeting and reminders are already fixed templates, as WhatsApp requires |
+| **Production architecture**: Postgres, a queue ordered per conversation, scheduled follow-ups, outbox | Correctness with several workers (ordering, no double sends) | Designed in [deployment and scaling](docs/design/deployment-and-scaling.md) |
+| **Answers to the open questions** (e-bikes, foreign licences, data retention) | They change knock-out rules; once answered they become configuration | [Process design §8](docs/process-design.md) |
+| **Pre-fill what the application already knows** (name, city) | Fewer questions; the candidate still confirms everything at the recap | Needs the ATS integration ([API spec](docs/design/ats-api.yaml)) |
+
+### Product
+| Improvement | Why | Trade-off / note |
+|---|---|---|
+| Confirm an opt-out that arrives with frustration | ≈ 3% of complaints are read as opt-out (D147). It is recoverable today: writing again resumes the screening | One more message for someone who really wants to stop |
+| Check the licence at the interview, and measure how often candidates lie about it | Protects recruiter time without collecting ID documents in a chat (data minimisation, bias, drop-off) | A rejection reason "no licence at the interview" gives the number before adding friction |
+| Voice channel | The assessment's "Great" tier; some candidates prefer to talk | Latency matters more: understanding and writing may become one call for voice only |
+| Recruiter app in Spanish | Grupo Sazón's recruiters work in Spanish. The app is in English for this review; the summaries are already in Spanish | Interface strings only |
+| Experiment with reminder timing and wording | The recovery rate is already measured, so a variant can be compared against it | Needs volume to be significant |
+
+### Quality and evals
+| Improvement | Why |
+|---|---|
+| Label a sample of real pilot conversations and grow the eval sets | 113 messages and 13 conversations find failure modes, but are not enough to quote error rates |
+| Have recruiters rate a sample by hand | Calibrates the LLM judge on the client's own standard |
+| Turn every recruiter override into an eval case | Where the system and the recruiters disagree is the most useful data there is |
+| Evals in CI on prompt or model changes, plus canary rollouts | Catches regressions before they reach candidates |
+| Recruiter summary on Sonnet, or through the Batch API | The Opus summary is ≈ 40% of the cost per screening. Switch only after checking `summary_faithful` with the judge |
+
+### What I'd do differently
+- **Start the evals on day one.** The most serious problems were found by the evals, late in the week: two paths to a wrong knock-out and a loop in the recap. Unit tests can't find them, because they script the model's answers.
+- **Give eval cases production context from the start.** The first version had none and overstated one risk by 19/20 vs 0/20 (D141).
+- **Skip the throwaway UI.** The first recruiter tool was Streamlit, later replaced by React. API-first made the switch cheap, but going straight to the final interface would have saved time.
 
 ## Structured output
 
@@ -132,6 +167,7 @@ Every conversation produces a `ScreeningData` record (plus per-field status, fla
   "full_name": "Ana López",
   "has_drivers_license": true,
   "license_status": "yes",
+  "license_type": "car",
   "city_id": "madrid",
   "city": "Madrid",
   "country": "ES",
