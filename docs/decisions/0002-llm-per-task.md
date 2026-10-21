@@ -33,6 +33,17 @@ Models are configured per client in `client.yaml`. Changing one is a one-line ch
 - Three models means three behaviours to know. The narrow task boundaries keep that manageable.
 - The Speak system prompt is ~500 tokens, around Sonnet 5.5's minimum cacheable size, so it may not be cached. At this volume it doesn't matter, and the prompt isn't padded artificially. The Understand prompt is cached: measured `cache_read_input_tokens` ≈ 5.4k (the output schema adds to the prompt, so the size is larger than its text).
 
+## Measured (extraction eval, 112 cases, `evals/results/extraction.md`)
+| | Haiku 5.5 | Sonnet 5.5 | Opus 5.5 |
+|---|---|---|---|
+| Cases fully correct | 107/112 | 109/112 | 111/112 |
+| Spurious values | 0 | 1 | 0 |
+| Location after the deterministic rules | 22/22 | 22/22 | 22/22 |
+| Latency p50 | 1.5 s | 2.1 s | 2.5 s |
+| Cost per 1,000 messages | $0.18 | $3.76 | $7.05 |
+
+Every residual Haiku error is caught by a deterministic layer, so the decision stands, now with data (D146).
+
 ## Revisit when
 - The extraction eval shows Haiku below target on a field → upgrade Understand to Sonnet.
 - The voice channel needs lower latency → merge Understand + Speak into one call for voice only.

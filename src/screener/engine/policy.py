@@ -339,6 +339,12 @@ class ScreeningPolicy:
             events.append(Event("ungrounded_value", {"field": group}))
             return None
 
+        # A knock-out ends the screening, so it needs an answer to the knock-out question, the
+        # recap or an explicit correction: a place or a licence mentioned in passing never ends it
+        # (the extraction eval read "6 months with Deliveroo in Berlin" as where the candidate lives).
+        def may_knock_out(*fields: FieldName) -> bool:
+            return state.current_field in fields or state.stage == Stage.CONFIRMING or "correction" in analysis.intents
+
         data = state.data
         if x.full_name and (q := grounded("full_name")):
             self._record(state, FieldName.FULL_NAME, validate_full_name(x.full_name), q,
@@ -351,10 +357,13 @@ class ScreeningPolicy:
                 data.license_status = v
                 data.has_drivers_license = v == LicenseStatus.YES
 
-            self._record(state, FieldName.DRIVERS_LICENSE, Validation(value=status), q, set_license, captured, events)
+            if status != LicenseStatus.YES and not may_knock_out(FieldName.DRIVERS_LICENSE):
+                events.append(Event("knockout_deferred", {"field": FieldName.DRIVERS_LICENSE, "value": status.value}))
+            else:
+                self._record(state, FieldName.DRIVERS_LICENSE, Validation(value=status), q, set_license, captured, events)
 
         if (x.location_text or x.location_city_id or x.location_outside_service_area) and (q := grounded("location")):
-            self._apply_location(state, x, q, captured, events)
+            self._apply_location(state, x, q, captured, events, solicited=may_knock_out(FieldName.LOCATION, FieldName.ZONE))
 
         if x.availability is not None and (q := grounded("availability")):
             self._record(state, FieldName.AVAILABILITY, validate_availability(x.availability), q,
@@ -394,9 +403,13 @@ class ScreeningPolicy:
         self._detect_corrections(state, before, captured, events)
         return captured
 
-    def _apply_location(self, state, x: Extracted, quote: str, captured, events) -> None:
+    def _apply_location(self, state, x: Extracted, quote: str, captured, events, solicited: bool = True) -> None:
         data = state.data
         raw = x.location_text or quote
+        if not solicited and state.field(FieldName.LOCATION).status == FieldStatus.VALID:
+            # Another place mentioned in passing does not move a location the candidate already gave.
+            events.append(Event("unsolicited_value_ignored", {"field": FieldName.LOCATION, "text": raw}))
+            return
         match = self.matcher.match(raw)
         city_id, zone = None, None
         if match.status == "resolved":
@@ -426,6 +439,9 @@ class ScreeningPolicy:
                 self._mark_valid(state, FieldName.ZONE, quote, captured, events)
             return
         if match.status == "no_match" and x.location_outside_service_area is True:
+            if not solicited:
+                events.append(Event("knockout_deferred", {"field": FieldName.LOCATION, "text": raw}))
+                return  # asked in its turn: the answer to the location question decides
             data.location_raw, data.city_id, data.city, data.zone = raw, None, raw, None
             data.country, data.in_service_area = None, False
             self._mark_valid(state, FieldName.LOCATION, quote, captured, events)

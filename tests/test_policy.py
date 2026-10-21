@@ -17,6 +17,13 @@ def to_screening(policy, state):
     assert state.stage == Stage.SCREENING
 
 
+def to_licence(policy, state):
+    """Answer the name, so the next question is the licence."""
+    to_screening(policy, state)
+    d, _ = say(policy, state, "Ana López", full_name="Ana López")
+    assert d.ask_field == FieldName.DRIVERS_LICENSE
+
+
 def to_location(policy, state):
     """Answer name and licence, so the next question is the location."""
     to_screening(policy, state)
@@ -96,7 +103,7 @@ class TestHappyPath:
 
 class TestKnockouts:
     def test_no_licence_disqualifies_immediately_and_offers_talent_pool(self, policy, state):
-        to_screening(policy, state)
+        to_licence(policy, state)
         d, events = say(policy, state, "no tengo", drivers_license="no")
         assert state.stage == Stage.DISQUALIFIED
         assert state.disqualification_reason == DisqualificationReason.NO_LICENSE
@@ -105,12 +112,12 @@ class TestKnockouts:
         assert d.kind == "talent_pool_ack" and state.talent_pool_opt_in is True
 
     def test_licence_in_progress_is_its_own_reason(self, policy, state):
-        to_screening(policy, state)
+        to_licence(policy, state)
         d, _ = say(policy, state, "me lo estoy sacando", drivers_license="in_progress")
         assert d.outcome == "license_in_progress"
 
     def test_out_of_area_uses_the_candidates_words(self, policy, state):
-        to_screening(policy, state)
+        to_location(policy, state)
         d, _ = say(policy, state, "Vivo en Toledo", location_text="Toledo", location_outside_service_area=True)
         assert (state.stage, d.outcome, d.outcome_place) == (Stage.DISQUALIFIED, "out_of_area", "Toledo")
         assert state.data.in_service_area is False
@@ -125,6 +132,45 @@ class TestKnockouts:
         d, _ = say(policy, state, "Toledo", location_text="Toledo", location_city_id="toledo")
         assert state.data.city_id is None
         assert (d.ask_field, d.ask_issue) == (FieldName.LOCATION, "location_unknown")
+
+    def test_a_knockout_mentioned_in_passing_waits_for_its_question(self, policy, state):
+        # found by the extraction eval: a city where they once worked was read as where they live
+        to_screening(policy, state)
+        d, events = say(policy, state, "Ana López, trabajé en Berlín", full_name="Ana López",
+                        location_text="Berlín", location_outside_service_area=True)
+        assert state.stage == Stage.SCREENING and "knockout_deferred" in events
+        assert state.data.full_name == "Ana López" and state.data.in_service_area is None
+        assert d.ask_field == FieldName.DRIVERS_LICENSE  # the location will be asked in its turn
+
+    def test_a_licence_knockout_in_the_opening_message_is_asked_in_its_turn(self, policy, state):
+        d, events = say(policy, state, "hola, aún no tengo carnet, ¿puedo aplicar?", intents=("affirm", "provide_info"),
+                        drivers_license="no")
+        assert state.stage == Stage.SCREENING and "knockout_deferred" in events
+        say(policy, state, "Ana López", full_name="Ana López")
+        say(policy, state, "no", drivers_license="no")  # the answer to the licence question decides
+        assert state.disqualification_reason == DisqualificationReason.NO_LICENSE
+
+    def test_a_knockout_answer_to_its_question_still_ends_the_screening(self, policy, state):
+        to_licence(policy, state)
+        say(policy, state, "no", drivers_license="no")
+        assert state.disqualification_reason == DisqualificationReason.NO_LICENSE
+
+    def test_another_place_mentioned_later_does_not_move_the_location(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Valencia", location_text="Valencia", location_city_id="valencia")
+        state.current_field = FieldName.EXPERIENCE_YEARS
+        _, events = say(policy, state, "6 meses con Deliveroo en Madrid", experience_months=6,
+                        experience_platforms=["Deliveroo"], location_text="Madrid", location_city_id="madrid")
+        assert state.data.city_id == "valencia" and "unsolicited_value_ignored" in events
+        assert state.data.experience_months == 6
+
+    def test_an_explicit_correction_can_still_change_a_knockout_field(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Valencia", location_text="Valencia", location_city_id="valencia")
+        state.current_field = FieldName.AVAILABILITY
+        say(policy, state, "perdona, me he mudado a Toledo", intents=("correction",),
+            location_text="Toledo", location_outside_service_area=True)
+        assert state.disqualification_reason == DisqualificationReason.OUT_OF_AREA
 
     def test_ambiguous_zone_asks_with_options(self, policy, state):
         to_location(policy, state)
@@ -288,7 +334,7 @@ class TestRecapAndCorrections:
 
 class TestAfterTheEnd:
     def finish(self, policy, state):
-        to_screening(policy, state)
+        to_licence(policy, state)
         say(policy, state, "no tengo", drivers_license="no")
         say(policy, state, "sí", intents=("affirm",))  # talent pool
         assert state.talent_pool_opt_in is True

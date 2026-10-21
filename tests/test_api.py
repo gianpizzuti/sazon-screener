@@ -84,10 +84,11 @@ def test_recruiter_queue_detail_and_analytics(client_for):
 
 
 def test_overriding_the_bot_is_audited(client_for):
-    client, engine = client_for([analysis("sí", intents=("affirm",)), analysis("no tengo", drivers_license="no")])
+    client, engine = client_for([analysis("sí", intents=("affirm",)), analysis("Ana López", full_name="Ana López"),
+                                 analysis("no tengo", drivers_license="no")])
     with client:
         cid = client.post("/api/conversations", json={}).json()["conversation_id"]
-        run(client, cid, ["sí", "no tengo"])
+        run(client, cid, ["sí", "Ana López", "no tengo"])
         response = client.put(f"/api/candidates/{cid}/review", json={"status": "interview", "note": "Uses an e-bike, client accepts it", "by": "marta"})
         assert response.status_code == 200 and response.json()["status"] == "interview"
         types = [e.type for e in engine.repo.events(cid)]
