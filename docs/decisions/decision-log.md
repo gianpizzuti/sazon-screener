@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (98 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (108 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -149,3 +149,18 @@ Every decision taken while building the agent, large or small (98 so far), with 
 | D96 | Sample conversations exported from the database, with highlights derived from the event log | Samples are real and self-describing; no hand-written labels to drift | Copy-pasted transcripts | `scripts/export_samples.py` |
 | D97 | A language switch needs the function-word check to confirm the new language, or a message of at least 4 words with no signal | "full time" alone (a common loanword in Spain) switched the agent to English (refines D71) | D71's "not contradicting" rule | `policy._update_language` |
 | D98 | `make run` starts API and dashboard together | One command for evaluators | Two terminals | `scripts/run.py` |
+
+## Re-engagement (the 60% no-answer problem)
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D99 | Follow-ups at +2 h, +24 h, +72 h after the candidate's last message; abandoned 24 h after the last one | Same day, next day, and a last chance, then stop: persistent but not spammy | More reminders (annoying, WhatsApp quality rating drops) or one (gives up too early) | `client.yaml: followups` |
+| D100 | Follow-ups are fixed templates that repeat the pending question | WhatsApp only allows pre-approved templates > 24 h after the candidate's last message; repeating the question makes a one-word reply enough | LLM-written reminders: not allowed on WhatsApp outside the window, and unnecessary | `copy.yaml: followup`, `followups.render` |
+| D101 | Quiet hours 21:00–09:00 in the candidate's timezone | Spain and Mexico are 7–8 h apart: a "morning" message from Madrid wakes a candidate in Monterrey | Server-time quiet hours. Limitation: before the city is known the default timezone is used; production would use the city of the application | `followups.next_action` |
+| D102 | At most one follow-up per run, spaced as scheduled even after downtime | A scheduler restart must not fire three reminders in a row | Sending whatever is due | `followups.due_at` |
+| D103 | "Abandoned" is not terminal: any reply resumes where they stopped and resets the counters | Candidates come back days later; turning them away would waste the recovery | A terminal abandoned stage | `engine._handle` (`resumed` event) |
+| D104 | Recovery rate (replied after a follow-up / received one) is the re-engagement KPI, with "which reminder brought them back" | It measures the 60% problem directly and tells which reminder is worth keeping | Counting messages sent | `analytics.py` |
+| D105 | Pilot scheduler: a loop in the API every 60 s | Zero infrastructure for a pilot | Production: one scheduled job (or delayed tasks) with a unique (conversation, attempt) constraint, since several API workers would double-send | `api._followup_loop` |
+| D106 | Demo clock: moves time forward for the whole system (persisted offset), hour by hour, running the scheduler at each step; only with `SCREENER_DEMO_TOOLS=1` | Shows days of follow-ups in seconds without faking data | Rewriting timestamps (history would lie) | `engine/clock.py`, `/demo/*` |
+| D107 | "Awaiting reply" (silent > 2 h or follow-ups under way) is distinct from "abandoned"; completion rate = finished / (finished + abandoned) | Waiting candidates are not lost yet and must not count as failures | One "abandoned" bucket after 2 h (D89, superseded) | `views.display_status`, `analytics.py` |
+| D108 | Opening "Try the agent" doesn't create a conversation; only the button does | Visiting the page was creating empty candidates that then received follow-ups | Auto-start | `dashboard/views/chat.py` |

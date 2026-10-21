@@ -21,7 +21,7 @@ Requirements: Python 3.11+, an Anthropic API key.
 make install                 # creates .venv and installs the package
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # API (localhost:8000/docs) + recruiter dashboard (localhost:8501)
-make test                    # 106 tests, offline, no API key needed
+make test                    # 114 tests, offline, no API key needed
 ```
 
 Optional:
@@ -30,6 +30,7 @@ Optional:
 make seed                    # fill the dashboard with 15 demo candidates (real models, ~1.5 USD in total)
 make chat                    # talk to the agent in the terminal (/data shows what was collected)
 make samples                 # export finished conversations to samples/*.md
+make reset-demo              # wipe the local database and re-seed (deletes your local test conversations)
 ```
 
 ## What's inside
@@ -37,6 +38,7 @@ make samples                 # export finished conversations to samples/*.md
 | | |
 |---|---|
 | **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts |
+| **Re-engagement** | Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in *their* timezone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. Any reply resumes the screening. The **recovery rate** shows whether it works. In the dashboard, the **demo clock** (sidebar) moves time forward to show it live |
 | **Recruiter dashboard** | **Pipeline** (queue ordered by what to do first) · **Candidate** (AI summary, extracted data with the candidate's own words, full transcript with the *why* of every message, recruiter decision and override, JSON export, GDPR erasure) · **Analytics** (completion, funnel, knock-out reasons, drop-off, frustration by question, FAQ gaps, AI health) · **Try the agent** (play the candidate in the web chat) |
 | **API** | `/conversations` for channels (web, WhatsApp, voice), `/candidates` + `/analytics` for recruiters and an ATS. OpenAPI docs at `/docs` |
 

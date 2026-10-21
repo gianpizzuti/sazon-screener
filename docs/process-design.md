@@ -69,7 +69,8 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
 **The candidate stops responding**
 - Follow-ups at +2 h, +24 h and +72 h. Each message is short and says how many questions are left. On WhatsApp, anything after 24 h must be an approved template.
 - Quiet hours 21:00–09:00 in the **candidate's** timezone. Spain and Mexico are 7–8 hours apart.
-- After the last follow-up the conversation is `abandoned` and the drop-off stage is recorded for analytics.
+- 24 hours after the last follow-up the conversation is `abandoned` and the drop-off stage is recorded for analytics.
+- Follow-ups are fixed templates (WhatsApp's 24-hour rule) and repeat the pending question, so a one-word reply is enough to continue. The KPI is the **recovery rate**: candidates who reply after a follow-up.
 - Any later reply resumes exactly where the candidate left off. Nothing is asked twice.
 
 **Invalid or ambiguous answers**
