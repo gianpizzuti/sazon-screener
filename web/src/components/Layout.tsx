@@ -21,7 +21,7 @@ function Workspace({ compact = false }: { compact?: boolean }) {
       <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-btn font-display text-[15px] font-semibold text-on-brand shadow-sm">GS</div>
       <div className={clsx("min-w-0 leading-tight", compact && "hidden sm:block")}>
         <div className="truncate font-display text-[17px] font-semibold text-heading">Grupo Sazón</div>
-        <div className="text-[11px] font-medium tracking-wide text-ink-3 uppercase">Recruiting · Sofía AI</div>
+        <div className="text-[11px] font-medium tracking-wide text-ink-3 uppercase">Recruiting</div>
       </div>
     </div>
   );
