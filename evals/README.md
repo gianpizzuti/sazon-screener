@@ -24,7 +24,7 @@ python -m evals.conversations --only p08 --no-judge       # one persona, no judg
 | Fields correct | 144/146 |
 | Spurious values (said by nobody) | 0 |
 | Values backed by a verbatim quote | 100% |
-| Location after the deterministic rules | 22/22 (the model alone: 19/22) |
+| Location after the deterministic rules | 22/22 (the model alone: 20/22) |
 | Latency p50 | 1.5 s |
 | Cost per 1,000 messages | ≈ $0.2 |
 
