@@ -165,6 +165,29 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
             raise HTTPException(503, "no summarizer configured")
         return summary
 
+    @api.get("/config", tags=["recruiter"])
+    def workspace_config(request: Request) -> dict:
+        """The rules this workspace runs on (read-only, no secrets): what "How it works" shows."""
+        cfg = get_engine(request).cfg
+        return {
+            "client": cfg.name,
+            "description": cfg.description,
+            "agent": cfg.agent.name,
+            "role": cfg.role,
+            "service_areas": [
+                {"id": a.id, "name": a.name, "country": a.country, "restaurants": a.restaurants, "zones": [z.name for z in a.zones]}
+                for a in cfg.service_areas
+            ],
+            "faq": [{"id": f.id, "question": f.question} for f in cfg.faq],
+            "followups": cfg.followups.model_dump(exclude={"scheduler_interval_seconds"}),
+            "thresholds": {
+                "max_failed_attempts": cfg.agent.max_failed_attempts,
+                "late_start_days": cfg.agent.late_start_days,
+                "max_message_chars": cfg.agent.max_message_chars,
+            },
+            "models": cfg.models.model_dump(),
+        }
+
     @api.get("/analytics", response_model=Analytics, tags=["recruiter"])
     def analytics(request: Request) -> Analytics:
         engine = get_engine(request)

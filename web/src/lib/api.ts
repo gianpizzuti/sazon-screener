@@ -156,6 +156,18 @@ export interface DemoClock {
   offset_hours: number;
 }
 
+export interface WorkspaceConfig {
+  client: string;
+  description: string;
+  agent: string;
+  role: Record<string, string>;
+  service_areas: { id: string; name: string; country: string; restaurants: number; zones: string[] }[];
+  faq: { id: string; question: string }[];
+  followups: { schedule_hours: number[]; quiet_hours_start: number; quiet_hours_end: number; abandon_after_hours: number; whatsapp_window_hours: number };
+  thresholds: { max_failed_attempts: number; late_start_days: number; max_message_chars: number };
+  models: { understand: string; speak: string; summary: string };
+}
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -189,6 +201,7 @@ export const api = {
   erase: (id: string) => request<void>("DELETE", `/candidates/${id}`),
   regenerateSummary: (id: string) => request<Summary>("POST", `/candidates/${id}/summary`),
   analytics: () => request<Analytics>("GET", "/analytics"),
+  config: () => request<WorkspaceConfig>("GET", "/config"),
   start: (language: "es" | "en") => request<TurnResult>("POST", "/conversations", { channel: "web", language }),
   send: (id: string, text: string) =>
     request<TurnResult>("POST", `/conversations/${id}/messages?debug=true`, { text }),

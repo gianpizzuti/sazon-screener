@@ -144,3 +144,13 @@ def test_api_paths_never_fall_through_to_the_web_app(client_for):
         if (WEB_DIST / "index.html").exists():  # built web app: client-side routes get index.html
             page = client.get("/candidates/some-id")
             assert page.status_code == 200 and "<div id=\"root\">" in page.text
+
+
+
+def test_workspace_config_exposes_the_rules_but_no_secrets(client_for):
+    client, _ = client_for([])
+    with client:
+        cfg = client.get("/api/config").json()
+        assert cfg["client"] == "Grupo Sazón" and sum(a["restaurants"] for a in cfg["service_areas"]) == 45
+        assert cfg["followups"]["schedule_hours"] == [2, 24, 72] and cfg["thresholds"]["max_failed_attempts"] == 2
+        assert "key" not in str(cfg).lower()

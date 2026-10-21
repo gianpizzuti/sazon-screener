@@ -12,6 +12,7 @@ import { PipelinePage } from "./pages/Pipeline";
 const CandidatePage = lazy(() => import("./pages/Candidate").then((m) => ({ default: m.CandidatePage })));
 const AnalyticsPage = lazy(() => import("./pages/Analytics").then((m) => ({ default: m.AnalyticsPage })));
 const TryAgentPage = lazy(() => import("./pages/TryAgent").then((m) => ({ default: m.TryAgentPage })));
+const HowItWorksPage = lazy(() => import("./pages/HowItWorks").then((m) => ({ default: m.HowItWorksPage })));
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 5_000, retry: 1 } } });
 
@@ -28,6 +29,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/candidates/:id" element={<CandidatePage />} />
                 <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/try" element={<TryAgentPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
               </Routes>
             </Suspense>
           </Layout>

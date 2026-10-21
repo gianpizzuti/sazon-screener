@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { ChartNoAxesColumn, CircleCheck, Clock, FastForward, Info, MessagesSquare, Moon, Sun, Users } from "lucide-react";
+import { ChartNoAxesColumn, CircleCheck, Clock, FastForward, Info, MessagesSquare, Moon, Sun, Users, Workflow } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useCallback, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
@@ -12,6 +12,7 @@ const NAV = [
   { to: "/", label: "Pipeline", icon: Users, end: true },
   { to: "/analytics", label: "Analytics", icon: ChartNoAxesColumn },
   { to: "/try", label: "Try the agent", icon: MessagesSquare },
+  { to: "/how-it-works", label: "How it works", icon: Workflow },
 ];
 
 /** The client's workspace: recruiters work "in Grupo Sazón" (each client is a config folder). */
