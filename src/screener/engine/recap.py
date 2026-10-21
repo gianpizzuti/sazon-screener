@@ -26,7 +26,7 @@ def format_date(d: date, locale: str, today: date | None = None) -> str:
     return f"{WEEKDAYS['es'][d.weekday()]} {d.day:02d}/{d.month:02d}" + (f"/{d.year}" if show_year else "")
 
 
-def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
+def render_recap(state: ConversationState, copy: Copy, today: date, updated: bool = False) -> str:
     loc = state.locale
     d = state.data
 
@@ -41,6 +41,8 @@ def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
     license_value = None
     if d.has_drivers_license is not None:
         license_value = copy.text("values.yes" if d.has_drivers_license else "values.no", loc)
+        if d.has_drivers_license and d.license_type:
+            license_value += f" ({copy.text(f'values.license_type.{d.license_type.value}', loc)})"
 
     place = d.city
     if place and d.zone:
@@ -67,7 +69,7 @@ def render_recap(state: ConversationState, copy: Copy, today: date) -> str:
             start = copy.text("values.start_tomorrow", loc, date=start)
 
     lines = [
-        copy.text("recap.title", loc),
+        copy.text("recap.title_updated" if updated else "recap.title", loc),
         f"• {label('full_name')}: {unclear_or(FieldName.FULL_NAME, d.full_name)}",
         f"• {label('drivers_license')}: {unclear_or(FieldName.DRIVERS_LICENSE, license_value)}",
         f"• {label('location')}: {unclear_or(FieldName.LOCATION, place)}",

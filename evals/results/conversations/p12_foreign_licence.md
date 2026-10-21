@@ -2,52 +2,41 @@
 
 > Daniela, from Venezuela, living in Madrid. Asked about a licence, she says she has a Venezuelan one and doesn't know if it is valid in Spain. Asked again, she repeats the same: she never says simply yes or no.
 
-**Expected:** needs_review · **Got:** needs_review · **Checks:** within turn budget failed
+**Expected:** needs_review · **Got:** needs_review · **Checks:** all passed
 
 | | Message | |
 |---|---|---|
 | **Sofía** | ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos? | `template` |
 | *Candidate* | ¡Hola, Sofía! Sí, empecemos 😊 | affirm,smalltalk |
-| **Sofía** | ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor. | `llm` |
+| **Sofía** | ¡Genial, vamos allá! ¿Cómo te llamas? Nombre y apellido, por favor. | `llm` |
 | *Candidate* | Me llamo Daniela Rojas 😊 | provide_info · full_name=Daniela Rojas |
-| **Sofía** | Mucho gusto, Daniela. Para seguir, ¿tienes licencia de conducir en vigor (auto o moto)? | `llm` |
-| *Candidate* | Hola Sofía, sí, tengo licencia de conducir, pero es venezolana. No sé si es válida aquí en España, la verdad. ¿Eso importa para el puesto? | provide_info,question |
-| **Sofía** | Sí, tener licencia de conducir en vigor es uno de los requisitos. Si la tuya vale aquí, eso lo confirma el equipo de reclutamiento. Para seguir, ¿tienes licencia en vigor, es decir, que no esté vencida? Puedes decirme si es de auto, de moto o de las dos. | `llm` |
-| *Candidate* | No estoy segura de eso, Sofía 🙏 Es una licencia venezolana y no sé si aquí en España está vigente. Lo que sí es que no la tengo vencida, creo. ¿Es de auto, de moto o de las dos? Creo que es de auto... ¿pero y si la licencia no vale aquí, qué pasaría? | question |
-| **Sofía** | Eso lo confirma el equipo de reclutamiento, yo no puedo decirte qué pasaría. Pregunta sencilla: ¿tu licencia está en vigor, o sea, no vencida? Puedes responder: sí, no, o no estoy segura. Y si es de auto o de moto, dímelo también. | `llm` |
-| *Candidate* | Ay, perdona Sofía 🙏 Creo que no está vencida, pero no estoy segura del todo. Es de auto, creo. Y sobre si vale aquí en España, la verdad no lo sé, por eso te pregunto a ti 😅 | provide_info,question |
-| **Sofía** | No te preocupes. Si tu licencia vale en España lo confirma el equipo de reclutamiento, yo no puedo asegurarlo. Sigamos con otra pregunta: ¿en qué ciudad y zona te gustaría repartir? Por ejemplo: Madrid, zona centro. | `llm` |
-| *Candidate* | Ah vale, gracias Sofía 🙏 Vivo en Madrid, en Tetuán. Me viene bien repartir por allí o por zonas cercanas, la verdad. | provide_info,smalltalk · location_text=Madrid, en Tetuán, location_city_id=madrid, location_zone=Tetuán, location_outside_service_area=False |
-| **Sofía** | Perfecto, Madrid y la zona de Tetuán, anotado. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana? | `llm` |
-| *Candidate* | Jornada completa, Sofía 😊 | provide_info · availability=['full_time'] |
+| **Sofía** | Encantada, Daniela. Primera pregunta sobre el puesto: ¿tienes carnet de conducir en vigor (coche o moto)? | `llm` |
+| *Candidate* | Hola Sofía, tengo un carnet de conducir venezolano, pero no sé muy bien si es válido aquí en España 🤔 ¿Eso importa para el puesto? | question |
+| **Sofía** | Un carnet en vigor es requisito del puesto, pero si el venezolano vale en España te lo confirmará el equipo de selección. Con ese carnet que tienes, ¿está en vigor, o está caducado? Vale cualquiera de las dos respuestas: solo dime cómo está. | `llm` |
+| *Candidate* | No estoy segura de si está en vigor 🤔 Creo que sí, pero no sabría decirte con certeza si está caducado o no. Lo que sí sé es que es venezolano, y no sé si aquí en España vale. ¿Eso podría ser un problema para seguir con la solicitud? | question,provide_info |
+| **Sofía** | Los requisitos son tener carnet en vigor, permiso para trabajar en el país y repartir en una de nuestras zonas. Si el tuyo vale en España, lo confirma el equipo de selección. Para seguir: ¿tu carnet está en vigor, no está en vigor, o no lo sabes? | `llm` |
+| *Candidate* | No lo sé con certeza 🤔 Creo que debería estar en vigor, pero no lo he mirado bien. Lo que sí sé es que es venezolano y no sé si vale aquí. ¿Puedo seguir con las demás preguntas y que el equipo lo revise después? | question,provide_info |
+| **Sofía** | Sí, puedes seguir. Al terminar, si cumples los requisitos, un/a recruiter te escribe en menos de 48 horas para una entrevista breve de unos 20 minutos en el restaurante más cercano. ¿En qué ciudad y zona te gustaría repartir? Por ejemplo: Madrid, zona centro. | `llm` |
+| *Candidate* | Madrid, zona Tetuán 😊 Vivo ahí, así que me vendría bien repartir por esa zona. ¿Hay que elegir alguna más, o con esta vale? | provide_info,question · location_text=Madrid, zona Tetuán, location_city_id=madrid, location_zone=Tetuán, location_outside_service_area=False |
+| **Sofía** | Perfecto, Madrid y la zona de Tetuán queda anotado. Si hace falta elegir alguna zona más, eso te lo confirmará el equipo de selección. Ahora, ¿qué disponibilidad tienes: jornada completa, media jornada o fines de semana? | `llm` |
+| *Candidate* | Jornada completa 😊 | provide_info · availability=['full_time'] |
 | **Sofía** | Perfecto, jornada completa. ¿Qué turno prefieres: mañana, tarde, noche o flexible? | `llm` |
-| *Candidate* | Por la tarde, Sofía 😊 | provide_info · schedule=['afternoon'] |
-| **Sofía** | Turno de tarde, anotado. ¿Tienes experiencia repartiendo? Si es así, ¿cuánto tiempo y en qué plataformas? | `llm` |
-| *Candidate* | Sí, tengo experiencia. Trabajé 2 años repartiendo en Caracas para una farmacia 😊 | provide_info · experience_months=24, experience_platforms=['una farmacia'] |
-| **Sofía** | Muy bien, dos años repartiendo para una farmacia es una buena experiencia. ¿Cuándo podrías empezar? | `llm` |
-| *Candidate* | Podría empezar el próximo lunes, Sofía 😊 | provide_info · start_date={'kind': 'next_weekday', 'amount': None, 'weekday': 0, 'exact_date': None} |
+| *Candidate* | Tardes 😊 | provide_info · schedule=['afternoon'] |
+| **Sofía** | Perfecto, turno de tarde. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas? | `llm` |
+| *Candidate* | Sí, tengo unos 2 años repartiendo en Caracas para una farmacia 😊 | provide_info,affirm · experience_months=24, experience_platforms=['una farmacia'] |
+| **Sofía** | Dos años repartiendo para una farmacia, genial, es una buena base. ¿Cuándo podrías empezar? | `llm` |
+| *Candidate* | El próximo lunes, si todo sale bien 😊 | provide_info · start_date={'kind': 'next_weekday', 'amount': None, 'weekday': 0, 'exact_date': None} |
 | **Sofía** | Antes de terminar, revisa tus datos:<br>• Nombre: Daniela Rojas<br>• Carnet de conducir: (por confirmar)<br>• Zona: Madrid (Tetuán)<br>• Disponibilidad: jornada completa<br>• Turno: tarde<br>• Experiencia: 2 años (una farmacia)<br>• Inicio: lunes 26/10<br><br>¿Está todo correcto? | `template` |
-| *Candidate* | Casi todo correcto 😊 Solo lo del carnet: es una licencia venezolana de auto, creo que no está vencida, pero no sé si vale en España. Lo dejo "por confirmar" como dices, ¿vale? Y el inicio: el próximo lunes sería el 26/10, ¿verdad? | correction,question · start_date={'kind': 'next_weekday', 'amount': None, 'weekday': 0, 'exact_date': None} |
-| **Sofía** | Sí, el próximo lunes es el 26/10, así que el inicio queda tal cual lo pusimos. Sobre si tu licencia venezolana vale en España, lo confirmará el equipo de reclutamiento. Para la contratación necesitarás DNI o NIE con permiso de trabajo, el carnet de conducir y tu número de la Seguridad Social. | `llm` |
-| **Sofía** | Antes de terminar, revisa tus datos:<br>• Nombre: Daniela Rojas<br>• Carnet de conducir: (por confirmar)<br>• Zona: Madrid (Tetuán)<br>• Disponibilidad: jornada completa<br>• Turno: tarde<br>• Experiencia: 2 años (una farmacia)<br>• Inicio: lunes 26/10<br><br>¿Está todo correcto? | `template` |
-| *Candidate* | Vale, Sofía, gracias 😊 Todo correcto. Lo del carnet queda por confirmar, como dices. ¿Y los documentos que me pides (DNI o NIE, carnet y número de la Seguridad Social) los tengo que mandar por aquí o en otro sitio? | affirm,question |
-| **Sofía** | Los documentos son los que te comenté: DNI o NIE con permiso de trabajo, carnet de conducir y número de la Seguridad Social. Dónde y cómo enviarlos te lo confirmará el equipo de reclutamiento. Para cerrar, ¿tienes carnet de conducir en vigor (coche o moto)? | `llm` |
-| *Candidate* | No estoy segura, Sofía 🙏 Tengo licencia venezolana de auto y creo que no está vencida, pero no sé si está en vigor aquí en España. Lo dejo como "por confirmar", ¿vale? | provide_info,question |
-| **Sofía** | Sí, queda como "por confirmar". Si tu licencia venezolana está en vigor aquí en España, lo confirmará el equipo de reclutamiento, yo no lo sé. Solo necesito esto: ¿tienes carnet de conducir en vigor (coche o moto)? Puedes responder: sí, no o no estoy segura. | `llm` |
-| *Candidate* | No estoy segura, Sofía 🙏 Es venezolana de auto, creo que no está vencida, pero no sé si vale aquí. ¿Te sirve así? | question,provide_info |
-| **Sofía** | Sí, "no estoy segura" es una respuesta válida y queda anotada tal cual. Si te sirve así, lo confirmará el equipo de reclutamiento, que revisa cada solicitud. Ahora te envío un resumen con tus datos. | `llm` |
-| **Sofía** | Antes de terminar, revisa tus datos:<br>• Nombre: Daniela Rojas<br>• Carnet de conducir: (por confirmar)<br>• Zona: Madrid (Tetuán)<br>• Disponibilidad: jornada completa<br>• Turno: tarde<br>• Experiencia: 2 años (una farmacia)<br>• Inicio: lunes 26/10<br><br>¿Está todo correcto? | `template` |
-| *Candidate* | Sí, todo correcto, Sofía 😊 Gracias por la ayuda con todo. | affirm,smalltalk |
-| **Sofía** | Gracias a ti, Daniela, por tu tiempo y por tus respuestas. Una persona del equipo de reclutamiento revisará tu solicitud y se pondrá en contacto contigo pronto. ¡Que tengas muy buen día! 😊 | `llm` |
+| *Candidate* | Sí, todo correcto 😊 Lo del carnet venezolano lo dejo para que lo revise el equipo, ¿vale? | affirm,provide_info,question |
+| **Sofía** | Sí, Daniela, lo del carnet venezolano lo confirma el equipo de selección. Gracias por tu tiempo: un/a recruiter revisará tus respuestas y te escribirá pronto. ¡Mucha suerte! 😊 | `llm` |
 
-**Screening data:** `{"full_name": "Daniela Rojas", "location_raw": "Madrid, en Tetuán", "city_id": "madrid", "city": "Madrid", "country": "ES", "zone": "Tetuán", "in_service_area": true, "availability": ["full_time"], "preferred_schedule": ["afternoon"], "experience_years": 2.0, "experience_months": 24, "experience_platforms": ["una farmacia"], "start_date": "2026-10-26", "start_date_raw": "el próximo lunes sería el 26/10"}`
+**Screening data:** `{"full_name": "Daniela Rojas", "location_raw": "Madrid, zona Tetuán", "city_id": "madrid", "city": "Madrid", "country": "ES", "zone": "Tetuán", "in_service_area": true, "availability": ["full_time"], "preferred_schedule": ["afternoon"], "experience_years": 2.0, "experience_months": 24, "experience_platforms": ["una farmacia"], "start_date": "2026-10-26", "start_date_raw": "El próximo lunes"}`
 **Flags:** unclear_field
 
-**Recruiter summary:** Perfil que cumple zona, disponibilidad, experiencia y fecha de inicio. El único punto abierto es el carnet: tiene licencia de coche expedida fuera de España, cree que no está vencida, pero no sabe si es válida en España. Queda en revisión por ese motivo.
+**Recruiter summary:** Perfil apto en zona, disponibilidad y experiencia (2 años repartiendo para una farmacia), pero queda pendiente el carnet de conducir: tiene un carnet expedido en Venezuela y no sabe si está en vigor ni si es válido en España. Puede empezar el próximo lunes (26/10).
 
-**Judge:** warmth 4/5 · clarity 3/5 · brevity 3/5 · language 3/5 · honesty 5/5 · handling 2/5 · summary_faithful 5/5
-- Mexican terms used with a Spain candidate: "¿tienes licencia de conducir en vigor (auto o moto)?"
-- Licence question re-asked after Daniela had already answered clearly: "Pregunta sencilla: ¿tu licencia está en vigor...?"
-- After the recap was confirmed, Sofía asked again: "Para cerrar, ¿tienes carnet de conducir en vigor (coche o moto)?", which caused a loop.
-- The recap template was sent three times (messages 21, 24, 31).
-- Awkward phrasing: "Si te sirve así, lo confirmará el equipo de reclutamiento"
+**Judge:** warmth 4/5 · clarity 4/5 · brevity 4/5 · language 4/5 · honesty 4/5 · handling 4/5 · summary_faithful 5/5
+- Message 9 re-lists all requirements, including "permiso para trabajar en el país", which was never asked, then repeats the licence question.
+- Message 11's "te escribe en menos de 48 horas para una entrevista" is stated mid-flow and is more specific than the closing "te escribirá pronto" for a needs_review case.
+- Message 17 asks two questions at once: "¿cuánto tiempo y en qué plataformas?"
+- The anglicism "un/a recruiter" is used in Spanish messages.

@@ -44,6 +44,7 @@ export interface ScreeningData {
   full_name: string | null;
   has_drivers_license: boolean | null;
   license_status: "yes" | "no" | "in_progress" | null;
+  license_type: "car" | "motorbike" | "both" | null;
   location_raw: string | null;
   city: string | null;
   country: string | null;

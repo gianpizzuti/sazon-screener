@@ -348,6 +348,13 @@ class TestRecapAndCorrections:
                    question="¿Cuánto se cobra?", faq_id="pay")
         assert (state.stage, d.kind) == (Stage.QUALIFIED, "outcome") and d.answer.faq_id == "pay"
 
+    def test_the_licence_type_can_be_added_at_the_recap_and_the_recap_says_it_was_updated(self, policy, state):
+        # found by the conversation eval: "tengo carnet de moto, no de coche" twice, the recap still said "Sí"
+        complete_until_recap(policy, state)
+        d, events = say(policy, state, "es de moto", intents=("correction",), license_type="motorbike")
+        assert state.data.license_type == "motorbike" and "field_corrected" in events
+        assert d.kind == "recap" and d.recap_updated
+
     def test_the_recap_hands_over_to_a_person_after_three_unconfirmed_replies(self, policy, state):
         complete_until_recap(policy, state)
         for _ in range(2):

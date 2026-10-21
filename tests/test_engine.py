@@ -98,6 +98,18 @@ def test_recap_says_tomorrow_next_to_tomorrows_date(config):
     assert "mañana, miércoles 21/10" in render_recap(state, config.copy_, TODAY)
 
 
+def test_recap_shows_the_licence_type_and_says_when_it_was_updated(config):
+    from screener.domain.models import ConversationState, LicenseStatus, LicenseType
+    from screener.engine.recap import render_recap
+    from conftest import TODAY
+
+    state = ConversationState(id="r", client_id="x", channel="t")
+    state.data.has_drivers_license, state.data.license_status = True, LicenseStatus.YES
+    state.data.license_type = LicenseType.MOTORBIKE
+    text = render_recap(state, config.copy_, TODAY, updated=True)
+    assert "Sí (moto)" in text and text.startswith("Listo, he actualizado tus datos")
+
+
 def test_the_applications_country_sets_the_spanish_variant_from_the_first_message(make_engine):
     engine = make_engine([])
     result = engine.start(country="MX")

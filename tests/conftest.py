@@ -21,6 +21,7 @@ NOW = datetime(2026, 10, 20, 10, 0)
 EVIDENCE_GROUP = {
     "full_name": "full_name",
     "drivers_license": "drivers_license",
+    "license_type": "drivers_license",
     "location_text": "location",
     "location_city_id": "location",
     "location_zone": "location",

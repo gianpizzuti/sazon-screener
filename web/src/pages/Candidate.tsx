@@ -25,7 +25,10 @@ const REVIEW: { key: ReviewStatus; label: string }[] = [
 function fieldValue(field: string, d: CandidateDetail["data"]): string {
   switch (field) {
     case "full_name": return d.full_name ?? "–";
-    case "drivers_license": return ({ yes: "Yes", no: "No", in_progress: "In progress" } as Record<string, string>)[d.license_status ?? ""] ?? "–";
+    case "drivers_license": {
+      const status = ({ yes: "Yes", no: "No", in_progress: "In progress" } as Record<string, string>)[d.license_status ?? ""] ?? "–";
+      return d.license_status === "yes" && d.license_type ? `${status} (${{ car: "car", motorbike: "motorbike", both: "car and motorbike" }[d.license_type]})` : status;
+    }
     case "location": return d.in_service_area === false ? `${d.location_raw} (outside area)` : d.city ?? "–";
     case "zone": return d.zone ?? "–";
     case "availability": return d.availability.map((a) => AVAILABILITY[a] ?? a).join(", ") || "–";

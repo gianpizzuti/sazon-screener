@@ -124,6 +124,9 @@ recap:
   title:
     es: "Antes de terminar, revisa tus datos:"
     en: "Before we finish, please check your details:"
+  title_updated:
+    es: "Listo, he actualizado tus datos. Revísalos:"
+    en: "Done, I've updated your details. Please check them:"
   question:
     es: "¿Está todo correcto?"
     en: "Is everything correct?"
@@ -139,6 +142,10 @@ recap:
 values:
   "yes": {es: Sí, en: "Yes"}
   "no": {es: "No", en: "No"}
+  license_type:
+    car: {es: coche, es-MX: auto, en: car}
+    motorbike: {es: moto, en: motorbike}
+    both: {es: coche y moto, es-MX: auto y moto, en: car and motorbike}
   unclear: {es: "(por confirmar)", en: "(to be confirmed)"}
   no_experience: {es: Sin experiencia previa, en: No previous experience}
   years: {es: "{n} años", en: "{n} years"}

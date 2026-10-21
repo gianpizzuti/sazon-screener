@@ -15,6 +15,7 @@ from datetime import date
 from screener.config import ClientConfig
 from screener.domain.locations import LocationMatcher
 from screener.domain.models import (
+    LicenseType,
     FIELD_ORDER,
     KNOCKOUT_FIELDS,
     OPTIONAL_FIELDS,
@@ -52,7 +53,7 @@ TONE_BY_SENTIMENT = {"confused": "simplify", "frustrated": "reassuring"}
 # Which ScreeningData attributes belong to each field (to detect corrections).
 FIELD_ATTRS: dict[FieldName, tuple[str, ...]] = {
     FieldName.FULL_NAME: ("full_name",),
-    FieldName.DRIVERS_LICENSE: ("license_status",),
+    FieldName.DRIVERS_LICENSE: ("license_status", "license_type"),
     FieldName.LOCATION: ("city_id", "in_service_area"),
     FieldName.ZONE: ("zone",),
     FieldName.AVAILABILITY: ("availability",),
@@ -257,6 +258,7 @@ class ScreeningPolicy:
             return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events)
         changed = {e.payload.get("field") for e in events if e.type == "field_corrected"}
         restated = [f for f in captured if f not in changed]
+        directive.recap_updated = bool(changed)
         if captured and len(restated) == len(captured):
             if "affirm" in intents and not intents & {"deny", "correction"}:
                 return self._complete(state, events, directive.answer)  # confirmed, restating a detail
@@ -383,12 +385,18 @@ class ScreeningPolicy:
             self._record(state, FieldName.FULL_NAME, validate_full_name(x.full_name), q,
                          lambda v: setattr(data, "full_name", v), captured, events)
 
-        if x.drivers_license and (q := grounded("drivers_license")):
-            status = LicenseStatus(x.drivers_license)
+        # "es de moto" at the recap only adds the type to a licence they already have.
+        licence = x.drivers_license or ("yes" if x.license_type and data.license_status == LicenseStatus.YES else None)
+        if licence and (q := grounded("drivers_license")):
+            status = LicenseStatus(licence)
 
             def set_license(v: LicenseStatus) -> None:
                 data.license_status = v
                 data.has_drivers_license = v == LicenseStatus.YES
+                if v != LicenseStatus.YES:
+                    data.license_type = None
+                elif x.license_type:
+                    data.license_type = LicenseType(x.license_type)
 
             if status != LicenseStatus.YES and not may_knock_out(FieldName.DRIVERS_LICENSE):
                 events.append(Event("knockout_deferred", {"field": FieldName.DRIVERS_LICENSE, "value": status.value}))
@@ -539,7 +547,9 @@ class ScreeningPolicy:
             case FieldName.FULL_NAME:
                 return f"their name is {d.full_name}"
             case FieldName.DRIVERS_LICENSE:
-                return "they have a valid driver's license" if d.has_drivers_license else "they don't have a valid license"
+                if not d.has_drivers_license:
+                    return "they don't have a valid license"
+                return "they have a valid driver's license" + (f" ({d.license_type.value})" if d.license_type else "")
             case FieldName.LOCATION:
                 return f"they would deliver in {d.city}" if d.in_service_area else f"they are in {d.location_raw}"
             case FieldName.ZONE:

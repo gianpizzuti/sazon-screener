@@ -7,7 +7,7 @@ from collections import Counter
 import pytest
 
 from evals.common import load_config
-from evals.extraction import FIELDS, load_cases, request_for, score
+from evals.extraction import EVIDENCE_GROUP, FIELDS, load_cases, request_for, score
 from screener.llm.schemas import Evidence, Extracted, TurnAnalysis
 
 CASES = load_cases()
@@ -24,8 +24,7 @@ def perfect_analysis(case: dict) -> TurnAnalysis:
     values = {f: _first(v) for f, v in (case.get("expect") or {}).items()}
     if values.get("location_text") == "present":
         values["location_text"] = case["msg"]
-    groups = {"location" if f.startswith("location") else "experience" if f.startswith("experience") else f
-              for f, v in values.items() if v is not None}
+    groups = {EVIDENCE_GROUP[f] for f, v in values.items() if v is not None}
     lang = case.get("lang", "es")
     return TurnAnalysis(
         language="es" if lang == "any" else lang,

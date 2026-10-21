@@ -40,7 +40,7 @@ Models are configured per client in `client.yaml`. Changing one is a one-line ch
 | Spurious values | 0 | 1 | 0 |
 | Location after the deterministic rules | 22/22 | 22/22 | 22/22 |
 | Latency p50 | 1.5 s | 2.1 s | 2.5 s |
-| Cost per 1,000 messages | $0.18 | $3.76 | $7.05 |
+| Cost per 1,000 messages | $0.18–0.24 | $3.76 | $7.05 |
 
 Every residual Haiku error is caught by a deterministic layer, so the decision stands, now with data (D146).
 

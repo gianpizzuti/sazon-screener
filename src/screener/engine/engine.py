@@ -252,7 +252,7 @@ class ScreeningEngine:
                 metas.append(meta)
             out.append(
                 OutboundMessage(
-                    text=render_recap(state, self.cfg.copy_, today),
+                    text=render_recap(state, self.cfg.copy_, today, updated=directive.recap_updated),
                     quick_replies=self.cfg.copy_.options("confirm", state.locale),
                 )
             )

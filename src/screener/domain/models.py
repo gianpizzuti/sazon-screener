@@ -36,6 +36,12 @@ class LicenseStatus(StrEnum):
     IN_PROGRESS = "in_progress"
 
 
+class LicenseType(StrEnum):
+    CAR = "car"
+    MOTORBIKE = "motorbike"
+    BOTH = "both"
+
+
 class StartDateKind(StrEnum):
     IMMEDIATE = "immediate"
     IN_DAYS = "in_days"
@@ -113,6 +119,7 @@ class ScreeningData(BaseModel):
     full_name: str | None = None
     has_drivers_license: bool | None = None
     license_status: LicenseStatus | None = None
+    license_type: LicenseType | None = None  # car / motorbike, when they say (recruiters need it)
     location_raw: str | None = None
     city_id: str | None = None
     city: str | None = None

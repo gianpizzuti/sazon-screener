@@ -1,6 +1,6 @@
 PY := .venv/bin/python
 
-.PHONY: install web test chat run web-dev seed samples reset-demo
+.PHONY: install web test chat run web-dev seed samples reset-demo eval-extraction eval-compare eval-conversations
 
 install:       ## Python package + the web app (the web build needs Node 18+)
 	python3 -m venv .venv
@@ -32,3 +32,13 @@ samples:       ## export finished demo conversations to samples/*.md
 reset-demo:    ## DELETES the local database and demo clock, then re-seeds the demo candidates
 	rm -f data/screener.db data/demo_clock.json
 	$(PY) scripts/seed_demo.py
+
+eval-extraction:    ## extraction eval with the production model (real API, ~0.03 USD)
+	$(PY) -m evals.extraction --models haiku
+
+eval-compare:       ## extraction eval on Haiku, Sonnet and Opus (real API, ~1.25 USD)
+	$(PY) -m evals.extraction --models haiku sonnet opus
+
+eval-conversations: ## 13 simulated candidates + Opus judge (real API, ~1 USD)
+	$(PY) -m evals.conversations
+

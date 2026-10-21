@@ -9,7 +9,7 @@ The client has two different problems, and the design addresses each one separat
 | 60% of candidates don't answer recruiter calls | Asynchronous chat, first message seconds after applying, candidate answers when it suits them |
 | 80% of recruiter time goes to unqualified candidates | Knock-out questions first; recruiters only receive qualified (or flagged) candidates with a summary |
 
-📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 💬 **[Sample conversations](samples/README.md)**
+📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 📊 **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · 💬 **[Sample conversations](samples/README.md)**
 
 ---
 
@@ -21,7 +21,7 @@ Requirements: Python 3.11+, Node 18+ (for the web app), an Anthropic API key.
 make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
-make test                    # 115 tests, offline, no API key needed
+make test                    # offline, no API key: 129 tests of the product + 228 checks of the eval datasets
 ```
 
 Optional:
@@ -32,6 +32,8 @@ make chat                    # talk to the agent in the terminal (/data shows wh
 make samples                 # export finished conversations to samples/*.md
 make reset-demo              # wipe the local database and re-seed (deletes your local test conversations)
 make web-dev                 # web app with hot reload on :5173 (with `make run` for the API)
+make eval-extraction         # extraction eval on the production model (real API, ~0.03 USD)
+make eval-conversations      # 13 simulated candidates + LLM judge (real API, ~1 USD)
 ```
 
 ## What's inside
@@ -41,6 +43,7 @@ make web-dev                 # web app with hot reload on :5173 (with `make run`
 | **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts |
 | **Re-engagement** | Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in *their* timezone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. Any reply resumes the screening. The **recovery rate** shows whether it works. In the web app, the **demo clock** (top bar) moves time forward to show it live |
 | **Recruiter web app** (React) | **Pipeline**: queue ordered by what to do first, status filters, live counters. **Candidate**: AI summary, extracted data with the candidate's own words, chat transcript with the *why* behind every message, recruiter decision and audited override, audit timeline, JSON export, GDPR erasure. **Analytics**: funnel and charts that grow as you scroll, recovery-rate meter, FAQ gaps, AI health, table view. **Try the agent**: play the candidate and watch the screening checklist fill in live. **How it works**: the screening flow as an interactive flowchart (click a step for the exact question and rules, or trace a candidate's path) plus the workspace's live configuration. Light and dark theme, reduced-motion aware |
+| **Evals** | **Extraction**: 113 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 0 invented values, location 22/22 after the rules, ≈ $0.2 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
 | **API** | `/api/conversations` for channels (web, WhatsApp, voice), `/api/candidates` + `/api/analytics` for recruiters and an ATS, `/api/config` for the read-only workspace rules. OpenAPI docs at `/docs` |
 
 ## How it works
@@ -99,7 +102,8 @@ src/screener/
 web/           React + TypeScript recruiter web app (an API client, built into web/dist)
 scripts/       run, seed demo data, export samples
 samples/       real conversations with highlights, transcript, data and summary
-tests/         policy, engine, API, validators, locations (offline, deterministic)
+tests/         policy, engine, API, validators, locations, eval datasets (offline, deterministic)
+evals/         extraction and conversation evals against the real models, with committed results
 docs/          process design, decision log, ADRs, live testing log
 ```
 

@@ -97,6 +97,8 @@ asked for it, combine it with the known first name.
 exam pending, expired, being renewed). Spain says "carnet (de conducir)", Mexico "licencia (de manejo)". \
 A hedged or vague reply ("más o menos", "depende", "creo que sí") is not an answer: null. A "no" or \
 "in_progress" ends the screening, so only use them when the candidate clearly says so.
+- license_type: "car", "motorbike" or "both", only if they say which ("de coche", "carnet B" = car; \
+"de moto", "A", "A1", "A2" = motorbike). Owning a car is not a licence type. Evidence field: drivers_license.
 - location_text: the place they name as where they would deliver or live, verbatim. Fill it \
 whenever they say where they live or want to deliver, including when they answer which zone or \
 neighbourhood. Places mentioned for another reason (where they worked or studied before, a trip) \

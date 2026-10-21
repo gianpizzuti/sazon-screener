@@ -87,13 +87,13 @@
   tags: [license]
   asked: drivers_license
   msg: "sí, de coche"
-  expect: {drivers_license: "yes"}
+  expect: {drivers_license: "yes", license_type: car}
 
 - id: lic_moto_a2
   tags: [license]
   asked: drivers_license
   msg: "tengo el A2 de moto"
-  expect: {drivers_license: "yes"}
+  expect: {drivers_license: "yes", license_type: motorbike}
 
 - id: lic_mx
   tags: [license, mexico]
@@ -132,7 +132,7 @@
   asked: drivers_license
   conv: en
   msg: "yes, car license"
-  expect: {drivers_license: "yes"}
+  expect: {drivers_license: "yes", license_type: car}
   lang: en
 
 - id: lic_bike_only
@@ -547,6 +547,7 @@
   expect:
     full_name: "Tom Becker"
     drivers_license: "yes"
+    license_type: motorbike
     location_text: present
     location_city_id: valencia
     location_outside_service_area: {one_of: [false, null]}
@@ -815,6 +816,7 @@
   asked: drivers_license
   msg: "sí, tengo carnet y coche propio, vale?"
   expect: {drivers_license: "yes"}
+  ignore: [license_type]
   variant: es-ES
 
 - id: var_mexico
@@ -892,3 +894,13 @@
   asked: drivers_license
   msg: "qué va, nunca me lo he sacado"
   expect: {drivers_license: "no"}
+
+- id: hold_licence_type_at_recap
+  tags: [holdout, license, correction]
+  stage: confirming
+  known: {name: Laura Gómez, licence: "yes", city: Málaga, availability: weekends, schedule: evening, experience_months: "24", start_date: "2026-10-26"}
+  agent: "Antes de terminar, revisa tus datos: Laura Gómez · carnet: sí · Málaga (Teatinos) · fines de semana · noche · 2 años (Glovo) · empieza el lunes 26/10. ¿Está todo correcto?"
+  msg: "todo bien, solo que mi carnet es de moto"
+  expect: {license_type: motorbike}
+  ignore: [drivers_license]
+

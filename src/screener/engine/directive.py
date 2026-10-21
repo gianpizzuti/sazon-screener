@@ -55,6 +55,7 @@ class Directive(BaseModel):
     zone_city: str | None = None
     remaining_questions: int = 0
     unchanged: list[str] = Field(default_factory=list)  # restated values at the recap
+    recap_updated: bool = False  # the recap follows a correction: its title says so
     tone: Literal["normal", "simplify", "reassuring"] = "normal"
     outcome: Outcome | None = None
     outcome_place: str | None = None

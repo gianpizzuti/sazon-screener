@@ -45,6 +45,7 @@ class Evidence(BaseModel):
 class Extracted(BaseModel):
     full_name: str | None
     drivers_license: LicenseStatus | None
+    license_type: Literal["car", "motorbike", "both"] | None
     location_text: str | None
     location_city_id: str | None
     location_zone: str | None
