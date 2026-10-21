@@ -2,6 +2,8 @@
 
 **Status:** design, not built. The API it builds on exists today; what is missing is marked **(to build)**.
 
+**API spec:** [`ats-api.yaml`](ats-api.yaml) (OpenAPI 3.1, validated with `openapi-spec-validator`; paste it into editor.swagger.io to browse it). This document explains the choices behind it.
+
 Grupo Sazón's recruiters already work in an applicant tracking system (ATS). The screener should feel like part of it: an application in the ATS starts a screening within seconds, and the result comes back into the ATS without anyone copying data by hand.
 
 ## 1. Principles
@@ -89,7 +91,22 @@ Grupo Sazón's recruiters already work in an applicant tracking system (ATS). Th
 | 1 | Inbound webhook starts screenings; outbound outcome, fields and note via the ATS API | 2–3 weeks per ATS | Production |
 | 2 | Two-way stage sync, duplicate linking, erasure propagation, reconciliation | +2 weeks | Several cities, recruiters working only in the ATS |
 
-## 7. Questions for Grupo Sazón
+## 7. The API at a glance ([`ats-api.yaml`](ats-api.yaml))
+
+A public, versioned contract (`/v1`). It is deliberately separate from the internal API that the recruiter web app uses (`/api/...`), so the internal API can change freely. Every operation maps to an internal endpoint that exists today.
+
+| Direction | Operation | Purpose | Maps to (today) |
+|---|---|---|---|
+| ATS → screener | `POST /v1/screenings` | Start a screening. Idempotent on `external_ref`; links a second application by the same phone | `POST /api/conversations` |
+| ATS → screener | `GET /v1/screenings` | Polling and nightly reconciliation (`updated_since`, cursor) | `GET /api/candidates` |
+| ATS → screener | `GET /v1/screenings/{id}` · `/transcript` | Result, and the transcript behind a link (data minimisation) | `GET /api/candidates/{id}` |
+| ATS → screener | `PUT /v1/screenings/{id}/decision` | The recruiter's decision taken in the ATS; an audited override if it contradicts the bot | `PUT /api/candidates/{id}/review` |
+| ATS → screener | `POST /v1/screenings/{id}/cancel` · `DELETE /v1/screenings/{id}` | Application withdrawn · GDPR erasure | `DELETE /api/candidates/{id}` |
+| Screener → ATS | `screening.completed` · `.abandoned` · `.human_requested` · `.erased` | Outcomes, through the outbox. HMAC-signed with a timestamp, retried for 24 h, idempotent by event `id` | (to build) |
+
+Conventions: bearer API key per client; errors as `application/problem+json` (RFC 9457); `429` with `Retry-After`; only additive changes within a version.
+
+## 8. Questions for Grupo Sazón
 
 1. **ATS and access.** Which ATS, and does its API offer webhooks, custom fields and notes?
 2. **Who acts on screened-out candidates.** Do recruiters want to confirm each one, or accept automatic rejection for the objective knock-outs?

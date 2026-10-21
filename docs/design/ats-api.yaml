@@ -1,0 +1,507 @@
+openapi: 3.1.0
+info:
+  title: Sazón Screener — ATS integration API
+  version: 1.0.0-design
+  summary: Contract between an applicant tracking system (ATS) and the screening agent.
+  description: |
+    **Design only (not built).** The rationale is in `docs/design/ats-integration.md`.
+
+    - **ATS → screener**: the endpoints below start a screening, read its result, sync the
+      recruiter's decision and erase the data.
+    - **Screener → ATS**: the `webhooks` section lists the events the screener sends when a
+      screening ends.
+
+    This public, versioned contract is deliberately separate from the internal API that the
+    recruiter web app uses (`/api/...`), so the internal API can change without breaking
+    integrations. Each operation notes the internal endpoint it maps to.
+
+    Conventions:
+    - **Authentication**: a bearer API key per client, sent by the ATS adapter.
+    - **Idempotency**: creating a screening is idempotent on `external_ref`. Every webhook has
+      an event `id`, which receivers use to discard duplicates.
+    - **Errors**: `application/problem+json` (RFC 9457).
+    - **Versioning**: in the path (`/v1`). Within a version, changes are only additive (new
+      optional fields, new event types), so receivers must ignore unknown fields.
+    - **Rate limits**: `429` with `Retry-After`.
+servers:
+  - url: https://api.screener.example.com/v1
+    description: Placeholder host
+security:
+  - apiKey: []
+tags:
+  - name: screenings
+    description: Start and read screenings
+  - name: recruiter decisions
+    description: Decisions taken in the ATS
+  - name: privacy
+    description: Withdrawal and erasure
+
+paths:
+  /screenings:
+    post:
+      tags: [screenings]
+      operationId: createScreening
+      summary: Start a screening for a new application
+      description: |
+        Called when an application is created in the ATS. Sofía sends the first message within
+        seconds.
+
+        **Idempotent on `external_ref`**:
+        - the same `external_ref` with the same payload returns `200` with the existing screening;
+        - the same `external_ref` with a different payload returns `409`.
+
+        If the same phone number already has a screening in progress, the new application is
+        linked to it (`linked_to` in the response) instead of starting a second conversation.
+
+        *Maps to:* `POST /api/conversations` (adds `external_ref`, candidate contact and known data).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateScreening" }
+            example:
+              external_ref: "APP-2026-104233"
+              job_ref: "REPARTIDOR-MAD-07"
+              location_ref: "MAD-LAVAPIES"
+              country: ES
+              channel: whatsapp
+              candidate:
+                phone: "+34612345678"
+                first_name: "Lucía"
+                preferred_language: es
+              known:
+                city: Madrid
+              privacy_notice_version: "2026-09"
+      responses:
+        "201":
+          description: Screening created; the first message is on its way
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Screening" }
+        "200":
+          description: Replay of a request already accepted (same `external_ref`, same payload)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Screening" }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "422": { $ref: "#/components/responses/Invalid" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+    get:
+      tags: [screenings]
+      operationId: listScreenings
+      summary: List screenings (polling and nightly reconciliation)
+      description: |
+        For an ATS without webhooks, and for the nightly reconciliation that re-sends anything a
+        webhook may have missed. Results use cursor pagination and are ordered by `updated_at`.
+
+        *Maps to:* `GET /api/candidates`.
+      parameters:
+        - { name: updated_since, in: query, schema: { type: string, format: date-time }, description: "Only screenings changed after this instant" }
+        - { name: external_ref, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { $ref: "#/components/schemas/Status" } }
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } }
+      responses:
+        "200":
+          description: A page of screenings
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items: { type: array, items: { $ref: "#/components/schemas/Screening" } }
+                  next_cursor: { type: [string, "null"] }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /screenings/{screening_id}:
+    parameters:
+      - $ref: "#/components/parameters/ScreeningId"
+    get:
+      tags: [screenings]
+      operationId: getScreening
+      summary: Read one screening
+      description: "*Maps to:* `GET /api/candidates/{id}` (without the transcript, see below)."
+      responses:
+        "200":
+          description: The screening
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Screening" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [privacy]
+      operationId: eraseScreening
+      summary: Erase all data of a screening (GDPR)
+      description: |
+        Deletes the conversation, messages, extracted data, summary and audit events. A
+        `screening.erased` webhook confirms it.
+
+        *Maps to:* `DELETE /api/candidates/{id}`.
+      responses:
+        "204": { description: Erased }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /screenings/{screening_id}/transcript:
+    parameters:
+      - $ref: "#/components/parameters/ScreeningId"
+    get:
+      tags: [screenings]
+      operationId: getTranscript
+      summary: Read the conversation transcript
+      description: |
+        Kept out of the main payload (data minimisation): the ATS stores a link, and only users
+        with access read the transcript.
+
+        *Maps to:* the `transcript` of `GET /api/candidates/{id}`.
+      responses:
+        "200":
+          description: Messages in order
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Message" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /screenings/{screening_id}/decision:
+    parameters:
+      - $ref: "#/components/parameters/ScreeningId"
+    put:
+      tags: [recruiter decisions]
+      operationId: setDecision
+      summary: Sync the recruiter's decision taken in the ATS
+      description: |
+        The ATS adapter maps its own stages to these statuses. A decision that contradicts the
+        bot's outcome is recorded as an audited human override (for example, `interview` for a
+        screened-out candidate).
+
+        *Maps to:* `PUT /api/candidates/{id}/review`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Decision" }
+            example: { status: interview, decided_by: "marta@gruposazon.example", note: "Uses an e-bike; accepted by the client" }
+      responses:
+        "200":
+          description: Decision recorded
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Screening" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/Invalid" }
+
+  /screenings/{screening_id}/cancel:
+    parameters:
+      - $ref: "#/components/parameters/ScreeningId"
+    post:
+      tags: [privacy]
+      operationId: cancelScreening
+      summary: Stop the conversation (the application was withdrawn or closed in the ATS)
+      description: No more messages, follow-ups included. The data stays until erased or until the retention period ends.
+      responses:
+        "200":
+          description: Cancelled
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Screening" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+webhooks:
+  screening.completed:
+    post:
+      summary: The screening ended (qualified, needs review, screened out or withdrawn)
+      description: |
+        Delivery rules:
+        - Sent from a transactional outbox: at least once, with the same event `id` on every retry.
+        - Retries use exponential backoff for up to 24 h; after that the event goes to a
+          dead-letter queue, raises an alert, and is caught by the nightly reconciliation.
+        - Receivers should answer `2xx` within 10 s and do their processing asynchronously.
+
+        Each request is signed:
+        - `X-Screener-Timestamp` is the Unix time of the request;
+        - `X-Screener-Signature` is `sha256=` followed by the HMAC-SHA256 of
+          `timestamp + "." + body`, with the client's webhook secret.
+
+        Receivers must reject requests whose timestamp is more than 5 minutes old (replay protection).
+
+        A `screened_out` outcome is a recommendation: a person confirms the rejection in the
+        ATS, unless the client has opted in to automatic rejection.
+      parameters:
+        - $ref: "#/components/parameters/SignatureHeader"
+        - $ref: "#/components/parameters/TimestampHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EventEnvelope"
+                - type: object
+                  properties:
+                    type: { const: screening.completed }
+                    data: { $ref: "#/components/schemas/Screening" }
+            example:
+              id: "evt_01JB7Q8M3N2K"
+              type: screening.completed
+              created_at: "2026-10-26T09:41:07Z"
+              screening_id: "6f1c2d4e-8a1b-4c3d-9e2f-0a1b2c3d4e5f"
+              external_ref: "APP-2026-104233"
+              data:
+                id: "6f1c2d4e-8a1b-4c3d-9e2f-0a1b2c3d4e5f"
+                external_ref: "APP-2026-104233"
+                status: qualified
+                knockout_reason: null
+                needs_review: false
+                flags: []
+                data:
+                  full_name: "Lucía Fernández"
+                  license: { status: "yes", type: car }
+                  location: { city: Madrid, city_id: madrid, zone: Centro, country: ES, in_service_area: true }
+                  availability: [part_time, weekends]
+                  schedule: [afternoon, evening]
+                  experience: { months: 8, platforms: [Glovo] }
+                  start_date: "2026-10-26"
+                summary:
+                  headline: "Lucía Fernández · Madrid (Centro) · part-time + weekends · 8 months Glovo · starts 26/10"
+                  text: "Qualified: valid car licence, delivers in Madrid Centro, part-time and weekends, afternoons and evenings, 8 months with Glovo, can start Monday 26 October."
+                  concerns: []
+                  candidate_questions: []
+                open_questions: []
+                talent_pool_consent: null
+                language: es
+                transcript_url: "https://app.screener.example.com/candidates/6f1c2d4e-8a1b-4c3d-9e2f-0a1b2c3d4e5f"
+                created_at: "2026-10-26T09:31:12Z"
+                updated_at: "2026-10-26T09:41:07Z"
+      responses:
+        "2XX": { description: Received. Any other status is retried }
+  screening.abandoned:
+    post:
+      summary: No reply after the last follow-up (includes the stage where the candidate stopped)
+      parameters:
+        - $ref: "#/components/parameters/SignatureHeader"
+        - $ref: "#/components/parameters/TimestampHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EventEnvelope"
+                - type: object
+                  properties:
+                    type: { const: screening.abandoned }
+                    data: { $ref: "#/components/schemas/Screening" }
+      responses:
+        "2XX": { description: Received }
+  screening.human_requested:
+    post:
+      summary: The candidate asked to talk to a person (sent at once, so a recruiter can reach out)
+      parameters:
+        - $ref: "#/components/parameters/SignatureHeader"
+        - $ref: "#/components/parameters/TimestampHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EventEnvelope"
+                - type: object
+                  properties:
+                    type: { const: screening.human_requested }
+                    data: { $ref: "#/components/schemas/Screening" }
+      responses:
+        "2XX": { description: Received }
+  screening.erased:
+    post:
+      summary: Confirms an erasure (requested through the API, by the candidate, or by the retention policy)
+      parameters:
+        - $ref: "#/components/parameters/SignatureHeader"
+        - $ref: "#/components/parameters/TimestampHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EventEnvelope"
+                - type: object
+                  properties:
+                    type: { const: screening.erased }
+                    data:
+                      type: object
+                      required: [reason]
+                      properties:
+                        reason: { type: string, enum: [api_request, candidate_request, retention_policy] }
+      responses:
+        "2XX": { description: Received }
+
+components:
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: One key per client, stored in a secret manager and rotated without downtime (two active keys during a rotation).
+
+  parameters:
+    ScreeningId:
+      name: screening_id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    SignatureHeader:
+      name: X-Screener-Signature
+      in: header
+      required: true
+      schema: { type: string, examples: ["sha256=5d41402abc4b2a76b9719d911017c592"] }
+    TimestampHeader:
+      name: X-Screener-Timestamp
+      in: header
+      required: true
+      schema: { type: integer, description: Unix seconds }
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+      content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } }
+    NotFound:
+      description: No such screening (or it was erased)
+      content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } }
+    Conflict:
+      description: This `external_ref` already exists with a different payload
+      content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } }
+    Invalid:
+      description: The request is well-formed JSON but breaks a rule (e.g. a phone number not in E.164)
+      content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } }
+    RateLimited:
+      description: Too many requests; retry after the given number of seconds
+      headers:
+        Retry-After: { schema: { type: integer } }
+      content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } }
+
+  schemas:
+    CreateScreening:
+      type: object
+      required: [external_ref, country, channel, candidate, privacy_notice_version]
+      properties:
+        external_ref: { type: string, maxLength: 128, description: "The ATS application id: the idempotency key" }
+        job_ref: { type: string, description: The ATS job or requisition id }
+        location_ref: { type: string, description: The restaurant applied to; mapped to a service area in the client's configuration }
+        country: { type: string, enum: [ES, MX], description: "Sets Spain or Mexico Spanish from the first message" }
+        channel: { type: string, enum: [whatsapp, web, voice], default: whatsapp }
+        candidate:
+          type: object
+          required: [phone]
+          properties:
+            phone: { type: string, pattern: "^\\+[1-9]\\d{6,14}$", description: E.164 }
+            first_name: { type: string }
+            email: { type: string, format: email }
+            preferred_language: { type: string, enum: [es, en] }
+        known:
+          type: object
+          description: Data the application already has. It is not asked again, but the candidate confirms it at the recap.
+          properties:
+            full_name: { type: string }
+            city: { type: string }
+        privacy_notice_version: { type: string, description: Version of the privacy notice shown in the application form }
+
+    Status:
+      type: string
+      description: |
+        `screened_out` = a knock-out failed (no licence, licence in progress, out of area).
+        It is a recommendation for a person to confirm, not a rejection.
+      enum: [in_progress, awaiting_reply, qualified, needs_review, screened_out, withdrawn, abandoned, cancelled]
+
+    Screening:
+      type: object
+      required: [id, external_ref, status, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        external_ref: { type: string }
+        status: { $ref: "#/components/schemas/Status" }
+        knockout_reason: { type: [string, "null"], enum: [no_license, license_in_progress, out_of_area, null] }
+        needs_review: { type: boolean, description: "True when a person must look at it: an unclear knock-out answer, a request for a person, a late start, abusive language" }
+        flags: { type: array, items: { type: string, examples: [human_requested, late_start, unclear_field, recap_not_confirmed] } }
+        data: { $ref: "#/components/schemas/ScreeningData" }
+        summary: { $ref: "#/components/schemas/Summary" }
+        open_questions: { type: array, items: { type: string }, description: Candidate questions the approved FAQ did not answer }
+        talent_pool_consent: { type: [boolean, "null"] }
+        decision: { $ref: "#/components/schemas/Decision" }
+        linked_to: { type: [string, "null"], format: uuid, description: Set when this application was linked to an earlier screening of the same phone number }
+        language: { type: string, enum: [es, en] }
+        transcript_url: { type: string, format: uri }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+
+    ScreeningData:
+      type: object
+      description: "The structured screening result. Fields are null until collected. Every value was quoted from the candidate's own words before being stored."
+      properties:
+        full_name: { type: [string, "null"] }
+        license:
+          type: object
+          properties:
+            status: { type: [string, "null"], enum: ["yes", "no", in_progress, null] }
+            type: { type: [string, "null"], enum: [car, motorbike, both, null] }
+        location:
+          type: object
+          properties:
+            city: { type: [string, "null"] }
+            city_id: { type: [string, "null"] }
+            zone: { type: [string, "null"] }
+            country: { type: [string, "null"], enum: [ES, MX, null] }
+            in_service_area: { type: [boolean, "null"] }
+        availability: { type: array, items: { type: string, enum: [full_time, part_time, weekends] } }
+        schedule: { type: array, items: { type: string, enum: [morning, afternoon, evening, flexible] } }
+        experience:
+          type: object
+          properties:
+            months: { type: [integer, "null"], minimum: 0 }
+            platforms: { type: array, items: { type: string } }
+        start_date: { type: [string, "null"], format: date }
+
+    Summary:
+      type: [object, "null"]
+      description: Written for the recruiter after the conversation ends
+      properties:
+        headline: { type: string }
+        text: { type: string }
+        concerns: { type: array, items: { type: string } }
+        candidate_questions: { type: array, items: { type: string } }
+
+    Decision:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [new, contacted, interview, hired, rejected] }
+        decided_by: { type: string }
+        note: { type: string, maxLength: 1000 }
+        is_override: { type: boolean, readOnly: true, description: "True when it contradicts the bot's outcome; recorded in the audit trail" }
+
+    Message:
+      type: object
+      required: [role, text, at]
+      properties:
+        role: { type: string, enum: [agent, candidate] }
+        text: { type: string }
+        at: { type: string, format: date-time }
+
+    EventEnvelope:
+      type: object
+      required: [id, type, created_at, screening_id, external_ref]
+      properties:
+        id: { type: string, description: "Unique per event, identical on retries: the receiver's idempotency key" }
+        type: { type: string }
+        created_at: { type: string, format: date-time }
+        screening_id: { type: string, format: uuid }
+        external_ref: { type: string }
+
+    Problem:
+      type: object
+      description: RFC 9457 problem details
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
