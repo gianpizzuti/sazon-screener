@@ -1,6 +1,6 @@
 # ADR 0008: API-first, with a Streamlit recruiter tool as one of its clients
 
-**Status:** accepted
+**Status:** accepted. The UI choice (Streamlit) is superseded by [ADR 0009](0009-react-web-app.md); the API-first architecture stands.
 
 ## Context
 Recruiters need to see the queue, open a candidate, understand why the agent did what it did, record their own decision and see whether the funnel works. The same data and actions will be needed by other clients: a WhatsApp webhook, a voice agent, the client's ATS. There were five days to the deadline, and the backend is what the technical evaluation focuses on.

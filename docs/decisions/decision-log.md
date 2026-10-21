@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (108 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (122 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -134,7 +134,7 @@ Every decision taken while building the agent, large or small (108 so far), with
 |---|---|---|---|---|
 | D82 | One API, two route groups: `/conversations` (channels) and `/candidates` + `/analytics` (recruiters) | Channels and recruiters are different audiences with different contracts; OpenAPI docs come for free (ATS starting point) | One flat API | `api/app.py` |
 | D83 | The dashboard is a client of the API, never of the database | Logic in one place; the API is exercised by real use; it is how an ATS would integrate | Streamlit reading SQLite directly: one process fewer | `dashboard/client.py` |
-| D84 | Streamlit for the recruiter UI | Built in a day, all Python, every line explainable; the evaluation focuses on the backend | React: nicer and multi-user ready, much more code. Swappable later without touching the core | ADR 0008 |
+| D84 | ~~Streamlit for the recruiter UI~~ (superseded by D109) | Built in a day, all Python, every line explainable; the evaluation focuses on the backend | React: nicer and multi-user ready, much more code. Swappable later without touching the core | ADR 0008 |
 | D85 | UI in English; AI summaries in the recruiters' language (Spanish, configurable) | The take-home is reviewed in English; summaries are for the client's recruiters | Spanish UI (right for production) | `dashboard/`, `client.yaml` |
 | D86 | Human decisions in a separate `reviews` table | What the bot decided and what a person decided must never be confused | A status column on the conversation | `repository.ReviewRow` |
 | D87 | A recruiter can override any automated outcome; overrides are logged as `human_override` events and counted in analytics | Human oversight (EU AI Act, GDPR art. 22) made visible in the product | Bot decisions as final | `Repository.set_review` |
@@ -164,3 +164,22 @@ Every decision taken while building the agent, large or small (108 so far), with
 | D106 | Demo clock: moves time forward for the whole system (persisted offset), hour by hour, running the scheduler at each step; only with `SCREENER_DEMO_TOOLS=1` | Shows days of follow-ups in seconds without faking data | Rewriting timestamps (history would lie) | `engine/clock.py`, `/demo/*` |
 | D107 | "Awaiting reply" (silent > 2 h or follow-ups under way) is distinct from "abandoned"; completion rate = finished / (finished + abandoned) | Waiting candidates are not lost yet and must not count as failures | One "abandoned" bucket after 2 h (D89, superseded) | `views.display_status`, `analytics.py` |
 | D108 | Opening "Try the agent" doesn't create a conversation; only the button does | Visiting the page was creating empty candidates that then received follow-ups | Auto-start | `dashboard/views/chat.py` |
+
+## Recruiter web app (see [ADR 0009](0009-react-web-app.md))
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D109 | React + TypeScript + Vite + Tailwind + Motion replace Streamlit | Interactions, motion and theming a recruiter-facing product needs; Streamlit reruns the page and isolates charts in iframes | Keeping Streamlit with CSS hacks. More code to own (~1.5k lines TS) | `web/` |
+| D110 | The API moves under `/api`; FastAPI serves the built app at `/` | One process in production, no route collisions with client-side pages, API versioning room | Separate static server + CORS | `api/app.py` |
+| D111 | `web/dist` is not committed; `make install` builds it when Node is available | Build artefacts in git go stale | Committing dist (works without Node). Trade-off: Node 18+ needed for the UI | `Makefile`, `.gitignore` |
+| D112 | Semantic colour tokens for light and dark, every text/surface pair checked for AA contrast | Accessible by construction; one muted token was darkened (4.44 → 5.14:1) | Tailwind colours used ad hoc | `web/src/index.css` |
+| D113 | Primary buttons use a darker orange (#c2410c) than the brand accent (#ea580c) | White on #ea580c is 3.56:1 (fails AA); on #c2410c it is 5.18:1 | Brand orange everywhere | `--brand-btn` |
+| D114 | Data colour (validated blue) separate from brand colour (orange) | Charts stay colour-blind safe and never compete with actions | Orange bars | `--series` |
+| D115 | Charts built in-house; bars animate `scaleX` when they scroll into view | Exactly the effect asked for, no layout shift, full control over accessibility | A chart library | `components/charts.tsx` |
+| D116 | Every chart has keyboard focus, a screen-reader summary and a table alternative | Charts alone are not accessible | Charts only | `BarList`, `DataTable` |
+| D117 | Motion respects `prefers-reduced-motion` (MotionConfig + CSS) | Some users get sick from motion; the data must be readable immediately | Always animating | `main.tsx`, `index.css` |
+| D118 | Enter-only page transitions | An exit animation (AnimatePresence + router) left pages stuck invisible (found in browser testing) | Exit + enter transitions | `Layout.tsx` |
+| D119 | Route-level code splitting | The pipeline (landing page) loads first, other pages on demand | One bundle (> 500 kB) | `main.tsx` |
+| D120 | The screening checklist ticks live in "Try the agent" | Makes slot filling visible: the clearest demo of what the agent does | A JSON dump | `pages/TryAgent.tsx` |
+| D121 | Template fallback rate excludes follow-ups | Reminders are templates by design; counting them made the AI look 10% less healthy than it was | Counting every template | `analytics.py` |
+| D122 | TypeScript 5, not 7 | 7 is the new native compiler; with a deadline, the established toolchain wins | Latest major | `web/package.json` |

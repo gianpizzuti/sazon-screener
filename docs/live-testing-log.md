@@ -48,3 +48,11 @@ The Understand system prompt is served from cache (`cache_read_input_tokens` ≈
 |---|---|---|---|---|
 | L13 | A Spanish candidate answered just "full time" and the agent switched to English, then back at the next message (found while generating demo data) | The function-word check gives no opinion on loanwords, so the model decided alone | A switch now needs the check to confirm, or ≥ 4 words without signal (D97) | `TestLanguageLoanwords` (3 tests); demo conversation regenerated: no switch |
 | L14 | "no, pero puedo conducir ebike" → disqualified (manual test) | Working as specified: a licence is a knock-out | None in code. It is real evidence for **open question #1 to the client** (are e-bikes accepted?); a recruiter can override the outcome (D87) | n/a |
+
+## Round 3 (2026-10-21): new web app, verified in the browser
+
+| # | What happened | Root cause | Fix | Check |
+|---|---|---|---|---|
+| L15 | Opening a candidate from the pipeline showed an empty page | AnimatePresence `mode="wait"` with a router: the exiting element rendered the new route and stayed at `opacity: 0`; the new one never mounted | Enter-only page transitions (D118) | Re-checked in the browser: every route renders |
+| L16 | "Template fallback rate 10%" with zero model errors | Follow-up reminders (templates by design) were counted as fallbacks | Excluded from the metric (D121) | Metric reads 0% with no errors |
+| L17 | Muted text at 4.44:1 on the page background | Token chosen by eye | Computed contrast for every token pair; darkened to 5.14:1 (D112) | Script output in the commit history |
