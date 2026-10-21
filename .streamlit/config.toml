@@ -1,0 +1,11 @@
+[theme]
+primaryColor = "#eb6834"   # Grupo Sazón accent (buttons, selection); charts use their own validated colour
+
+[client]
+toolbarMode = "minimal"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false
