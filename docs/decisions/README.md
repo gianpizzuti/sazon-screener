@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Every decision, small ones included, is listed in the **[decision log](decision-log.md)** (192 entries). The records below are the deep-dives on the important ones.
+Every decision, small ones included, is listed in the **[decision log](decision-log.md)** (197 entries). The records below are the deep-dives on the important ones.
 
 Each record says what was decided, the alternatives considered, the trade-offs accepted and **when the decision should be revisited**.
 

@@ -15,6 +15,10 @@ options:
   drivers_license:
     es: ["Sí", "No"]
     en: ["Yes", "No"]
+  license_type:
+    es-MX: ["Carro", "Moto", "Los dos"]
+    es: ["Coche", "Moto", "Los dos"]
+    en: ["Car", "Motorbike", "Both"]
   availability:
     es-ES: ["Jornada completa", "Media jornada", "Fines de semana"]
     es-MX: ["Tiempo completo", "Medio tiempo", "Fines de semana"]
@@ -69,6 +73,10 @@ issue:
   name_needs_surname:
     es: "Gracias. ¿Y tu apellido?"
     en: "Thanks. And your surname?"
+  license_type:
+    es-MX: "Perfecto. ¿Es de carro, de moto o de los dos?"
+    es: "Perfecto. ¿Es de coche, de moto o de los dos?"
+    en: "Great. Is it for a car, a motorbike or both?"
   location_ambiguous:
     es: "¿A cuál te refieres: {options}?"
     en: "Which one do you mean: {options}?"
@@ -178,6 +186,10 @@ outcome:
   license_in_progress:
     es: "Gracias, {name}. Necesitamos que ya tengas el carnet en vigor para empezar. ¿Quieres que guardemos tus datos para escribirte cuando lo tengas?"
     en: "Thanks, {name}. You need to already hold a valid license to start. Would you like us to keep your details and contact you once you have it?"
+  license_type_not_accepted:
+    es: "Gracias, {name}. Para este puesto hace falta otro tipo de carnet, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
+    es-MX: "Gracias, {name}. Para este puesto se necesita otro tipo de licencia, así que por ahora no podemos continuar. ¿Quieres que guardemos tus datos para avisarte de futuras vacantes?"
+    en: "Thanks, {name}. This role needs a different type of licence, so we can't continue right now. Would you like us to keep your details and let you know about future openings?"
   out_of_area:
     es: "Gracias, {name}. Ahora mismo no repartimos en {place}. ¿Quieres que guardemos tus datos para avisarte si abrimos en tu zona?"
     en: "Thanks, {name}. We don't deliver in {place} yet. Would you like us to keep your details and let you know if we open in your area?"

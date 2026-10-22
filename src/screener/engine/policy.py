@@ -163,6 +163,15 @@ class ScreeningPolicy:
 
     # ------------------------------------------------------------------ flow
     def _next_step(self, state, directive, events, captured) -> Decision:
+        if self._should_ask_license_type(state):
+            # "sí" alone: one follow-up, like the surname after a first name. Never a loop: an
+            # unclear answer moves on, and the licence itself stays valid.
+            state.license_type_asked = True
+            state.current_field = FieldName.DRIVERS_LICENSE
+            directive.kind = "ask"
+            directive.ask_field = FieldName.DRIVERS_LICENSE
+            directive.ask_issue = "license_type"
+            return self._done(state, directive, events, captured)
         nxt = self.next_field(state)
         if nxt is None:
             self._set_stage(state, Stage.CONFIRMING, events)
@@ -240,6 +249,8 @@ class ScreeningPolicy:
             return DisqualificationReason.NO_LICENSE
         if data.license_status == LicenseStatus.IN_PROGRESS:
             return DisqualificationReason.LICENSE_IN_PROGRESS
+        if data.license_status == LicenseStatus.YES and not self.cfg.license.accepts(data.license_type):
+            return DisqualificationReason.LICENSE_TYPE
         if data.in_service_area is False:
             return DisqualificationReason.OUT_OF_AREA
         return None
@@ -258,7 +269,7 @@ class ScreeningPolicy:
             state.add_flag("recap_not_confirmed", message[:160])
             events.append(Event("recap_not_confirmed", {"rounds": state.recap_rounds}))
             return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events)
-        changed = {e.payload.get("field") for e in events if e.type == "field_corrected"}
+        changed = {e.payload.get("field") for e in events if e.type in ("field_corrected", "field_refined")}
         restated = [f for f in captured if f not in changed]
         directive.recap_updated = bool(changed)
         if captured and len(restated) == len(captured):
@@ -452,6 +463,11 @@ class ScreeningPolicy:
                 elif x.license_type:
                     data.license_type = LicenseType(x.license_type)
 
+            if status == LicenseStatus.YES and not self.cfg.license.accepts(x.license_type) \
+                    and not may_knock_out(FieldName.DRIVERS_LICENSE):
+                # a type the client doesn't accept, mentioned in passing: keep the licence, ask the type in its turn
+                x = x.model_copy(update={"license_type": None})
+                events.append(Event("knockout_deferred", {"field": FieldName.DRIVERS_LICENSE, "value": "license_type"}))
             if status != LicenseStatus.YES and not may_knock_out(FieldName.DRIVERS_LICENSE):
                 events.append(Event("knockout_deferred", {"field": FieldName.DRIVERS_LICENSE, "value": status.value}))
             else:
@@ -581,11 +597,24 @@ class ScreeningPolicy:
         events.append(Event("field_valid", {"field": name}))
 
     def _detect_corrections(self, state, before: ScreeningData, captured, events) -> None:
+        """A changed value is a correction; a missing detail filled in ("es de moto" after "sí")
+        is a refinement: the audit trail must not suggest the candidate got something wrong."""
         for name in captured:
             old = tuple(getattr(before, a) for a in FIELD_ATTRS[name])
             new = tuple(getattr(state.data, a) for a in FIELD_ATTRS[name])
-            if any(v not in (None, []) for v in old) and old != new:
-                events.append(Event("field_corrected", {"field": name}))
+            if all(v in (None, []) for v in old) or old == new:
+                continue
+            refined = all(o in (None, []) or o == n for o, n in zip(old, new))
+            events.append(Event("field_refined" if refined else "field_corrected", {"field": name}))
+
+    def _should_ask_license_type(self, state) -> bool:
+        return (
+            self.cfg.license.ask_type
+            and state.stage == Stage.SCREENING
+            and state.data.license_status == LicenseStatus.YES
+            and state.data.license_type is None
+            and not state.license_type_asked
+        )
 
     @staticmethod
     def _set_stage(state, stage: Stage, events) -> None:

@@ -70,6 +70,21 @@ class FollowUpSettings(BaseModel):
     scheduler_interval_seconds: int = 60
 
 
+class LicenseSettings(BaseModel):
+    """Which driving licences the client accepts (a knock-out) and whether recruiters need the type."""
+
+    accepted_types: list[Literal["car", "motorbike"]] = Field(default_factory=lambda: ["car", "motorbike"])
+    ask_type: bool = True  # "sí" alone: ask once whether it is for car, motorbike or both
+
+    def accepts(self, license_type: str | None) -> bool:
+        if license_type is None or license_type == "both":
+            return True
+        return license_type in self.accepted_types
+
+    def describe(self) -> str:
+        return " or ".join({"car": "car", "motorbike": "motorbike"}[t] for t in self.accepted_types)
+
+
 class SchedulingSettings(BaseModel):
     """Interview booking in the chat, in each area's local time."""
 
@@ -141,6 +156,7 @@ class ClientConfig(BaseModel):
     models: ModelSettings
     followups: FollowUpSettings = Field(default_factory=FollowUpSettings)
     scheduling: SchedulingSettings = Field(default_factory=SchedulingSettings)
+    license: LicenseSettings = Field(default_factory=LicenseSettings)
     next_steps: dict[str, str]
     platforms: list[Platform]
     service_areas: list[ServiceArea]

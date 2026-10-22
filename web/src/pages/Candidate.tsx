@@ -260,7 +260,7 @@ function Bubble({ message, index }: { message: Message; index: number }) {
 
 const EVENT_LABELS: Record<string, string> = {
   conversation_started: "Conversation started", stage_changed: "Stage changed", field_valid: "Answer accepted", field_invalid: "Answer rejected",
-  field_unclear: "Field marked unclear", field_corrected: "Answer corrected", field_reopened: "Field reopened", knockout: "Knock-out",
+  field_unclear: "Field marked unclear", field_corrected: "Answer corrected", field_refined: "Answer completed", field_reopened: "Field reopened", knockout: "Knock-out",
   completed: "Screening finished", question_answered: "Question answered (FAQ)", question_unanswered: "Question not in FAQ", language_switched: "Language switched",
   human_requested: "Asked for a person", followup_sent: "Reminder sent", resumed: "Candidate came back", abandoned: "Marked abandoned",
   review_status_changed: "Recruiter status changed", human_override: "Human override", sentiment: "Sentiment", talent_pool: "Talent pool answer",

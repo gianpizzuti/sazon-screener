@@ -34,6 +34,7 @@ Outcome = Literal[
     "no_license",
     "license_in_progress",
     "out_of_area",
+    "license_type_not_accepted",
     "withdrawn",
     "terminated",
 ]

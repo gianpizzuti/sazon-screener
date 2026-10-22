@@ -28,7 +28,7 @@ def to_location(policy, state):
     """Answer name and licence, so the next question is the location."""
     to_screening(policy, state)
     say(policy, state, "Ana López", full_name="Ana López")
-    d, _ = say(policy, state, "sí", drivers_license="yes")
+    d, _ = say(policy, state, "sí, de coche", drivers_license="yes", license_type="car")
     assert d.ask_field == FieldName.LOCATION
 
 
@@ -51,7 +51,10 @@ class TestHappyPath:
         d, _ = say(policy, state, "Ana López", full_name="Ana López")
         assert d.ask_field == FieldName.DRIVERS_LICENSE and d.candidate_name == "Ana"
         d, _ = say(policy, state, "sí", drivers_license="yes")
-        assert d.ask_field == FieldName.LOCATION
+        assert (d.ask_field, d.ask_issue) == (FieldName.DRIVERS_LICENSE, "license_type")  # "sí" alone: car or motorbike?
+        d, events = say(policy, state, "de moto", license_type="motorbike")
+        assert d.ask_field == FieldName.LOCATION and state.data.license_type == "motorbike"
+        assert "field_refined" in events and "field_corrected" not in events  # completing is not correcting
         d, _ = say(policy, state, "Madrid", location_text="Madrid")
         assert d.ask_field == FieldName.ZONE  # optional, asked once because only the city was given
         d, _ = say(policy, state, "Chamberí", location_text="Chamberí")
@@ -77,7 +80,8 @@ class TestHappyPath:
         message = "Hola, soy Ana López, tengo carnet y vivo en Getafe"
         d, _ = say(policy, state, message, full_name="Ana López", drivers_license="yes", location_text="Getafe")
         assert state.stage == Stage.SCREENING
-        assert d.ask_field == FieldName.AVAILABILITY  # zone came with Getafe
+        # zone came with Getafe; "tengo carnet" said no type, so that is the one thing asked next
+        assert (d.ask_field, d.ask_issue) == (FieldName.DRIVERS_LICENSE, "license_type")
         assert state.data.zone == "Getafe" and state.data.city == "Madrid"
         assert len(d.acknowledge) == 4
 
@@ -99,6 +103,49 @@ class TestHappyPath:
         state.current_field = FieldName.EXPERIENCE_YEARS
         say(policy, state, "nunca he repartido", experience_months=0)
         assert state.field(FieldName.EXPERIENCE_PLATFORMS).status == FieldStatus.SKIPPED
+
+
+class TestLicenceType:
+    def test_an_unclear_type_moves_on_without_harming_the_licence(self, policy, state):
+        to_licence(policy, state)
+        say(policy, state, "sí", drivers_license="yes")
+        d, _ = say(policy, state, "no sé, la normal", intents=("other",))
+        assert d.ask_field == FieldName.LOCATION and state.data.license_type is None  # asked once, never a loop
+        assert state.field(FieldName.DRIVERS_LICENSE).status == FieldStatus.VALID and not state.flags
+
+    def test_a_type_said_with_the_licence_needs_no_follow_up(self, policy, state):
+        to_licence(policy, state)
+        d, _ = say(policy, state, "sí, de coche", drivers_license="yes", license_type="car")
+        assert d.ask_field == FieldName.LOCATION
+
+    def test_a_client_that_only_takes_cars_screens_out_motorbike_licences(self, config, state):
+        from screener.config import LicenseSettings
+        from screener.engine.policy import ScreeningPolicy
+
+        cars_only = ScreeningPolicy(config.model_copy(update={"license": LicenseSettings(accepted_types=["car"])}))
+        to_licence(cars_only, state)
+        say(cars_only, state, "sí", drivers_license="yes")
+        d, _ = say(cars_only, state, "solo de moto", license_type="motorbike")
+        assert (state.stage, d.outcome) == (Stage.DISQUALIFIED, "license_type_not_accepted")
+        assert state.disqualification_reason == "license_type_not_accepted"
+
+    def test_both_types_pass_a_cars_only_client(self, config, state):
+        from screener.config import LicenseSettings
+        from screener.engine.policy import ScreeningPolicy
+
+        cars_only = ScreeningPolicy(config.model_copy(update={"license": LicenseSettings(accepted_types=["car"])}))
+        to_licence(cars_only, state)
+        d, _ = say(cars_only, state, "sí, de coche y de moto", drivers_license="yes", license_type="both")
+        assert state.stage == Stage.SCREENING and d.ask_field == FieldName.LOCATION
+
+    def test_no_follow_up_when_the_client_does_not_need_the_type(self, config, state):
+        from screener.config import LicenseSettings
+        from screener.engine.policy import ScreeningPolicy
+
+        quiet = ScreeningPolicy(config.model_copy(update={"license": LicenseSettings(ask_type=False)}))
+        to_licence(quiet, state)
+        d, _ = say(quiet, state, "sí", drivers_license="yes")
+        assert d.ask_field == FieldName.LOCATION
 
 
 class TestKnockouts:
@@ -352,7 +399,7 @@ class TestRecapAndCorrections:
         # found by the conversation eval: "tengo carnet de moto, no de coche" twice, the recap still said "Sí"
         complete_until_recap(policy, state)
         d, events = say(policy, state, "es de moto", intents=("correction",), license_type="motorbike")
-        assert state.data.license_type == "motorbike" and "field_corrected" in events
+        assert state.data.license_type == "motorbike" and "field_refined" in events
         assert d.kind == "recap" and d.recap_updated
 
     def test_the_recap_hands_over_to_a_person_after_three_unconfirmed_replies(self, policy, state):

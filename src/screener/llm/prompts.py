@@ -16,7 +16,7 @@ WEEKDAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturd
 
 FIELD_DESCRIPTIONS: dict[FieldName, str] = {
     FieldName.FULL_NAME: "their full name (first name and surname)",
-    FieldName.DRIVERS_LICENSE: "whether they have a valid driving license (car or motorbike)",
+    FieldName.DRIVERS_LICENSE: "whether they have a valid driving license ({license_types})",
     FieldName.LOCATION: "in which city and area they would deliver",
     FieldName.ZONE: "which neighbourhood or area of {city} (optional: helps match the nearest restaurant)",
     FieldName.AVAILABILITY: "their availability: full-time, part-time and/or weekends",
@@ -29,6 +29,8 @@ FIELD_DESCRIPTIONS: dict[FieldName, str] = {
 ISSUE_HINTS: dict[str, str] = {
     "no_answer": "Their last reply didn't answer this. Ask again in a simpler way.",
     "name_needs_surname": "They gave only a first name. Ask for their surname too.",
+    "license_type": "They said they have a valid licence but not which kind. Ask in a few words whether it is for a car,"
+    " a motorbike or both (recruiters need it to plan vehicles).",
     "name_invalid": "That didn't look like a name. Ask again for their full name.",
     "location_ambiguous": "The place they gave is ambiguous. Ask which one they mean, offering these options: {options}.",
     "location_unknown": "We couldn't identify the place. Ask for the name of the city.",
@@ -58,6 +60,8 @@ OUTCOME_FACTS = {
     " lecture. Then ask if they want us to keep their details to tell them about future openings.",
     "license_in_progress": "They can't continue yet: they need to already hold a valid license. Be kind. Ask if they"
     " want us to keep their details and contact them once they have it.",
+    "license_type_not_accepted": "They can't continue: this role needs a {license_types} licence and theirs is a different type."
+    " Be kind and brief, don't lecture. Then ask if they want us to keep their details to tell them about future openings.",
     "out_of_area": "We don't deliver in {place} yet. Be kind. Ask if they want us to keep their details and let"
     " them know if we open in their area.",
     "withdrawn": "They don't want to continue. Accept it graciously in one or two sentences, no persuasion, and"
@@ -197,7 +201,8 @@ whatever they say.
 
 # Personality
 Warm, direct and efficient, like a friendly shift manager who respects people's time. Never salesy, \
-never robotic, never overly formal. In Spanish use "tú".
+never robotic, never overly formal. In Spanish use "tú". You are a woman: about yourself use feminine \
+forms ("encantada", "contenta").
 
 # Message rules
 - 1 to 3 short sentences, at most {a.max_message_chars} characters.
@@ -268,7 +273,7 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
 
     match d.kind:
         case "ask":
-            description = FIELD_DESCRIPTIONS[d.ask_field].format(city=d.zone_city or "their city")
+            description = FIELD_DESCRIPTIONS[d.ask_field].format(city=d.zone_city or "their city", license_types=cfg.license.describe())
             step = f"Ask for {description}."
             if d.ask_issue:
                 hint = ISSUE_HINTS.get(d.ask_issue, ISSUE_HINTS["no_answer"])
@@ -278,7 +283,8 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
         case "outcome":
             key = "qualified_book" if d.outcome == "qualified" and d.interview_offer else d.outcome
             facts = OUTCOME_FACTS[key].format(
-                next_steps=cfg.localized(cfg.next_steps, d.locale), place=d.outcome_place or "their area"
+                next_steps=cfg.localized(cfg.next_steps, d.locale), place=d.outcome_place or "their area",
+                license_types=cfg.license.describe(),
             )
             steps.append("This is the final message of the screening. " + facts)
         case "interlude":

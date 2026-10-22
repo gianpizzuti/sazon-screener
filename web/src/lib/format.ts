@@ -6,6 +6,7 @@ export const REASONS: Record<string, string> = {
   no_license: "No driver's license",
   license_in_progress: "License in progress",
   out_of_area: "Outside service area",
+  license_type_not_accepted: "Licence type not accepted",
 };
 export const FIELD_LABELS: Record<string, string> = {
   full_name: "Name",

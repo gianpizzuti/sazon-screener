@@ -57,7 +57,7 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
 | Field | Stored as | Valid when | If invalid or ambiguous | Knock-out |
 |---|---|---|---|---|
 | Full name | string | at least first name + surname, no digits | ask for the surname once, then accept and flag | no |
-| Driver's licence | bool (+ `in_progress`) | clear yes / no | "más o menos" → ask for a clear yes/no | **yes** (no, or still getting it) |
+| Driver's licence | status (yes / no / in progress) + type (car / motorbike / both) | clear yes / no; type one of the client's accepted types | "más o menos" → ask for a clear yes/no; "sí" alone → one follow-up for the type | **yes** (no, still getting it, or a type the client doesn't accept) |
 | City / zone | canonical city id + zone | matches a configured service area (aliases, accents, typos) | ambiguous ("Ciutat Vella": Barcelona or Valencia?) → offer options; unknown → ask for the city | **yes** (outside the service area) |
 | Availability | set of `full_time`, `part_time`, `weekends` | at least one; not full-time *and* part-time | contradiction → ask which one | no |
 | Preferred schedule | set of `morning`, `afternoon`, `evening`, `flexible` | at least one (all three = flexible) | ask again with options | no |
@@ -132,7 +132,7 @@ Knock-outs are objective rules set by the client, explained to the candidate and
 | Question for the client | Assumption made |
 |---|---|
 | Are bicycles / e-bikes accepted? No licence is needed for them, so this knock-out could reject valid candidates. | No: licence required, as specified |
-| Which licence types count (car, motorbike, moped)? Is an own vehicle required? | Any valid car or motorbike licence; vehicle not asked |
+| Which licence types count (car, motorbike, moped)? Is an own vehicle required? | Configurable per client (`license.accepted_types`); for Grupo Sazón both, and the type is asked once if the candidate only says "sí". Vehicle not asked |
 | Do foreign licences count (e.g. Venezuelan, Colombian)? Spain recognises some only for six months of residency. Found by the conversation eval. | The agent never judges validity: an unsure answer ends in *needs review* and the question is logged for the recruiter |
 | Is "zone" where the candidate lives or where they can work? | Where they can work |
 | Who contacts qualified candidates, and how fast? | They book the interview in the chat; a recruiter only steps in if no offered time fits |

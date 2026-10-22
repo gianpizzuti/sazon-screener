@@ -27,6 +27,12 @@ followups:
   whatsapp_window_hours: 24
   scheduler_interval_seconds: 60
 
+# Driving licence (a knock-out). Which types count is the client's decision (process design §8):
+# Grupo Sazón accepts both; recruiters want to know which one, so "sí" alone gets one follow-up.
+license:
+  accepted_types: [car, motorbike]
+  ask_type: true
+
 # Interview booking in the chat, right after qualifying (local time of each area).
 # Illustrative: the real calendar comes from the client (docs/process-design.md §8).
 scheduling:

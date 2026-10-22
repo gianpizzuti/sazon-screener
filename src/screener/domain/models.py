@@ -111,6 +111,7 @@ class DisqualificationReason(StrEnum):
     NO_LICENSE = "no_license"
     LICENSE_IN_PROGRESS = "license_in_progress"
     OUT_OF_AREA = "out_of_area"
+    LICENSE_TYPE = "license_type_not_accepted"  # e.g. the client needs cars and they only drive motorbikes
 
 
 class ScreeningData(BaseModel):
@@ -197,6 +198,7 @@ class ConversationState(BaseModel):
     pending_questions: list[str] = Field(default_factory=list)
     abuse_strikes: int = 0
     recap_rounds: int = 0  # replies to the recap that did not confirm it
+    license_type_asked: bool = False  # the one follow-up "car, motorbike or both?" was asked
     interview: InterviewState | None = None
     application: Application = Field(default_factory=Application)
     post_close_replies: int = 0  # courtesy replies sent after the screening ended

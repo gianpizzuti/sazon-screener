@@ -188,6 +188,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
             ],
             "faq": [{"id": f.id, "question": f.question} for f in cfg.faq],
             "followups": cfg.followups.model_dump(exclude={"scheduler_interval_seconds"}),
+            "license": cfg.license.model_dump(),
             "thresholds": {
                 "max_failed_attempts": cfg.agent.max_failed_attempts,
                 "late_start_days": cfg.agent.late_start_days,
