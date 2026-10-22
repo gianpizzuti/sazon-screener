@@ -23,7 +23,7 @@ Requirements: Python 3.11+, Node 18+ (for the web app), an Anthropic API key.
 make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
-make test                    # offline, no API key: 151 tests of the product + 238 checks of the eval datasets
+make test                    # offline, no API key: 158 tests of the product + 238 checks of the eval datasets
 ```
 
 Optional:
