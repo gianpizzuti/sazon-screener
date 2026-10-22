@@ -532,16 +532,21 @@ class ScreeningPolicy:
     def _apply_location(self, state, x: Extracted, quote: str, captured, events, solicited: bool = True) -> None:
         data = state.data
         raw = x.location_text or quote
+        if data.city_id and state.field(FieldName.LOCATION).status == FieldStatus.VALID:
+            match = self.matcher.match(raw)
+            if not (match.status == "resolved" and match.city_id != data.city_id):
+                zone = (self.matcher.zone_in_city(data.city_id, raw) or self.matcher.group_in_city(data.city_id, raw)
+                        or self.matcher.group_in_city(data.city_id, x.location_zone))
+                if zone:
+                    # A zone or part of the city they already chose ("Norte", "prefiero sur"): a preference,
+                    # never a knock-out, so it can change at any moment (found in manual testing).
+                    data.zone = zone
+                    self._mark_valid(state, FieldName.ZONE, quote, captured, events)
+                    return
         if not solicited and state.field(FieldName.LOCATION).status == FieldStatus.VALID:
             # Another place mentioned in passing does not move a location the candidate already gave.
             events.append(Event("unsolicited_value_ignored", {"field": FieldName.LOCATION, "text": raw}))
             return
-        if state.current_field == FieldName.ZONE and data.city_id and not self.matcher.zone_in_city(data.city_id, raw):
-            group = self.matcher.group_in_city(data.city_id, raw) or self.matcher.group_in_city(data.city_id, x.location_zone)
-            if group:  # "Norte": a part of the city offered as a button
-                data.zone = group
-                self._mark_valid(state, FieldName.ZONE, quote, captured, events)
-                return
         match = self.matcher.match(raw)
         city_id, zone = None, None
         if match.status == "resolved":

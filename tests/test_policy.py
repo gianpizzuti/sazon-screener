@@ -124,6 +124,23 @@ class TestZoneChoice:
         d, _ = say(policy, state, "Cualquier zona", intents=("other",))
         assert state.field(FieldName.ZONE).status == FieldStatus.SKIPPED and d.ask_field == FieldName.AVAILABILITY
 
+    def test_changing_the_zone_later_is_applied(self, policy, state):
+        # found in manual testing: "ok, entonces prefiero sur" at the availability question was ignored
+        to_location(policy, state)
+        say(policy, state, "Madrid, centro", location_text="Madrid, centro")
+        assert state.data.zone == "Centro"
+        d, events = say(policy, state, "ok, entonces prefiero sur. y puedo trabajar el fin de semana",
+                        location_text="sur", availability=["weekends"])
+        assert state.data.zone == "Sur" and "field_corrected" in events and state.data.availability == ["weekends"]
+        assert d.ask_field == FieldName.SCHEDULE
+
+    def test_another_city_mentioned_later_is_still_ignored(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid, centro", location_text="Madrid, centro")
+        state.current_field = FieldName.EXPERIENCE_YEARS
+        _, events = say(policy, state, "un año en Glovo en Valencia", experience_months=12, location_text="Valencia")
+        assert state.data.city_id == "madrid" and "unsolicited_value_ignored" in events
+
     def test_which_zones_is_answered_from_the_configuration(self, policy, state):
         # found in manual testing: "¿qué barrios son disponibles?" got "esa información no la tengo"
         to_location(policy, state)
