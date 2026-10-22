@@ -212,9 +212,7 @@ export const api = {
   regenerateSummary: (id: string) => request<Summary>("POST", `/candidates/${id}/summary`),
   analytics: () => request<Analytics>("GET", "/analytics"),
   config: () => request<WorkspaceConfig>("GET", "/config"),
-  /** `job`/`area_id`: what the application says; in production they come from the ATS. */
-  start: (language: "es" | "en", ad?: { job: string; area_id: string } | null) =>
-    request<TurnResult>("POST", "/conversations", { channel: "web", language, ...(ad ?? {}) }),
+  start: (language: "es" | "en") => request<TurnResult>("POST", "/conversations", { channel: "web", language }),
   send: (id: string, text: string) =>
     request<TurnResult>("POST", `/conversations/${id}/messages?debug=true`, { text }),
   demoClock: async (): Promise<DemoClock | null> => {

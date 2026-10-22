@@ -64,7 +64,7 @@ The point of an eval is the changes it causes. Each row below was found by an ev
 | The recap loop: the same recap re-sent up to 5 times; 2 of 13 candidates gave up | 3/13 conversations | The recap always ends: explain, complete, or hand over after 3 rounds | D154 |
 | The agent told a candidate what to say to pass a knock-out | 1/13 | Never coach an answer | D156 |
 | A question in the final message was dropped | 2/13 | The final message answers it | D155 |
-| Neutral Spanish read as Mexican by Spanish candidates (language 3.9/5) | 7/13 | Country from the application → 4.8/5 | D157 |
+| Neutral Spanish scored low on "language" (3.9/5) | 7/13 | First fixed with the application's country (4.8/5). Then revised: the rubric itself asked for regional vocabulary, so the evidence was circular. Now one wording before the city | D157 → D192 |
 | Recap had no licence type; a corrected recap did not say it was updated | 2/13 | Licence type recorded and shown; "he actualizado tus datos" | D162, D163 |
 
 ## Method, and why
@@ -82,4 +82,5 @@ The point of an eval is the changes it causes. Each row below was found by an ev
 - **Small datasets.** 118 messages and 13 conversations are enough to find failure modes and compare models, but not to quote precise error rates. The next step is to label a sample of real conversations from the pilot.
 - **Mixed prompt versions.** The Sonnet and Opus extraction runs used the prompt before the last two clarifications; the report shows each run's prompt fingerprint.
 - **An LLM judge has biases**, for example leniency and preferring longer answers. The controls bound this but do not remove it. For a client, a recruiter would also rate a sample by hand.
+- **A judge scores what its rubric asks.** Its "language" criterion rewarded the regional vocabulary I had chosen, so the 3.9 → 4.8 gain was circular and the change was rolled back (D192). Rubric criteria must come from the client or from candidates, not from the design being judged.
 - **Total eval spend across all rounds: about $4.5**, including the repeated sampling.

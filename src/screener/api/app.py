@@ -33,7 +33,7 @@ class StartRequest(BaseModel):
     channel: str = "web"
     language: Literal["es", "en"] | None = None
     # What the application says (in production, from the ATS): the job ad and its restaurant.
-    country: Literal["ES", "MX"] | None = None  # sets Spain/Mexico Spanish and the timezone from the first message
+    country: Literal["ES", "MX"] | None = None  # sets the candidate's timezone until they name a city
     job: str | None = Field(default=None, max_length=200)
     area_id: str | None = None
 

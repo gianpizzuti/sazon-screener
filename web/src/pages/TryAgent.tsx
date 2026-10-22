@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { ArrowRight, Brain, Check, Hourglass, Languages, ListChecks, MessageCircle, Plus, Quote, Send } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -43,11 +43,6 @@ export function TryAgentPage() {
   const client = useQueryClient();
   const [session, setSession] = useState<Session | null>(loadSession);
   const [language, setLanguage] = useState<"es" | "en">("es");
-  // The job ad applied to: in production the ATS sends it with the application.
-  const { data: workspace } = useQuery({ queryKey: ["config"], queryFn: api.config });
-  const ads = (workspace?.service_areas ?? []).map((area) => ({ area_id: area.id, job: `Repartidor/a · ${area.interview_place ?? `Grupo Sazón ${area.name}`}` }));
-  const [adId, setAdId] = useState<string>("madrid");
-  const ad = ads.find((x) => x.area_id === adId) ?? null;
   const [text, setText] = useState("");
   const [pending, setPending] = useState<string | null>(null);
   const { data: detail } = useCandidate(session?.id);
@@ -57,7 +52,7 @@ export function TryAgentPage() {
   useEffect(() => { scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }, [detail?.transcript.length, pending]);
 
   const start = useMutation({
-    mutationFn: () => api.start(language, ad),
+    mutationFn: () => api.start(language),
     onSuccess: (r) => { setSession({ id: r.conversation_id, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: null, silent: false }); client.invalidateQueries({ queryKey: ["candidates"] }); },
   });
   const send = useMutation({
@@ -87,18 +82,9 @@ export function TryAgentPage() {
     <div>
       <PageHeader
         title="Try the agent"
-        subtitle="You are the candidate. Pick the job ad you apply to: in production the ATS sends it with the application. This web chat calls the same API a WhatsApp webhook or a voice agent would. Go silent and use the demo clock to see the reminders."
+        subtitle="You are the candidate. This web chat calls the same API a WhatsApp webhook or a voice agent would. Go silent and use the demo clock to see the reminders."
         aside={
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="flex items-center gap-2 text-sm text-ink-2">
-              <span className="whitespace-nowrap">Applying to</span>
-              <select value={adId} onChange={(e) => setAdId(e.target.value)} aria-label="Job ad the candidate applies to (sent by the ATS in production)"
-                title="In production the ATS sends the job ad with the application: Sofía knows the country (Spain or Mexico Spanish, timezone) from the first message."
-                className="h-10 max-w-[260px] cursor-pointer rounded-xl border border-line bg-surface px-3 text-sm text-ink focus:border-focus focus:outline-none">
-                {ads.map((x) => <option key={x.area_id} value={x.area_id}>{x.job}</option>)}
-                <option value="">Generic link (no restaurant)</option>
-              </select>
-            </label>
+          <div className="flex items-center gap-2">
             <div role="radiogroup" aria-label="Opening language" className="flex rounded-xl bg-surface p-1 ring-1 ring-line">
               {(["es", "en"] as const).map((l) => (
                 <button key={l} role="radio" aria-checked={language === l} onClick={() => setLanguage(l)}

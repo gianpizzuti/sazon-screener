@@ -93,9 +93,9 @@ class ScreeningEngine:
         """Open a conversation. The first message is a fixed template (as WhatsApp requires
         for business-initiated messages) disclosing that the agent is an AI.
 
-        The application (from the ATS: the job ad and its restaurant) tells the country before
-        the candidate says a word: Spain or Mexico Spanish from the first question, and reminders
-        in the right timezone. Without it: neutral Spanish until the city is known."""
+        The application (from the ATS: the job ad and its restaurant) tells the country before the
+        candidate says a word. It only sets the timezone, so reminders never go out at night in
+        Mexico; the wording is the same for everyone until the candidate names a city (D192)."""
         area = self.cfg.area(area_id)
         country = (country or (area.country if area else "") or "").upper() or None
         state = ConversationState(
@@ -103,7 +103,6 @@ class ScreeningEngine:
             client_id=self.cfg.id,
             channel=channel,
             language=language or self.cfg.agent.default_language,
-            spanish_variant={"ES": "es-ES", "MX": "es-MX"}.get(country or ""),
             application=Application(job=job, area_id=area.id if area else None, country=country),
             created_at=self.clock(),
         )

@@ -93,7 +93,7 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
 - Language is detected on every message, and the agent replies in the language of the latest message.
 - **Hysteresis:** "ok", "sí", numbers, names and platform names never trigger a switch.
 - Mixed messages ("Sí, I have a license") → reply in the dominant language.
-- **Spanish variant:** once the city is known (or the wording makes it obvious) vocabulary adapts: *carnet de conducir / coche* in Spain, *licencia de manejo / carro* in Mexico.
+- **Spanish variant:** before the city is known, one wording for both countries (*carnet de conducir, coche o moto*). Once the city is known (or the wording makes it obvious) vocabulary adapts: *carnet de conducir / coche* in Spain, *licencia de manejo / carro* in Mexico.
 
 **Other cases handled**
 - Several messages in a row: the channel waits a few seconds before processing them together.

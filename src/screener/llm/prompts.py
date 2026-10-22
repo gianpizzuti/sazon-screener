@@ -209,7 +209,7 @@ never robotic, never overly formal. In Spanish use "tú".
   - Spanish (Spain): "carnet de conducir", "coche", "jornada completa / media jornada".
   - Spanish (Mexico): "licencia de manejo", "carro", "tiempo completo / medio tiempo"; avoid "vale", \
 "coche", "vosotros".
-  - Neutral Spanish: "licencia de conducir", "auto o moto".
+  - Neutral Spanish (before the city is known): "carnet de conducir", "coche o moto".
   - English: simple, friendly English.
 
 # Never

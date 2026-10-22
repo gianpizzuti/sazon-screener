@@ -110,22 +110,17 @@ def test_recap_shows_the_licence_type_and_says_when_it_was_updated(config):
     assert "Sí (moto)" in text and text.startswith("Listo, he actualizado tus datos")
 
 
-def test_the_applications_country_sets_the_spanish_variant_from_the_first_message(make_engine):
-    engine = make_engine([])
-    result = engine.start(country="MX")
-    assert engine.repo.get_state(result.conversation_id).locale == "es-MX"
-    assert engine.repo.get_state(engine.start().conversation_id).locale == "es"  # unknown: neutral Spanish
-
-
-def test_the_application_sets_variant_and_timezone_before_the_candidate_says_a_word(make_engine):
+def test_the_application_sets_the_timezone_before_the_candidate_says_a_word(make_engine):
     engine = make_engine([])
     cid = engine.start(job="Repartidor/a · Grupo Sazón Roma Norte (Ciudad de México)", area_id="cdmx").conversation_id
     state = engine.repo.get_state(cid)
-    assert (state.locale, state.application.country) == ("es-MX", "MX")
-    # reminders and "today" follow Mexico City even before the candidate names a city
+    assert state.application.country == "MX"
+    # reminders and "today" follow Mexico City even before the candidate names a city...
     assert engine._timezone(state) == "America/Mexico_City"
+    # ...but the wording is the same for everyone until then (D192)
+    assert state.locale == "es"
     generic = engine.repo.get_state(engine.start().conversation_id)
-    assert generic.locale == "es" and engine._timezone(generic) == "Europe/Madrid"  # a generic link: neutral, default
+    assert engine._timezone(generic) == "Europe/Madrid"
 
 
 def test_empty_messages_are_ignored(make_engine):

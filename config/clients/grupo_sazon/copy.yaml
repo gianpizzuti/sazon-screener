@@ -38,7 +38,7 @@ ask:
   drivers_license:
     es-ES: "¿Tienes carnet de conducir en vigor (coche o moto)?"
     es-MX: "¿Tienes licencia de manejo vigente (carro o moto)?"
-    es: "¿Tienes licencia de conducir en vigor (auto o moto)?"
+    es: "¿Tienes carnet de conducir en vigor (coche o moto)?"
     en: "Do you have a valid driver's license (car or motorbike)?"
   location:
     es: "¿En qué ciudad y zona te gustaría repartir?"
@@ -132,7 +132,7 @@ recap:
     en: "Is everything correct?"
   labels:
     full_name: {es: Nombre, en: Name}
-    drivers_license: {es-ES: Carnet de conducir, es-MX: Licencia de manejo, es: Licencia de conducir, en: Driver's license}
+    drivers_license: {es-ES: Carnet de conducir, es-MX: Licencia de manejo, es: Carnet de conducir, en: Driver's license}
     location: {es: Zona, en: Area}
     availability: {es: Disponibilidad, en: Availability}
     schedule: {es: Turno, en: Shift}
@@ -173,10 +173,10 @@ outcome:
   no_license:
     es-ES: "Gracias, {name}. Para este puesto es imprescindible tener carnet de conducir en vigor, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
     es-MX: "Gracias, {name}. Para este puesto es indispensable tener licencia de manejo vigente, así que por ahora no podemos continuar. ¿Quieres que guardemos tus datos para avisarte de futuras vacantes?"
-    es: "Gracias, {name}. Para este puesto es imprescindible tener licencia de conducir en vigor, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
+    es: "Gracias, {name}. Para este puesto es imprescindible tener carnet de conducir en vigor, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
     en: "Thanks, {name}. A valid driver's license is required for this role, so we can't continue right now. Would you like us to keep your details and let you know about future openings?"
   license_in_progress:
-    es: "Gracias, {name}. Necesitamos que ya tengas la licencia en vigor para empezar. ¿Quieres que guardemos tus datos para escribirte cuando la tengas?"
+    es: "Gracias, {name}. Necesitamos que ya tengas el carnet en vigor para empezar. ¿Quieres que guardemos tus datos para escribirte cuando lo tengas?"
     en: "Thanks, {name}. You need to already hold a valid license to start. Would you like us to keep your details and contact you once you have it?"
   out_of_area:
     es: "Gracias, {name}. Ahora mismo no repartimos en {place}. ¿Quieres que guardemos tus datos para avisarte si abrimos en tu zona?"
@@ -250,7 +250,7 @@ interview:
   booked:
     es-ES: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario."
     es-MX: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu licencia de manejo. Si no puedes ir, escríbeme y buscamos otro horario."
-    es: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu licencia de conducir. Si no puedes ir, escríbeme y buscamos otro horario."
+    es: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario."
     en: "Done! Your interview is on {when} at {place}. Please bring your driving licence. If you can't make it, message me and we'll find another time."
   handoff:
     es-ES: "Vale. Una persona del equipo de selección te escribirá para encontrar un horario que te venga bien."

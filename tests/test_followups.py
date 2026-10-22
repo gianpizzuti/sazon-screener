@@ -44,7 +44,7 @@ def test_first_followup_after_two_hours_repeats_the_pending_question(timed):
     assert engine.run_followups() == []
     clock["now"] = T0 + timedelta(hours=2)
     [sent] = engine.run_followups()
-    assert sent["attempt"] == 1 and sent["text"].startswith("¿Seguimos, Ana? Solo quedan 6 preguntas.") and "licencia" in sent["text"]
+    assert sent["attempt"] == 1 and sent["text"].startswith("¿Seguimos, Ana? Solo quedan 6 preguntas.") and "carnet de conducir" in sent["text"]
     last = engine.repo.messages(cid)[-1]
     assert last.meta["kind"] == "followup" and last.meta["whatsapp_template_required"] is False  # within 24 h
 
