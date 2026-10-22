@@ -75,6 +75,11 @@ class TurnAnalysis(BaseModel):
     question: str | None
     faq_id: str | None
     correction_target: EvidenceField | None
+    chosen_option: int | None = Field(
+        default=None,
+        description="If the agent's last message listed numbered options (e.g. interview times) and the "
+        "candidate picked one, its number (1 = first). Null if none fits or it is unclear.",
+    )
     extracted: Extracted
     evidence: list[Evidence]
 
@@ -90,6 +95,7 @@ class TurnAnalysis(BaseModel):
             question=None,
             faq_id=None,
             correction_target=None,
+            chosen_option=None,
             extracted=Extracted.empty(),
             evidence=[],
         )

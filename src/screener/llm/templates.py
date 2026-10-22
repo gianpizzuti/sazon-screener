@@ -63,8 +63,9 @@ class TemplateResponder:
 
     def outcome_text(self, request: SpeakRequest) -> str:
         d = request.directive
+        key = "qualified_book" if d.outcome == "qualified" and d.interview_offer else d.outcome
         return self.copy.text(
-            f"outcome.{d.outcome}",
+            f"outcome.{key}",
             d.locale,
             name=d.candidate_name,
             place=d.outcome_place or "",

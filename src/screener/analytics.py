@@ -16,13 +16,15 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from screener.domain.models import FIELD_ORDER, OPTIONAL_FIELDS, ConversationState, FieldName, FieldStatus, utcnow
+from screener.domain.models import FIELD_ORDER, OPTIONAL_FIELDS, ConversationState, FieldName, FieldStatus, InterviewStatus, utcnow
 from screener.storage.repository import Repository
 from screener.views import display_status
 
 DONE = {FieldStatus.VALID, FieldStatus.UNCLEAR, FieldStatus.SKIPPED}
 FUNNEL_FIELDS = [f for f in FIELD_ORDER if f not in OPTIONAL_FIELDS and f != FieldName.EXPERIENCE_PLATFORMS]
 FINISHED = {"qualified", "needs_review", "disqualified", "withdrawn", "terminated"}
+# Messages that are templates by design (precision or WhatsApp rules): never counted as fallbacks.
+TEMPLATE_KINDS = {"greeting", "recap", "followup", "interview_offer", "interview_booked", "interview_handoff"}
 
 
 class FunnelStep(BaseModel):
@@ -53,6 +55,10 @@ class Analytics(BaseModel):
     candidates_recovered: int          # replied after a follow-up
     recovery_rate: float | None        # recovered / nudged: does re-engagement work?
     recovered_by_followup: dict[str, int]
+    interviews_offered: int            # qualified candidates who were offered interview times
+    interviews_booked: int             # ... and booked one in the chat
+    booking_rate: float | None         # booked / offered
+    scheduling_handoffs: int           # no time fitted: a recruiter finds one
 
 
 def compute(repo: Repository, now: datetime | None = None) -> Analytics:
@@ -73,6 +79,10 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
     for name in FUNNEL_FIELDS:
         funnel.append(FunnelStep(step=_label(name), count=sum(1 for s in states if s.field(name).status in DONE)))
     funnel.append(FunnelStep(step="Qualified", count=totals["qualified"]))
+    booked = sum(1 for s in states if s.interview and s.interview.status == InterviewStatus.BOOKED)
+    offered = sum(1 for s in states if s.interview)
+    if offered:
+        funnel.append(FunnelStep(step="Interview booked", count=booked))
 
     drop_off = Counter(
         _label(s.current_field) if s.current_field else "Intro"
@@ -86,7 +96,7 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
         if s.completed_at and statuses[s.id] in FINISHED
     ]
 
-    agent_sources = [m.meta.get("source") for m in messages if m.role == "agent" and m.meta.get("kind") not in ("greeting", "recap", "followup")]  # templates by design are not fallbacks
+    agent_sources = [m.meta.get("source") for m in messages if m.role == "agent" and m.meta.get("kind") not in TEMPLATE_KINDS]  # templates by design are not fallbacks
     by_type = Counter(e.type for e in events)
     nudged = {e.conversation_id for e in events if e.type == "followup_sent"}
     recovered = [e for e in events if e.type == "resumed" and e.payload.get("after_followups", 0) > 0]
@@ -118,6 +128,10 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
         candidates_recovered=len({e.conversation_id for e in recovered}),
         recovery_rate=_ratio(len({e.conversation_id for e in recovered}), len(nudged)),
         recovered_by_followup=dict(sorted(Counter(f"After follow-up {e.payload['after_followups']}" for e in recovered).items())),
+        interviews_offered=offered,
+        interviews_booked=booked,
+        booking_rate=_ratio(booked, offered),
+        scheduling_handoffs=sum(1 for s in states if s.interview and s.interview.status == InterviewStatus.HANDED_OFF),
     )
 
 

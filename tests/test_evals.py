@@ -12,7 +12,7 @@ from screener.llm.schemas import Evidence, Extracted, TurnAnalysis
 
 CASES = load_cases()
 CASE_KEYS = {"id", "tags", "asked", "stage", "conv", "known", "agent", "msg", "expect", "ignore",
-             "lang", "clear", "intents", "forbid", "faq", "sentiment", "variant", "target"}
+             "lang", "clear", "intents", "forbid", "faq", "sentiment", "variant", "target", "choice"}
 
 
 def _first(value):
@@ -35,6 +35,7 @@ def perfect_analysis(case: dict) -> TurnAnalysis:
         question=None,
         faq_id=case.get("faq"),
         correction_target=case.get("target"),
+        chosen_option=case.get("choice"),
         extracted=Extracted.model_validate({**Extracted.empty().model_dump(), **values}),
         evidence=[Evidence(field=g, quote=case["msg"]) for g in sorted(groups)],
     )

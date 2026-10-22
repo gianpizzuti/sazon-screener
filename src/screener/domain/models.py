@@ -144,6 +144,27 @@ class FieldState(BaseModel):
     evidence: str | None = None  # the candidate's own words the value came from
 
 
+class InterviewStatus(StrEnum):
+    OFFERED = "offered"          # options sent, waiting for the candidate's choice
+    BOOKED = "booked"
+    HANDED_OFF = "handed_off"    # no option fitted (or none left): a recruiter finds a time
+
+
+class InterviewState(BaseModel):
+    """Interview booking after a candidate qualifies. Slot times are UTC (naive), like every
+    stored datetime; they are shown in the area's timezone."""
+
+    status: InterviewStatus
+    area_id: str
+    place: str
+    timezone: str = "Europe/Madrid"                         # the area's, to show times locally
+    offered: list[datetime] = Field(default_factory=list)   # the options currently on screen
+    history: list[datetime] = Field(default_factory=list)   # every option ever offered (not offered twice)
+    offers: int = 0                                         # rounds of options sent
+    slot: datetime | None = None                            # the booked start
+    reminded: bool = False                                  # options re-shown once after an unclear reply
+
+
 class Flag(BaseModel):
     code: str
     detail: str = ""
@@ -168,6 +189,7 @@ class ConversationState(BaseModel):
     pending_questions: list[str] = Field(default_factory=list)
     abuse_strikes: int = 0
     recap_rounds: int = 0  # replies to the recap that did not confirm it
+    interview: InterviewState | None = None
     post_close_replies: int = 0  # courtesy replies sent after the screening ended
     followups_sent: int = 0          # follow-ups since the candidate's last message
     last_followup_at: datetime | None = None
@@ -203,4 +225,4 @@ class ConversationState(BaseModel):
 
 
 # Flags that put a candidate in the recruiter's review queue.
-REVIEW_FLAGS = {"human_requested", "late_start", "abuse", "update_after_close", "recap_not_confirmed"}
+REVIEW_FLAGS = {"human_requested", "late_start", "abuse", "update_after_close", "recap_not_confirmed", "scheduling_needed"}

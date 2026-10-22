@@ -25,6 +25,7 @@ export const FLAG_LABELS: Record<string, string> = {
   update_after_close: "New info after close",
   unclear_field: "Unclear answer",
   recap_not_confirmed: "Summary not confirmed",
+  scheduling_needed: "Needs an interview time",
 };
 
 export function initials(name: string | null): string {
@@ -44,6 +45,16 @@ export function shortDate(value: string | null): string {
   if (!value) return "–";
   const d = new Date(`${value.slice(0, 10)}T12:00:00`);
   return d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" });
+}
+
+/** An interview time in the area's own timezone ("Thu 22 Oct · 16:00"). */
+export function interviewTime(at: string | null, timeZone: string | null): string {
+  if (!at) return "–";
+  const d = parseUtc(at);
+  const opts = { timeZone: timeZone ?? "Europe/Madrid" } as const;
+  const day = d.toLocaleDateString("en-GB", { ...opts, weekday: "short", day: "2-digit", month: "short" });
+  const time = d.toLocaleTimeString("en-GB", { ...opts, hour: "2-digit", minute: "2-digit" });
+  return `${day} · ${time}`;
 }
 
 /** Server timestamps are naive UTC. */

@@ -167,6 +167,9 @@ outcome:
   qualified:
     es: "¡Genial, {name}! Cumples los requisitos. {next_steps}"
     en: "Great, {name}! You meet the requirements. {next_steps}"
+  qualified_book:
+    es: "¡Genial, {name}! Cumples los requisitos para pasar a la entrevista, y puedes elegir el horario ahora mismo."
+    en: "Great, {name}! You meet the requirements for an interview, and you can choose the time right now."
   no_license:
     es-ES: "Gracias, {name}. Para este puesto es imprescindible tener carnet de conducir en vigor, así que ahora mismo no podemos seguir. ¿Quieres que guardemos tus datos para avisarte de futuras ofertas?"
     es-MX: "Gracias, {name}. Para este puesto es indispensable tener licencia de manejo vigente, así que por ahora no podemos continuar. ¿Quieres que guardemos tus datos para avisarte de futuras vacantes?"
@@ -227,3 +230,31 @@ misc:
   resume:
     es: "¡Qué bien que sigas interesado/a! Seguimos donde lo dejamos."
     en: "Glad you're still interested! Let's pick up where we left off."
+
+# Interview booking after qualifying: fixed templates, because dates and times must be exact.
+interview:
+  offer:
+    es: "Elige día y hora para tu entrevista (unos 20 minutos) en {place}:\n{options}"
+    en: "Pick a day and time for your interview (about 20 minutes) at {place}:\n{options}"
+  offer_again:
+    es: "Sin problema. Estas son otras opciones en {place}:\n{options}"
+    en: "No problem. Here are other options at {place}:\n{options}"
+  reminder:
+    es: "¿Cuál de estos horarios te viene mejor?\n{options}"
+    es-MX: "¿Cuál de estos horarios te funciona mejor?\n{options}"
+    en: "Which of these times works best for you?\n{options}"
+  taken:
+    es: "Lo siento, ese horario se acaba de ocupar. Estas son otras opciones en {place}:\n{options}"
+    en: "Sorry, that time was just taken. Here are other options at {place}:\n{options}"
+  none_option: {es: "Ninguno me va bien", es-MX: "Ninguno me funciona", en: "None of these work"}
+  booked:
+    es-ES: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario."
+    es-MX: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu licencia de manejo. Si no puedes ir, escríbeme y buscamos otro horario."
+    es: "¡Listo! Tu entrevista es el {when} en {place}. Trae tu licencia de conducir. Si no puedes ir, escríbeme y buscamos otro horario."
+    en: "Done! Your interview is on {when} at {place}. Please bring your driving licence. If you can't make it, message me and we'll find another time."
+  handoff:
+    es-ES: "Vale. Una persona del equipo de selección te escribirá para encontrar un horario que te venga bien."
+    es-MX: "Va. Una persona del equipo de reclutamiento te escribirá para encontrar un horario que te funcione."
+    es: "De acuerdo. Una persona del equipo de selección te escribirá para encontrar un horario que te venga bien."
+    en: "Okay. Someone from the recruiting team will message you to find a time that works for you."
+

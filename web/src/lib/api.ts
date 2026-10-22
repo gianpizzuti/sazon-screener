@@ -35,6 +35,10 @@ export interface CandidateRow {
   headline: string | null;
   followups_sent: number;
   next_followup_at: string | null;
+  interview_status: "offered" | "booked" | "handed_off" | null;
+  interview_at: string | null;
+  interview_place: string | null;
+  interview_timezone: string | null;
   created_at: string;
   last_activity: string;
   priority: number;
@@ -139,6 +143,10 @@ export interface Analytics {
   candidates_nudged: number;
   candidates_recovered: number;
   recovery_rate: number | null;
+  interviews_offered: number;
+  interviews_booked: number;
+  booking_rate: number | null;
+  scheduling_handoffs: number;
   recovered_by_followup: Record<string, number>;
 }
 

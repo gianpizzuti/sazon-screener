@@ -35,6 +35,11 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
                                                     │ confirmed
                                                     ▼
                     QUALIFIED  (or NEEDS REVIEW if a knock-out field stayed unclear)
+                                                    ▼
+                    INTERVIEW: 3 free times (buttons) ──none fits ×2──► a recruiter finds a time
+                                                    │ picks one
+                                                    ▼
+                                    BOOKED (confirmation: "bring your licence")
 ```
 
 **Branching principles**
@@ -100,7 +105,7 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
 
 | Outcome | Trigger | Candidate hears | Recruiter sees |
 |---|---|---|---|
-| **Qualified** | All knock-outs passed, data confirmed | Clear next step (recruiter contact within 48 h) | Qualified queue with summary and data |
+| **Qualified** | All knock-outs passed, data confirmed | Picks an interview time in the chat right away (three options; a recruiter steps in if none fits) | Qualified queue with summary, data and the booked interview |
 | **Qualified + flag** | A non-knock-out field stayed unclear, or a human was requested | Same as qualified | Flag with the reason |
 | **Needs review** | A knock-out field stayed unclear | "A recruiter will review your answers" | Review queue |
 | **Disqualified** | No licence / out of area | The reason, said kindly + talent-pool opt-in | Reason, recruiter can override |
@@ -130,7 +135,8 @@ Knock-outs are objective rules set by the client, explained to the candidate and
 | Which licence types count (car, motorbike, moped)? Is an own vehicle required? | Any valid car or motorbike licence; vehicle not asked |
 | Do foreign licences count (e.g. Venezuelan, Colombian)? Spain recognises some only for six months of residency. Found by the conversation eval. | The agent never judges validity: an unsure answer ends in *needs review* and the question is logged for the recruiter |
 | Is "zone" where the candidate lives or where they can work? | Where they can work |
-| Who contacts qualified candidates, and how fast? | A recruiter, within 48 h |
+| Who contacts qualified candidates, and how fast? | They book the interview in the chat; a recruiter only steps in if no offered time fits |
+| Where and when are interviews held (one restaurant per city, or each restaurant)? Is there a calendar we can read? | One restaurant per city, weekdays 10–13 and 16–19 (configuration); a calendar integration in production |
 | Pay, contract and benefits per country | FAQ uses placeholder answers to be confirmed |
 | Right to work, minimum age | Not screened, stated in the FAQ |
 | Retention period for disqualified candidates; talent-pool consent wording | Opt-in only, legal review needed |

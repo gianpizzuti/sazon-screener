@@ -29,6 +29,7 @@ class ServiceArea(BaseModel):
     restaurants: int
     aliases: list[str]
     zones: list[Zone] = Field(default_factory=list)
+    interview_place: str | None = None  # where qualified candidates are interviewed
 
 
 class Platform(BaseModel):
@@ -67,6 +68,19 @@ class FollowUpSettings(BaseModel):
     abandon_after_hours: float = 24        # silence after the last follow-up => abandoned
     whatsapp_window_hours: float = 24      # after this, WhatsApp only allows pre-approved templates
     scheduler_interval_seconds: int = 60
+
+
+class SchedulingSettings(BaseModel):
+    """Interview booking in the chat, in each area's local time."""
+
+    enabled: bool = False
+    slot_minutes: int = 30
+    weekdays: list[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4])  # 0 = Monday
+    windows: list[str] = Field(default_factory=lambda: ["10:00-13:00", "16:00-19:00"])
+    min_lead_hours: float = 18      # never tomorrow at 9 for someone who qualified at midnight
+    horizon_days: int = 7
+    offer_count: int = 3
+    max_offers: int = 2             # rounds of options before a recruiter takes over
 
 
 class ModelSettings(BaseModel):
@@ -126,6 +140,7 @@ class ClientConfig(BaseModel):
     agent: AgentSettings
     models: ModelSettings
     followups: FollowUpSettings = Field(default_factory=FollowUpSettings)
+    scheduling: SchedulingSettings = Field(default_factory=SchedulingSettings)
     next_steps: dict[str, str]
     platforms: list[Platform]
     service_areas: list[ServiceArea]

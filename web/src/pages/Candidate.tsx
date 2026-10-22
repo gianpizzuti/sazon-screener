@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import {
-  ArrowLeft, Bot, Check, ChevronDown, CircleCheck, CircleDot, CircleX, Download, Flag, Gavel, Hourglass, Languages,
+  ArrowLeft, Bot, CalendarCheck, CalendarClock, Check, ChevronDown, CircleCheck, CircleDot, CircleX, Download, Flag, Gavel, Hourglass, Languages,
   MapPin, MessageCircle, MoonStar, Quote, RefreshCw, Sparkles, Trash2, TriangleAlert, User, X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -11,7 +11,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Reveal } from "../components/charts";
 import { Button, Card, CardTitle, Chip, ErrorState, ReviewBadge, Skeleton, StatusBadge } from "../components/ui";
 import { api, type CandidateDetail, type Message, type ReviewStatus } from "../lib/api";
-import { AVAILABILITY, FIELD_LABELS, FLAG_LABELS, REASONS, SCHEDULE, ago, experience, initials, parseUtc, shortDate, titleCase, until } from "../lib/format";
+import { AVAILABILITY, FIELD_LABELS, FLAG_LABELS, REASONS, SCHEDULE, ago, experience, initials, interviewTime, parseUtc, shortDate, titleCase, until } from "../lib/format";
 import { useCandidate, useNow, useToast } from "../lib/hooks";
 
 const REVIEW: { key: ReviewStatus; label: string }[] = [
@@ -85,6 +85,28 @@ function SummaryCard({ detail }: { detail: CandidateDetail }) {
           </div>
           {s.source === "template" && <p className="mt-2 text-xs text-ink-3">The AI summary was unavailable: fallback shown.</p>}
         </div>
+      )}
+    </Card>
+  );
+}
+
+/** The interview the candidate booked in the chat (or why a person has to find a time). */
+function InterviewCard({ detail }: { detail: CandidateDetail }) {
+  const { interview_status: status, interview_at: at, interview_timezone: tz, interview_place: place } = detail.row;
+  const booked = status === "booked";
+  return (
+    <Card className={clsx(booked && "ring-1 ring-emerald-600/25")}>
+      <CardTitle icon={booked ? CalendarCheck : CalendarClock}>Interview</CardTitle>
+      {booked ? (
+        <>
+          <div className="num font-display text-2xl font-semibold text-heading">{interviewTime(at, tz)}</div>
+          <p className="mt-1 text-sm text-ink-2">{place}</p>
+          <p className="mt-3 text-xs text-ink-3">Booked by the candidate in the chat. Times are shown in the restaurant's local time.</p>
+        </>
+      ) : status === "offered" ? (
+        <p className="text-sm text-ink-2">Times offered in the chat; the candidate hasn't picked one yet.</p>
+      ) : (
+        <p className="text-sm text-ink-2">None of the offered times worked: <b className="text-ink">a recruiter needs to find a time</b> with the candidate.</p>
       )}
     </Card>
   );
@@ -244,7 +266,8 @@ const EVENT_LABELS: Record<string, string> = {
   review_status_changed: "Recruiter status changed", human_override: "Human override", sentiment: "Sentiment", talent_pool: "Talent pool answer",
   llm_error: "LLM error", guard_rejected: "Draft rejected by guard", ungrounded_value: "Ungrounded value discarded", abuse_strike: "Abusive message",
   update_after_close: "New info after close", ignored_after_close: "Ignored small talk after close", field_skipped: "Optional field skipped",
-  recap_not_confirmed: "Summary not confirmed", knockout_deferred: "Knock-out deferred (not asked yet)", unsolicited_value_ignored: "Value mentioned in passing ignored",
+  recap_not_confirmed: "Summary not confirmed", interview_offered: "Interview times offered", interview_booked: "Interview booked",
+  interview_cancelled: "Interview cancelled by the candidate", interview_handoff: "Interview: recruiter to find a time", interview_slot_taken: "Interview time taken meanwhile", knockout_deferred: "Knock-out deferred (not asked yet)", unsolicited_value_ignored: "Value mentioned in passing ignored",
 };
 
 function EraseButton({ id }: { id: string }) {
@@ -353,6 +376,7 @@ export function CandidatePage() {
           </Reveal>
         </div>
         <div className="space-y-6">
+          {detail.row.interview_status && <InterviewCard detail={detail} />}
           <DecisionCard detail={detail} />
           {(detail.flags.length > 0 || detail.pending_questions.length > 0) && (
             <Reveal>

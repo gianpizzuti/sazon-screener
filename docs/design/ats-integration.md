@@ -61,6 +61,7 @@ Grupo Sazón's recruiters already work in an applicant tracking system (ATS). Th
 | Recruiter summary (Opus) | Note on the application |
 | Flags (asked for a person, late start, unclear answer) and open questions | Tags plus a note |
 | Talent-pool consent | Consent field or tag; it decides whether the profile can be kept after rejection |
+| Interview booked in the chat (time, place) | Interview event in the ATS or the recruiter's calendar (`screening.interview_booked`) |
 | Link to the transcript in the screener | URL field. The transcript stays in the screener (data minimisation) |
 
 **Delivery: transactional outbox (to build).**
@@ -102,7 +103,7 @@ A public, versioned contract (`/v1`). It is deliberately separate from the inter
 | ATS → screener | `GET /v1/screenings/{id}` · `/transcript` | Result, and the transcript behind a link (data minimisation) | `GET /api/candidates/{id}` |
 | ATS → screener | `PUT /v1/screenings/{id}/decision` | The recruiter's decision taken in the ATS; an audited override if it contradicts the bot | `PUT /api/candidates/{id}/review` |
 | ATS → screener | `POST /v1/screenings/{id}/cancel` · `DELETE /v1/screenings/{id}` | Application withdrawn · GDPR erasure | `DELETE /api/candidates/{id}` |
-| Screener → ATS | `screening.completed` · `.abandoned` · `.human_requested` · `.erased` | Outcomes, through the outbox. HMAC-signed with a timestamp, retried for 24 h, idempotent by event `id` | (to build) |
+| Screener → ATS | `screening.completed` · `.interview_booked` · `.abandoned` · `.human_requested` · `.erased` | Outcomes, through the outbox. HMAC-signed with a timestamp, retried for 24 h, idempotent by event `id` | (to build) |
 
 Conventions: bearer API key per client; errors as `application/problem+json` (RFC 9457); `429` with `Retry-After`; only additive changes within a version.
 

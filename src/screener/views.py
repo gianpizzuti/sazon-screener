@@ -53,6 +53,10 @@ class CandidateRow(BaseModel):
     headline: str | None
     followups_sent: int
     next_followup_at: datetime | None
+    interview_status: str | None    # offered | booked | handed_off
+    interview_at: datetime | None   # UTC; shown in the area's timezone
+    interview_place: str | None
+    interview_timezone: str | None
     created_at: datetime
     last_activity: datetime
     priority: int
@@ -127,6 +131,10 @@ def build_row(state: ConversationState, summary: dict | None, review: dict, now:
         headline=(summary or {}).get("headline"),
         followups_sent=state.followups_sent,
         next_followup_at=next_followup_at,
+        interview_status=state.interview.status.value if state.interview else None,
+        interview_at=state.interview.slot if state.interview else None,
+        interview_place=state.interview.place if state.interview else None,
+        interview_timezone=state.interview.timezone if state.interview else None,
         created_at=state.created_at,
         last_activity=state.last_candidate_message_at or state.created_at,
         priority=PRIORITY.get(status, 9) * 10 + (0 if review.get("status", "new") == "new" else 5),

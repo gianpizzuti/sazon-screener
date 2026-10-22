@@ -15,6 +15,7 @@ from datetime import date
 from screener.config import ClientConfig
 from screener.domain.locations import LocationMatcher
 from screener.domain.models import (
+    InterviewStatus,
     LicenseType,
     FIELD_ORDER,
     KNOCKOUT_FIELDS,
@@ -40,6 +41,7 @@ from screener.domain.validators import (
     validate_start_date,
 )
 from screener.engine.directive import AnswerToQuestion, Decision, Directive, Event
+from screener.engine.scheduling import match_choice, wants_other_times, wants_to_reschedule
 from screener.llm.schemas import Extracted, TurnAnalysis
 
 DONE = {FieldStatus.VALID, FieldStatus.SKIPPED, FieldStatus.UNCLEAR}
@@ -110,7 +112,7 @@ class ScreeningPolicy:
             directive.answer = self._answer_question(state, analysis, events)
 
         if state.is_terminal:
-            return self._after_end(state, intents, directive, events, analysis)
+            return self._after_end(state, intents, directive, events, analysis, message)
 
         if "opt_out" in intents:
             return self._finish(state, Stage.WITHDRAWN, "withdrawn", events)
@@ -292,7 +294,7 @@ class ScreeningPolicy:
         )
         return Decision(directive, events)
 
-    def _after_end(self, state, intents, directive, events, analysis: TurnAnalysis) -> Decision:
+    def _after_end(self, state, intents, directive, events, analysis: TurnAnalysis, message: str = "") -> Decision:
         """Messages after the screening ended.
 
         Questions are always answered; new information is flagged for a recruiter; small
@@ -302,6 +304,9 @@ class ScreeningPolicy:
         silent = Decision(Directive(kind="silent", locale=state.locale), events)
         if state.stage == Stage.TERMINATED:
             return silent
+        if state.stage == Stage.QUALIFIED and state.interview:
+            if decision := self._interview_turn(state, intents, directive, events, analysis, message):
+                return decision
         if (
             state.stage == Stage.DISQUALIFIED
             and state.talent_pool_opt_in is None
@@ -325,6 +330,55 @@ class ScreeningPolicy:
             events.append(Event("ignored_after_close"))
             return silent
         state.post_close_replies += 1
+        return Decision(directive, events)
+
+    # ------------------------------------------------------------------ interview booking
+    def _interview_turn(self, state, intents, directive, events, analysis: TurnAnalysis, message: str) -> Decision | None:
+        """A qualified candidate picks an interview time (or changes it). The times were chosen
+        by the engine from the client's configuration; here the rules read the choice.
+        Returns None to fall back to the ordinary after-the-end handling."""
+        iv = state.interview
+        area = self.cfg.area(iv.area_id)
+        tz = area.timezone if area else self.cfg.agent.default_timezone
+        none_label = self.cfg.copy_.text("interview.none_option", state.locale)
+        directive.candidate_name = None
+
+        if iv.status == InterviewStatus.OFFERED:
+            choice = match_choice(message, iv.offered, tz, state.locale, analysis.chosen_option)
+            if choice is not None:
+                iv.status, iv.slot = InterviewStatus.BOOKED, iv.offered[choice]
+                events.append(Event("interview_booked", {"slot": iv.slot.isoformat(), "area": iv.area_id}))
+                directive.kind = "interview_booked"
+                return Decision(directive, events)
+            if wants_other_times(message, intents, none_label):
+                return self._reoffer(state, directive, events)
+            if directive.answer:  # a question while choosing: answer it, then point back to the options
+                directive.kind = "closed_followup"
+                directive.notes.append("pick_slot")
+                return Decision(directive, events)
+            if not iv.reminded:  # unclear reply: show the same options once more
+                iv.reminded = True
+                directive.kind = "interview_offer"
+                directive.notes.append("same_slots")
+                return Decision(directive, events)
+            return None
+
+        if iv.status == InterviewStatus.BOOKED and not directive.answer and wants_to_reschedule(message, intents):
+            events.append(Event("interview_cancelled", {"slot": iv.slot.isoformat() if iv.slot else None}))
+            iv.status, iv.slot = InterviewStatus.OFFERED, None
+            return self._reoffer(state, directive, events)
+        return None
+
+    def _reoffer(self, state, directive, events) -> Decision:
+        """New options, at most `max_offers` rounds: then a person finds a time (no loops)."""
+        iv = state.interview
+        if iv.offers >= self.cfg.scheduling.max_offers:
+            iv.status = InterviewStatus.HANDED_OFF
+            state.add_flag("scheduling_needed")
+            events.append(Event("interview_handoff", {"rounds": iv.offers}))
+            directive.kind = "interview_handoff"
+        else:
+            directive.kind = "interview_offer"  # the engine picks the next free times
         return Decision(directive, events)
 
     def _done(self, state, directive, events, captured=()) -> Decision:

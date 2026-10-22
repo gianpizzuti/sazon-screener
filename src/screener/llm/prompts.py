@@ -50,6 +50,9 @@ TONE_HINTS = {
 OUTCOME_FACTS = {
     "qualified": "Tell them, briefly and warmly, that they meet the requirements to move on to an interview,"
     " and give exactly this next step: {next_steps}. Don't say they are hired and don't mention job offers.",
+    "qualified_book": "Tell them, briefly and warmly, that they meet the requirements to move on to an interview,"
+    " and that they can choose the interview time right now: the options are sent right after your message."
+    " Don't list times, don't ask anything else, don't say they are hired and don't mention job offers.",
     "needs_review": "Thank them. Say a recruiter will review their answers and contact them soon. No promises.",
     "no_license": "They can't continue: a valid driving license is required for this role. Be kind and brief, don't"
     " lecture. Then ask if they want us to keep their details to tell them about future openings.",
@@ -125,6 +128,11 @@ experience but don't say how long, null. Don't round.
   - exact_date + exact_date (YYYY-MM-DD): "el 3 de noviembre". Use TODAY's year unless they say a \
 year, even if the date is in the past (the engine handles that)
   - unclear: answered without a usable time ("cuando acabe mi contrato", "pronto", "depende")
+
+# Choosing among options
+- chosen_option: when the agent's last message lists numbered options (for example interview times) \
+and the candidate picks one, its number (1 = first): "el martes a las 5" is the option on Tuesday at \
+17:00, "la última" the last one. If they say none fits, or it is unclear, null.
 
 # Intents (list every one that applies)
 provide_info (gives screening data), affirm / deny (yes / no to the agent's last question; for a \
@@ -268,7 +276,8 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
             steps.append(step)
             steps.append(f'Reference wording (adapt it, don\'t copy it): "{_reference(d, cfg)}"')
         case "outcome":
-            facts = OUTCOME_FACTS[d.outcome].format(
+            key = "qualified_book" if d.outcome == "qualified" and d.interview_offer else d.outcome
+            facts = OUTCOME_FACTS[key].format(
                 next_steps=cfg.localized(cfg.next_steps, d.locale), place=d.outcome_place or "their area"
             )
             steps.append("This is the final message of the screening. " + facts)
@@ -282,7 +291,9 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
             else:
                 steps.append("They don't want us to keep their details. Accept it, thank them and wish them luck.")
         case "closed_followup":
-            if "update_after_close" in d.notes:
+            if "pick_slot" in d.notes:
+                steps.append("After answering, remind them in a few words to pick one of the interview times above.")
+            elif "update_after_close" in d.notes:
                 steps.append(
                     "The screening is already finished, but they shared new information. Thank them and say the "
                     "recruiting team will review it. Promise nothing else; ask nothing."

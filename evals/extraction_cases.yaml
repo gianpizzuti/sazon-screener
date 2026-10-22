@@ -904,3 +904,49 @@
   expect: {license_type: motorbike}
   ignore: [drivers_license]
 
+# ------------------------------------------------------------------ choosing an interview time
+# The rules read buttons, numbers, weekdays and times first (engine/scheduling.py); these cases
+# measure the model's reading, which is only used when the rules can't tell.
+- id: choice_weekday_and_time
+  tags: [choice]
+  stage: qualified
+  agent: "Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):\n1) miércoles 21/10 a las 16:00\n2) jueves 22/10 a las 16:00\n3) viernes 23/10 a las 10:00"
+  msg: "el jueves a las 4"
+  expect: {}
+  choice: 2
+
+- id: choice_ordinal_in_a_sentence
+  tags: [choice]
+  stage: qualified
+  agent: "Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):\n1) miércoles 21/10 a las 16:00\n2) jueves 22/10 a las 16:00\n3) viernes 23/10 a las 10:00"
+  msg: "me viene mejor la última, gracias"
+  expect: {}
+  choice: 3
+
+- id: choice_informal_mexico
+  tags: [choice, mexico]
+  stage: qualified
+  agent: "Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Providencia (Guadalajara):\n1) miércoles 21/10 a las 16:00\n2) jueves 22/10 a las 16:00\n3) viernes 23/10 a las 10:00"
+  msg: "la del viernes porfa"
+  expect: {}
+  choice: 3
+
+- id: choice_none_fits
+  tags: [choice]
+  stage: qualified
+  agent: "Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):\n1) miércoles 21/10 a las 16:00\n2) jueves 22/10 a las 16:00\n3) viernes 23/10 a las 10:00"
+  msg: "ninguna, esos días trabajo por la tarde"
+  expect: {}
+  choice: null
+  forbid: [opt_out]
+
+- id: choice_english
+  tags: [choice, english]
+  stage: qualified
+  conv: en
+  agent: "Pick a day and time for your interview (about 20 minutes) at Grupo Sazón Roma Norte (Ciudad de México):\n1) Wednesday 21 Oct at 16:00\n2) Thursday 22 Oct at 16:00\n3) Friday 23 Oct at 10:00"
+  msg: "Thursday works for me"
+  expect: {}
+  choice: 2
+  lang: en
+

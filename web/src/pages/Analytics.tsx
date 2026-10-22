@@ -119,10 +119,36 @@ export function AnalyticsPage() {
         </Card>
       </Reveal>
 
+      <Reveal className="mt-6">
+        <Card>
+          <CardTitle number={7}>Interviews booked in the chat</CardTitle>
+          <p className="-mt-2 mb-6 max-w-3xl text-[13px] text-ink-3">
+            Qualified candidates pick an interview time right away instead of waiting for a recruiter's call: the same no-answer problem, solved at the last step.
+          </p>
+          <div className="grid items-center gap-8 md:grid-cols-[auto_1fr]">
+            <div className="flex flex-col items-center gap-3">
+              <Meter value={a.booking_rate} label="booked" />
+              <p className="num text-center text-sm text-ink-2">{a.interviews_booked} of {a.interviews_offered} offered</p>
+            </div>
+            <dl className="grid grid-cols-2 gap-4">
+              {[
+                ["Booked in the chat", String(a.interviews_booked), "Candidates who picked one of the offered times"],
+                ["Recruiter finds a time", String(a.scheduling_handoffs), "No offered time fitted after two rounds of options"],
+              ].map(([label, value, hint]) => (
+                <div key={label} className="rounded-xl bg-surface-2 p-3" title={hint}>
+                  <dt className="text-xs text-ink-3">{label}</dt>
+                  <dd className="num mt-0.5 text-xl font-semibold text-ink">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </Card>
+      </Reveal>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <Reveal>
           <Card className="h-full">
-            <CardTitle number={7}>Questions Sofía couldn't answer</CardTitle>
+            <CardTitle number={8}>Questions Sofía couldn't answer</CardTitle>
             <p className="-mt-2 mb-3 text-[13px] text-ink-3">She never improvises: each one is a candidate for the FAQ.</p>
             {a.unanswered_questions.length ? (
               <ul className="divide-y divide-line">
@@ -133,7 +159,7 @@ export function AnalyticsPage() {
         </Reveal>
         <Reveal delay={0.08}>
           <Card className="h-full">
-            <CardTitle number={8}>AI health</CardTitle>
+            <CardTitle number={9}>AI health</CardTitle>
             <dl className="grid grid-cols-2 gap-4">
               {[
                 ["Template fallback rate", pct(a.template_fallback_rate), "Messages written by templates because the model failed or its draft was rejected"],

@@ -78,7 +78,7 @@ def test_recruiter_queue_detail_and_analytics(client_for):
         queue = client.get("/api/candidates", params={"status": "qualified"}).json()
         assert [r["name"] for r in queue] == ["Ana López"] and queue[0]["city"] == "Madrid"
         detail = client.get(f"/api/candidates/{cid}").json()
-        assert detail["data"]["zone"] == "Getafe" and len(detail["transcript"]) == 13
+        assert detail["data"]["zone"] == "Getafe" and len(detail["transcript"]) == 14  # the final message is followed by the interview times
         stats = client.get("/api/analytics").json()
         assert stats["totals"]["qualified"] == 1 and stats["qualified_rate"] == 1.0
 

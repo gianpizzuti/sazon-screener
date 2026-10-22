@@ -48,7 +48,11 @@ function ThemeToggle() {
 
 function DemoClock({ notify }: { notify: (text: string) => void }) {
   const client = useQueryClient();
-  const { data: clock } = useQuery({ queryKey: ["demo-clock"], queryFn: api.demoClock, refetchInterval: 30_000 });
+  // Demo tools are off in production (404): stop asking instead of polling every 30 s.
+  const { data: clock } = useQuery({
+    queryKey: ["demo-clock"], queryFn: api.demoClock, retry: false,
+    refetchInterval: (query) => (query.state.status === "error" ? false : 30_000),
+  });
   const advance = useMutation({
     mutationFn: api.advance,
     onSuccess: (result) => {

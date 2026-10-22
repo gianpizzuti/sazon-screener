@@ -60,6 +60,7 @@ CHECKS = {  # case key -> (label, how to read it from the analysis)
     "sentiment": ("sentiment", lambda a: a.sentiment),
     "variant": ("spanish variant", lambda a: a.spanish_variant),
     "target": ("correction target", lambda a: a.correction_target),
+    "choice": ("interview time chosen", lambda a: a.chosen_option),
 }
 WORKERS = {"haiku": 8, "sonnet": 6, "opus": 4}
 
@@ -334,6 +335,7 @@ def failure_line(case: dict, gold_cases: dict[str, dict]) -> str:
                 "sentiment": f"expected {gold.get('sentiment')}, got {case['got']['sentiment']}",
                 "spanish variant": f"expected {gold.get('variant')}, got {case['got']['spanish_variant']}",
                 "correction target": f"expected {gold.get('target')}, got {case['got']['correction_target']}",
+                "interview time chosen": f"expected {gold.get('choice')}, got {case['got'].get('chosen_option')}",
             }.get(name, "")
             parts.append(f"{name}: {detail}")
     return f"- `{case['id']}` «{case['msg']}»: " + "; ".join(parts)

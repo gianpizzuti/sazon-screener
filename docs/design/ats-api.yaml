@@ -277,6 +277,25 @@ webhooks:
                 updated_at: "2026-10-26T09:41:07Z"
       responses:
         "2XX": { description: Received. Any other status is retried }
+  screening.interview_booked:
+    post:
+      summary: The candidate booked (or moved) the interview in the chat
+      description: The ATS can create the interview event on the recruiter's calendar. A move sends a new event with the new time.
+      parameters:
+        - $ref: "#/components/parameters/SignatureHeader"
+        - $ref: "#/components/parameters/TimestampHeader"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EventEnvelope"
+                - type: object
+                  properties:
+                    type: { const: screening.interview_booked }
+                    data: { $ref: "#/components/schemas/Screening" }
+      responses:
+        "2XX": { description: Received }
   screening.abandoned:
     post:
       summary: No reply after the last follow-up (includes the stage where the candidate stopped)
@@ -427,6 +446,7 @@ components:
         open_questions: { type: array, items: { type: string }, description: Candidate questions the approved FAQ did not answer }
         talent_pool_consent: { type: [boolean, "null"] }
         decision: { $ref: "#/components/schemas/Decision" }
+        interview: { $ref: "#/components/schemas/Interview" }
         linked_to: { type: [string, "null"], format: uuid, description: Set when this application was linked to an earlier screening of the same phone number }
         language: { type: string, enum: [es, en] }
         transcript_url: { type: string, format: uri }
@@ -468,6 +488,15 @@ components:
         text: { type: string }
         concerns: { type: array, items: { type: string } }
         candidate_questions: { type: array, items: { type: string } }
+
+    Interview:
+      type: [object, "null"]
+      description: The interview the candidate booked in the chat (null if not qualified or not offered yet)
+      properties:
+        status: { type: string, enum: [offered, booked, handed_off], description: "`handed_off`: no offered time fitted, a recruiter finds one" }
+        starts_at: { type: [string, "null"], format: date-time, description: UTC }
+        timezone: { type: string, examples: [Europe/Madrid, America/Mexico_City] }
+        place: { type: string }
 
     Decision:
       type: object

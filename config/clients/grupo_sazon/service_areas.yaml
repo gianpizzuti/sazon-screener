@@ -1,6 +1,7 @@
 # 45 restaurants in 9 cities. Zones are the districts each city's restaurants deliver to.
 # Aliases are matched accent- and case-insensitively, as whole words.
 # Values are illustrative: the real list comes from the client (see docs/process-design.md §8).
+# interview_place: where qualified candidates are interviewed (one restaurant per city, to confirm).
 
 service_areas:
   # ---------------- Spain ----------------
@@ -9,6 +10,7 @@ service_areas:
     country: ES
     timezone: Europe/Madrid
     restaurants: 9
+    interview_place: Grupo Sazón Malasaña (Madrid)
     aliases: [madrid]
     zones:
       - {name: Centro, aliases: [centro, sol, malasaña, malasana, lavapiés, chueca, la latina]}
@@ -30,6 +32,7 @@ service_areas:
     country: ES
     timezone: Europe/Madrid
     restaurants: 7
+    interview_place: Grupo Sazón Gràcia (Barcelona)
     aliases: [barcelona, bcn]
     zones:
       - {name: Ciutat Vella, aliases: [ciutat vella, gótico, gotico, raval, born]}
@@ -46,6 +49,7 @@ service_areas:
     country: ES
     timezone: Europe/Madrid
     restaurants: 4
+    interview_place: Grupo Sazón Ruzafa (Valencia)
     aliases: [valencia, valència]
     zones:
       - {name: Ciutat Vella, aliases: [ciutat vella, el carmen, el carme]}
@@ -59,6 +63,7 @@ service_areas:
     country: ES
     timezone: Europe/Madrid
     restaurants: 3
+    interview_place: Grupo Sazón Triana (Sevilla)
     aliases: [sevilla, seville]
     zones:
       - {name: Casco Antiguo, aliases: [casco antiguo]}
@@ -72,6 +77,7 @@ service_areas:
     country: ES
     timezone: Europe/Madrid
     restaurants: 2
+    interview_place: Grupo Sazón Centro (Málaga)
     aliases: [málaga, malaga]
     zones:
       - {name: Centro, aliases: [centro]}
@@ -83,6 +89,7 @@ service_areas:
     country: ES
     timezone: Europe/Madrid
     restaurants: 2
+    interview_place: Grupo Sazón Abando (Bilbao)
     aliases: [bilbao, bilbo]
     zones:
       - {name: Abando, aliases: [abando]}
@@ -95,6 +102,7 @@ service_areas:
     country: MX
     timezone: America/Mexico_City
     restaurants: 9
+    interview_place: Grupo Sazón Roma Norte (Ciudad de México)
     aliases: [cdmx, ciudad de méxico, ciudad de mexico, df, mexico city, chilangolandia]
     zones:
       - {name: Cuauhtémoc, aliases: [cuauhtémoc, cuauhtemoc, roma, roma norte, condesa, juárez, centro histórico, centro historico]}
@@ -111,6 +119,7 @@ service_areas:
     country: MX
     timezone: America/Mexico_City
     restaurants: 5
+    interview_place: Grupo Sazón Providencia (Guadalajara)
     aliases: [guadalajara, gdl]
     zones:
       - {name: Centro, aliases: [centro]}
@@ -124,6 +133,7 @@ service_areas:
     country: MX
     timezone: America/Monterrey
     restaurants: 4
+    interview_place: Grupo Sazón San Pedro (Monterrey)
     aliases: [monterrey, mty]
     zones:
       - {name: Centro, aliases: [centro]}

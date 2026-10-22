@@ -21,11 +21,12 @@ from pydantic import BaseModel, Field
 
 from screener.config import ClientConfig
 from screener.domain.models import TERMINAL_STAGES as TERMINAL
-from screener.domain.models import ConversationState, FieldName, ScreeningData, Stage, utcnow
+from screener.domain.models import ConversationState, FieldName, InterviewState, InterviewStatus, ScreeningData, Stage, utcnow
 from screener.engine import followups
 from screener.engine.directive import Directive, Event
 from screener.engine.policy import ScreeningPolicy
 from screener.engine.recap import render_recap
+from screener.engine.scheduling import candidate_slots, slot_label, slot_long
 from screener.llm.interfaces import (
     ChatMessage,
     LLMError,
@@ -222,13 +223,14 @@ class ScreeningEngine:
         events += decision.events
         if working.is_terminal and not state.is_terminal:
             working.completed_at = self.clock()  # one clock for the whole engine (testable, replayable)
+        interview_changes = self._schedule(state, working, decision.directive, events)
 
         history.append(ChatMessage(role="candidate", text=text))
         outbound, metas = self._render(working, decision.directive, history, today, events)
 
         rows = [("candidate", text, {"analysis": analysis.model_dump(mode="json")})]
         rows += [("agent", m.text, meta) for m, meta in zip(outbound, metas)]
-        self.repo.save_turn(working, rows, events)
+        self.repo.save_turn(working, rows, events, interview_changes)
         return TurnResult(
             conversation_id=working.id,
             stage=working.stage,
@@ -239,10 +241,91 @@ class ScreeningEngine:
             event_types=[e.type for e in events],
         )
 
+    # ------------------------------------------------------------------ interview booking
+    def _schedule(self, before: ConversationState, state: ConversationState, directive: Directive, events) -> list:
+        """Pick interview times for the policy's decision and work out the bookings to store.
+        Times depend on bookings already taken (the database), so they are chosen here; which
+        one the candidate chose, and what happens next, is the policy's decision."""
+        if not self.cfg.scheduling.enabled:
+            return []
+        if directive.kind == "outcome" and directive.outcome == "qualified":
+            self._offer_interview(state, directive, events)
+        elif directive.kind == "interview_offer" and "same_slots" not in directive.notes:
+            self._offer_interview(state, directive, events)
+        elif directive.kind == "interview_booked":
+            iv = state.interview
+            if iv.slot in self.repo.taken_interview_slots(iv.area_id):  # taken by someone else meanwhile
+                events.append(Event("interview_slot_taken", {"slot": iv.slot.isoformat()}))
+                iv.status, iv.slot = InterviewStatus.OFFERED, None
+                directive.kind = "interview_offer"
+                directive.notes.append("taken")
+                self._offer_interview(state, directive, events, count_round=False)
+
+        changes = []
+        old, new = before.interview, state.interview
+        old_slot = old.slot if old and old.status == InterviewStatus.BOOKED else None
+        new_slot = new.slot if new and new.status == InterviewStatus.BOOKED else None
+        if old_slot and old_slot != new_slot:
+            changes.append(("cancel", old.area_id, old_slot))
+        if new_slot and new_slot != old_slot:
+            changes.append(("book", new.area_id, new_slot))
+        return changes
+
+    def _offer_interview(self, state: ConversationState, directive: Directive, events, count_round: bool = True) -> None:
+        area = self.cfg.area(state.interview.area_id if state.interview else state.data.city_id)
+        if area is None:
+            return  # a qualified candidate always has a configured area; never crash on it
+        iv = state.interview or InterviewState(status=InterviewStatus.OFFERED, area_id=area.id,
+                                               place=area.interview_place or area.name, timezone=area.timezone)
+        state.interview = iv
+        unavailable = self.repo.taken_interview_slots(area.id) | set(iv.history)
+        slots = candidate_slots(self.cfg.scheduling, area.timezone, self.clock(), state.data.preferred_schedule, unavailable)
+        if not slots:  # nothing free in the horizon: a person finds a time
+            iv.status = InterviewStatus.HANDED_OFF
+            state.add_flag("scheduling_needed")
+            events.append(Event("interview_handoff", {"reason": "no_free_slots"}))
+            if directive.kind == "outcome":
+                directive.interview_offer = False  # the final message gives the recruiter-contact next step
+            else:
+                directive.kind = "interview_handoff"
+            return
+        iv.status, iv.offered, iv.reminded = InterviewStatus.OFFERED, slots, False
+        iv.history = iv.history + slots
+        if count_round:
+            iv.offers += 1
+        events.append(Event("interview_offered", {"slots": [s.isoformat() for s in slots], "round": iv.offers}))
+        if directive.kind == "outcome":
+            directive.interview_offer = True
+
+    def _interview_message(self, state: ConversationState, directive: Directive) -> OutboundMessage:
+        """Times and places are exact, so these messages are templates (like the recap)."""
+        iv, loc, copy = state.interview, state.locale, self.cfg.copy_
+        area = self.cfg.area(iv.area_id)
+        tz = area.timezone if area else self.cfg.agent.default_timezone
+        if directive.kind == "interview_booked":
+            return OutboundMessage(text=copy.text("interview.booked", loc, when=slot_long(iv.slot, tz, loc), place=iv.place))
+        if directive.kind == "interview_handoff":
+            return OutboundMessage(text=copy.text("interview.handoff", loc))
+        options = "\n".join(f"{i}) {slot_long(slot, tz, loc)}" for i, slot in enumerate(iv.offered, 1))
+        key = ("interview.taken" if "taken" in directive.notes else "interview.reminder" if "same_slots" in directive.notes
+               else "interview.offer_again" if iv.offers > 1 else "interview.offer")
+        return OutboundMessage(
+            text=copy.text(key, loc, place=iv.place, options=options),
+            quick_replies=[slot_label(slot, tz, loc) for slot in iv.offered] + [copy.text("interview.none_option", loc)],
+        )
+
     # ------------------------------------------------------------------ speaking
     def _render(self, state, directive: Directive, history, today, events):
         if directive.kind == "silent":
             return [], []
+        if directive.kind in ("interview_offer", "interview_booked", "interview_handoff"):
+            meta = {"kind": directive.kind, "source": "template", "directive": directive.model_dump(mode="json")}
+            return [self._interview_message(state, directive)], [meta]
+        if directive.kind == "outcome" and directive.interview_offer:
+            text, meta = self._speak(directive, history, events)
+            offer = self._interview_message(state, directive.model_copy(update={"kind": "interview_offer"}))
+            offer_meta = {"kind": "interview_offer", "source": "template", "directive": directive.model_dump(mode="json")}
+            return [OutboundMessage(text=text), offer], [meta, offer_meta]
         if directive.kind == "recap":
             out, metas = [], []
             if directive.answer or directive.notes:

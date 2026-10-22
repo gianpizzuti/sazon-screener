@@ -6,21 +6,22 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Button, Card, CardTitle, Chip, PageHeader, StatusBadge } from "../components/ui";
-import { type Analysis, api, type ScreeningData } from "../lib/api";
-import { AVAILABILITY, SCHEDULE, experience, shortDate, titleCase } from "../lib/format";
+import { type Analysis, api, type CandidateDetail } from "../lib/api";
+import { AVAILABILITY, SCHEDULE, experience, interviewTime, shortDate, titleCase } from "../lib/format";
 import { useCandidate } from "../lib/hooks";
 
 type Session = { id: string; quick: string[]; analysis: Analysis | null; silent: boolean };
 const STORAGE_KEY = "try-agent-session";
 
-const CHECKLIST: { label: string; value: (d: ScreeningData) => string | null }[] = [
-  { label: "Name", value: (d) => d.full_name },
-  { label: "Driver's license", value: (d) => (d.license_status ? { yes: "Yes", no: "No", in_progress: "In progress" }[d.license_status] : null) },
-  { label: "City · zone", value: (d) => (d.in_service_area === false ? `${d.location_raw} (outside)` : d.city ? `${d.city}${d.zone ? ` · ${d.zone}` : ""}` : null) },
-  { label: "Availability", value: (d) => d.availability.map((a) => AVAILABILITY[a]).join(", ") || null },
-  { label: "Shift", value: (d) => d.preferred_schedule.map((s) => SCHEDULE[s]).join(", ") || null },
-  { label: "Experience", value: (d) => (d.experience_months === null ? null : `${experience(d.experience_months)}${d.experience_platforms.length ? ` · ${d.experience_platforms.join(", ")}` : ""}`) },
-  { label: "Start date", value: (d) => (d.start_date ? shortDate(d.start_date) : null) },
+const CHECKLIST: { label: string; value: (detail: CandidateDetail) => string | null }[] = [
+  { label: "Name", value: ({ data: d }) => d.full_name },
+  { label: "Driver's license", value: ({ data: d }) => (d.license_status ? { yes: "Yes", no: "No", in_progress: "In progress" }[d.license_status] : null) },
+  { label: "City · zone", value: ({ data: d }) => (d.in_service_area === false ? `${d.location_raw} (outside)` : d.city ? `${d.city}${d.zone ? ` · ${d.zone}` : ""}` : null) },
+  { label: "Availability", value: ({ data: d }) => d.availability.map((a) => AVAILABILITY[a]).join(", ") || null },
+  { label: "Shift", value: ({ data: d }) => d.preferred_schedule.map((s) => SCHEDULE[s]).join(", ") || null },
+  { label: "Experience", value: ({ data: d }) => (d.experience_months === null ? null : `${experience(d.experience_months)}${d.experience_platforms.length ? ` · ${d.experience_platforms.join(", ")}` : ""}`) },
+  { label: "Start date", value: ({ data: d }) => (d.start_date ? shortDate(d.start_date) : null) },
+  { label: "Interview", value: ({ row }) => (row.interview_status === "booked" ? interviewTime(row.interview_at, row.interview_timezone) : null) },
 ];
 
 function loadSession(): Session | null {
@@ -179,10 +180,10 @@ export function TryAgentPage() {
 
         <div className="space-y-6">
           <Card>
-            <CardTitle icon={ListChecks} aside={detail && <span className="num text-sm text-ink-3">{CHECKLIST.filter((c) => c.value(detail.data)).length}/7</span>}>Screening progress</CardTitle>
+            <CardTitle icon={ListChecks} aside={detail && <span className="num text-sm text-ink-3">{CHECKLIST.filter((c) => c.value(detail)).length}/{CHECKLIST.length}</span>}>Screening progress</CardTitle>
             <ul className="space-y-1">
               {CHECKLIST.map((item) => {
-                const value = detail ? item.value(detail.data) : null;
+                const value = detail ? item.value(detail) : null;
                 return (
                   <li key={item.label} className="flex items-center gap-3 rounded-xl px-2 py-2">
                     <motion.span className={clsx("grid size-6 shrink-0 place-items-center rounded-full", value ? "bg-brand text-heading" : "bg-surface-2 ring-1 ring-line")}

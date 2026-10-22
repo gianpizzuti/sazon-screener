@@ -22,6 +22,9 @@ DirectiveKind = Literal[
     "talent_pool_ack",  # answer to the talent-pool opt-in
     "closed_followup",  # message after the screening is over
     "postpone_ack",     # candidate wants to continue later
+    "interview_offer",  # interview times (template); the engine picks them
+    "interview_booked", # interview confirmation (template)
+    "interview_handoff",# no time fitted: a recruiter will find one (template)
     "silent",           # say nothing (conversation terminated)
 ]
 
@@ -60,6 +63,7 @@ class Directive(BaseModel):
     outcome: Outcome | None = None
     outcome_place: str | None = None
     talent_pool_answer: bool | None = None
+    interview_offer: bool = False  # the qualified outcome is followed by interview times
 
 
 @dataclass

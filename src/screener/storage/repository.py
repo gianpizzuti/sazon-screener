@@ -3,12 +3,14 @@
 SQLite through SQLAlchemy: zero setup for whoever runs the project, real SQL for the
 recruiter dashboard, and Postgres is a connection-string change away.
 
-Four tables, four jobs:
+Five tables, five jobs:
   conversations: current state (JSON) + a few denormalised columns to filter on
   messages:      the full transcript, each message with its "why" (analysis / directive)
   events:        append-only audit trail; analytics are computed from it
   reviews:       what a HUMAN decided (recruiter status, notes). Kept apart from what the
                  bot decided, so automated and human decisions are never confused.
+  interviews:    booked interview times. A unique index on (area, start) for booked rows
+                 means two candidates can never get the same time, whatever the race.
 """
 
 from __future__ import annotations
@@ -16,7 +18,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, create_engine, select
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, create_engine, select, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -80,6 +82,21 @@ class ReviewRow(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
 
+class InterviewRow(Base):
+    __tablename__ = "interviews"
+    __table_args__ = (
+        Index("uq_interview_slot", "area_id", "starts_at", unique=True,
+              sqlite_where=text("status = 'booked'"), postgresql_where=text("status = 'booked'")),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    conversation_id: Mapped[str] = mapped_column(ForeignKey("conversations.id"), index=True)
+    area_id: Mapped[str] = mapped_column(String(64))
+    starts_at: Mapped[datetime] = mapped_column(DateTime)  # UTC
+    status: Mapped[str] = mapped_column(String(16), default="booked")  # booked | cancelled
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+
+
 # Recruiter workflow after the screening. Moving a bot-disqualified candidate forward (or
 # rejecting a bot-qualified one) is a human override and is logged as such.
 REVIEW_STATUSES = ("new", "contacted", "interview", "hired", "rejected")
@@ -117,8 +134,10 @@ class Repository:
         state: ConversationState,
         messages: list[tuple[str, str, dict]],
         events: list[Event],
+        interviews: list[tuple[str, str, datetime]] = (),
     ) -> None:
-        """Persist a whole turn atomically: state, new messages and events."""
+        """Persist a whole turn atomically: state, new messages, events and interview changes
+        (("book" | "cancel", area_id, starts_at))."""
         state.updated_at = utcnow()
         with self._session.begin() as s:
             row = s.get(ConversationRow, state.id) or ConversationRow(id=state.id, client_id=state.client_id)
@@ -140,6 +159,13 @@ class Repository:
                 s.add(MessageRow(conversation_id=state.id, role=role, text=text, meta=_jsonable(meta)))
             for event in events:
                 s.add(EventRow(conversation_id=state.id, type=event.type, payload=_jsonable(event.payload)))
+            for action, area_id, starts_at in interviews:
+                if action == "book":
+                    s.add(InterviewRow(conversation_id=state.id, area_id=area_id, starts_at=starts_at))
+                else:
+                    s.query(InterviewRow).filter_by(
+                        conversation_id=state.id, area_id=area_id, starts_at=starts_at, status="booked"
+                    ).update({"status": "cancelled"})
 
     def set_review(self, conversation_id: str, status: str, note: str = "", by: str = "") -> dict:
         """Record a recruiter decision; overriding the bot's outcome is logged as a human override."""
@@ -168,9 +194,14 @@ class Repository:
             conversation = s.get(ConversationRow, conversation_id)
             if conversation is None:
                 raise ConversationNotFound(conversation_id)
-            for model in (MessageRow, EventRow, ReviewRow):
+            for model in (MessageRow, EventRow, ReviewRow, InterviewRow):
                 s.query(model).filter_by(conversation_id=conversation_id).delete()
             s.delete(conversation)
+
+    def taken_interview_slots(self, area_id: str) -> set[datetime]:
+        with self._session() as s:
+            return set(s.scalars(select(InterviewRow.starts_at).where(
+                InterviewRow.area_id == area_id, InterviewRow.status == "booked")))
 
     def get_review(self, conversation_id: str) -> dict:
         with self._session() as s:

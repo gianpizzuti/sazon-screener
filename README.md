@@ -23,7 +23,7 @@ Requirements: Python 3.11+, Node 18+ (for the web app), an Anthropic API key.
 make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
-make test                    # offline, no API key: 129 tests of the product + 228 checks of the eval datasets
+make test                    # offline, no API key: 151 tests of the product + 238 checks of the eval datasets
 ```
 
 Optional:
@@ -42,7 +42,7 @@ make eval-conversations      # 13 simulated candidates + LLM judge (real API, ~1
 
 | | |
 |---|---|
-| **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts |
+| **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts. **Qualified candidates book their interview in the chat**: three free times as buttons, no double booking, moved by writing again |
 | **Re-engagement** | Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in *their* timezone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. Any reply resumes the screening. The **recovery rate** shows whether it works. In the web app, the **demo clock** (top bar) moves time forward to show it live |
 | **Recruiter web app** (React) | **Pipeline**: queue ordered by what to do first, status filters, live counters. **Candidate**: AI summary, extracted data with the candidate's own words, chat transcript with the *why* behind every message, recruiter decision and audited override, audit timeline, JSON export, GDPR erasure. **Analytics**: funnel and charts that grow as you scroll, recovery-rate meter, FAQ gaps, AI health, table view. **Try the agent**: play the candidate and watch the screening checklist fill in live. **How it works**: the screening flow as an interactive flowchart (click a step for the exact question and rules, or trace a candidate's path) plus the workspace's live configuration. Light and dark theme, reduced-motion aware |
 | **Evals** | **Extraction**: 113 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 0 invented values, location 22/22 after the rules, ≈ $0.2 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
@@ -142,6 +142,7 @@ In the order I would do them with more time. Most come from what testing and the
 | Check the licence at the interview, and measure how often candidates lie about it | Protects recruiter time without collecting ID documents in a chat (data minimisation, bias, drop-off) | A rejection reason "no licence at the interview" gives the number before adding friction |
 | Voice channel | The assessment's "Great" tier; some candidates prefer to talk | Latency matters more: understanding and writing may become one call for voice only |
 | Recruiter app in Spanish | Grupo Sazón's recruiters work in Spanish. The app is in English for this review; the summaries are already in Spanish | Interface strings only |
+| Calendar integration for interviews, a reminder the day before, and no-show tracking | Today the times come from configuration; the client's real calendar (Google/Microsoft or the ATS) is the production version | No-shows are the next leak in the funnel after "no answer" |
 | Experiment with reminder timing and wording | The recovery rate is already measured, so a variant can be compared against it | Needs volume to be significant |
 
 ### Quality and evals

@@ -36,7 +36,9 @@ const NODES: Node[] = [
   { id: "platforms", kind: "branch", x: SIDE, y: 800, title: "Which platforms", sub: "Glovo, Rappi, Uber Eats…" },
   { id: "start_date", kind: "step", x: SPINE, y: 905, title: "Start date" },
   { id: "recap", kind: "decision", x: SPINE, y: 1010, title: "Recap confirmed?" },
-  { id: "qualified", kind: "end", x: SPINE, y: 1115, title: "Qualified", sub: "recruiter within 48 h" },
+  { id: "qualified", kind: "step", x: SPINE, y: 1115, title: "Qualified", sub: "interview times offered" },
+  { id: "interview", kind: "end", x: SPINE, y: 1215, title: "Interview booked", sub: "picked in the chat" },
+  { id: "handoff", kind: "review", x: SIDE, y: 1215, title: "Recruiter finds a time", sub: "no time fitted, 2 rounds" },
   { id: "review", kind: "review", x: SIDE, y: 1115, title: "Needs review", sub: "a knock-out stayed unclear" },
 ];
 const EDGES: Edge[] = [
@@ -55,6 +57,8 @@ const EDGES: Edge[] = [
   { from: "platforms", to: "start_date", d: "M690,830 V905 H432" },
   { from: "start_date", to: "recap", d: "M300,931 V964" },
   { from: "recap", to: "qualified", d: "M300,1056 V1087", label: "yes", lx: 312, ly: 1075, anchor: "start" },
+  { from: "qualified", to: "interview", d: "M300,1141 V1187", label: "picks one", lx: 312, ly: 1170, anchor: "start" },
+  { from: "qualified", to: "handoff", d: "M430,1125 H470 V1215 H538", label: "none fits", lx: 504, ly: 1206 },
   { from: "recap", to: "review", d: "M440,1010 H690 V1083", label: "yes, but a knock-out was unclear", lx: 565, ly: 1001 },
   { from: "recap", to: "name", d: "M160,1010 H96 V210 H168", label: "correction → that question again", lx: 84, ly: 610 },
 ];
@@ -74,15 +78,17 @@ const DETAILS: Record<string, { asks?: string; rules: string[] }> = {
   platforms: { rules: ["Normalised (\"uber\" → Uber Eats); unknown employers kept as written.", "Only asked when experience is above zero."] },
   start_date: { asks: "¿Cuándo podrías empezar?", rules: ["The model reads the expression (\"el lunes que viene\"); code computes the date in the candidate's timezone.", "A past date is asked again; more than 90 days away is accepted and flagged."] },
   recap: { asks: "Antes de terminar, revisa tus datos: … ¿Está todo correcto?", rules: ["Rendered from the data by a template: the candidate's details are never paraphrased.", "A correction re-asks that field and re-runs the knock-outs."] },
-  qualified: { rules: ["The candidate hears the next step: a recruiter writes within 48 h.", "An AI summary is written for the recruiter after the conversation ends.", "They appear first in Action needed, soonest start date first."] },
+  qualified: { asks: "Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid): 1) miércoles 21/10 a las 16:00 …", rules: ["Three free times, from the client's calendar settings, in the restaurant's local time, the candidate's preferred shift first.", "A fixed template with buttons: dates and times are never written by the AI.", "An AI summary is written for the recruiter after the conversation ends."] },
+  interview: { rules: ["Read by rules first (button, number, weekday, time); the AI only when the rules can't tell.", "A unique index in the database: two candidates can never get the same time.", "Confirmation reminds them to bring their licence; they can move it by writing again."] },
+  handoff: { rules: ["Nothing fitted after two rounds of options (no loops).", "Flagged for a recruiter, who finds a time with the candidate."] },
   review: { rules: ["A knock-out answer stayed unclear after two attempts.", "The bot does not guess: a recruiter decides."] },
 };
 
 const SCENARIOS: { key: string; label: string; path: string[] }[] = [
-  { key: "qualified", label: "Qualified", path: ["start", "greet", "name", "license", "city", "zone", "avail", "shift", "exp", "platforms", "start_date", "recap", "qualified"] },
+  { key: "qualified", label: "Qualified", path: ["start", "greet", "name", "license", "city", "zone", "avail", "shift", "exp", "platforms", "start_date", "recap", "qualified", "interview"] },
   { key: "no_license", label: "No license", path: ["start", "greet", "name", "license", "ko_license"] },
   { key: "out_of_area", label: "Out of area", path: ["start", "greet", "name", "license", "city", "ko_city"] },
-  { key: "no_experience", label: "No experience", path: ["start", "greet", "name", "license", "city", "zone", "avail", "shift", "exp", "start_date", "recap", "qualified"] },
+  { key: "no_experience", label: "No experience", path: ["start", "greet", "name", "license", "city", "zone", "avail", "shift", "exp", "start_date", "recap", "qualified", "interview"] },
 ];
 
 function nodeBox(n: Node) {
@@ -102,9 +108,9 @@ function Flowchart({ selected, onSelect, trail }: { selected: string; onSelect: 
   return (
     // One trigger for the whole chart (as soon as any of it is visible): with a trigger per node,
     // nodes below the fold stayed invisible until scrolled to, and the chart looked broken.
-    <motion.svg viewBox="60 0 800 1160" className="mx-auto h-auto w-full max-w-[860px]" role="img"
+    <motion.svg viewBox="60 0 800 1260" className="mx-auto h-auto w-full max-w-[860px]" role="img"
       initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.01 }}
-      aria-label="Screening flow: greeting, name, driver's license (knock-out), city in a service area (knock-out), zone, availability, shift, experience and platforms, start date, recap, then qualified or needs review. A correction at the recap asks that question again.">
+      aria-label="Screening flow: greeting, name, driver's license (knock-out), city in a service area (knock-out), zone, availability, shift, experience and platforms, start date, recap, then qualified or needs review. A correction at the recap asks that question again. A qualified candidate picks an interview time in the chat, or a recruiter finds one.">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-3)" />

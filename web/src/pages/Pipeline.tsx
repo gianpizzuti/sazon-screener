@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Flag, Hourglass, Inbox, MapPin, MessageCircle, Search } from "lucide-react";
+import { CalendarCheck, CalendarClock, Flag, Hourglass, Inbox, MapPin, MessageCircle, Search } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { CountUp } from "../components/charts";
 import { Chip, EmptyState, ErrorState, PageHeader, REVIEW_LABELS, ReviewBadge, Skeleton, StatusBadge, STATUS_ORDER, statusMeta } from "../components/ui";
 import type { CandidateRow, ReviewStatus, Status } from "../lib/api";
-import { AVAILABILITY, FLAG_LABELS, SCHEDULE, ago, experience, initials, shortDate, until } from "../lib/format";
+import { AVAILABILITY, FLAG_LABELS, SCHEDULE, ago, experience, initials, interviewTime, shortDate, until } from "../lib/format";
 import { useCandidates, useNow } from "../lib/hooks";
 
 type Filter = "action" | "all" | Status | `review:${ReviewStatus}`;
@@ -100,13 +100,21 @@ function Row({ row, index, now, onOpen }: { row: CandidateRow; index: number; no
               {row.status === "abandoned" ? "3/3 reminders, no reply" : `${row.followups_sent}/3 · next ${until(row.next_followup_at, now)}`}
             </span>
           )}
+          {row.interview_status === "booked" && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+              <CalendarCheck className="size-3" aria-hidden />Interview {interviewTime(row.interview_at, row.interview_timezone)}
+            </span>
+          )}
+          {row.interview_status === "offered" && (
+            <span className="inline-flex items-center gap-1 text-xs text-ink-2"><CalendarClock className="size-3" aria-hidden />Choosing an interview time</span>
+          )}
           {row.flags.map((f) => (
             <span key={f} className="inline-flex items-center gap-1 text-xs text-amber-800 dark:text-amber-300"><Flag className="size-3" aria-hidden />{FLAG_LABELS[f] ?? f}</span>
           ))}
           {row.open_questions > 0 && (
             <span className="inline-flex items-center gap-1 text-xs text-ink-2"><MessageCircle className="size-3" aria-hidden />{row.open_questions} open question{row.open_questions > 1 ? "s" : ""}</span>
           )}
-          {!waiting && !row.flags.length && !row.open_questions && <span className="text-ink-3">–</span>}
+          {!waiting && !row.flags.length && !row.open_questions && !row.interview_status && <span className="text-ink-3">–</span>}
         </div>
       </td>
       <td className="num py-3 pr-5 pl-3 text-right text-xs whitespace-nowrap text-ink-3">{ago(row.last_activity, now)}</td>
