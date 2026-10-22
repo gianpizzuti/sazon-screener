@@ -7,7 +7,7 @@ is data loaded from `config/clients/<client>/`. The screening logic itself is ge
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal
+from typing import ClassVar, Literal
 
 import yaml
 from pydantic import BaseModel, Field
@@ -19,6 +19,7 @@ Language = Literal["es", "en"]
 class Zone(BaseModel):
     name: str
     aliases: list[str] = Field(default_factory=list)
+    group: str | None = None  # part of the city ("Norte"), for cities with many zones
 
 
 class ServiceArea(BaseModel):
@@ -30,6 +31,22 @@ class ServiceArea(BaseModel):
     aliases: list[str]
     zones: list[Zone] = Field(default_factory=list)
     interview_place: str | None = None  # where qualified candidates are interviewed
+
+    MAX_ZONE_BUTTONS: ClassVar[int] = 6  # beyond this, offer parts of the city instead of every zone
+
+    def zone_choices(self) -> list[str]:
+        """What the candidate can tap when asked for the zone: the zones themselves, or for a
+        city with many zones its parts ("Centro", "Norte"...)."""
+        if len(self.zones) <= self.MAX_ZONE_BUTTONS:
+            return [z.name for z in self.zones]
+        return list(dict.fromkeys(z.group for z in self.zones if z.group))
+
+    def describe_zones(self) -> str:
+        """For answering "which zones are there?": every zone, grouped by part of the city."""
+        groups = list(dict.fromkeys(z.group for z in self.zones if z.group))
+        if not groups:
+            return ", ".join(z.name for z in self.zones)
+        return "; ".join(f"{g}: {', '.join(z.name for z in self.zones if z.group == g)}" for g in groups)
 
 
 class Platform(BaseModel):

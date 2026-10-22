@@ -950,3 +950,24 @@
   choice: 2
   lang: en
 
+
+# ------------------------------------------------------------------ asking which zones exist
+# Found in manual testing: answered "the team will confirm" although the zones are configuration.
+- id: faq_zones_available
+  tags: [faq]
+  asked: zone
+  known: {name: Pablo Martín, licence: "yes", city: Madrid}
+  msg: "que barrios son disponibles?"
+  expect: {}
+  intents: [question]
+  faq: zones
+
+- id: faq_zones_english
+  tags: [faq, english]
+  asked: location
+  conv: en
+  msg: "which areas do you deliver in?"
+  expect: {}
+  intents: [question]
+  faq: zones
+  lang: en

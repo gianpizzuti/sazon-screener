@@ -23,7 +23,7 @@ Requirements: Python 3.11+, Node 18+ (for the web app), an Anthropic API key.
 make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
-make test                    # offline, no API key: 158 tests of the product + 238 checks of the eval datasets
+make test                    # offline, no API key: 163 tests of the product + 242 checks of the eval datasets
 ```
 
 Optional:
@@ -45,7 +45,7 @@ make eval-conversations      # 13 simulated candidates + LLM judge (real API, ~1
 | **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts. **Qualified candidates book their interview in the chat**: three free times as buttons, no double booking, moved by writing again |
 | **Re-engagement** | Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in *their* timezone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. Any reply resumes the screening. The **recovery rate** shows whether it works. In the web app, the **demo clock** (top bar) moves time forward to show it live |
 | **Recruiter web app** (React) | **Pipeline**: queue ordered by what to do first, status filters, live counters. **Candidate**: AI summary, extracted data with the candidate's own words, chat transcript with the *why* behind every message, recruiter decision and audited override, audit timeline, JSON export, GDPR erasure. **Analytics**: funnel and charts that grow as you scroll, recovery-rate meter, FAQ gaps, AI health, table view. **Try the agent**: play the candidate and watch the screening checklist fill in live. **How it works**: the screening flow as an interactive flowchart (click a step for the exact question and rules, or trace a candidate's path) plus the workspace's live configuration. Light and dark theme, reduced-motion aware |
-| **Evals** | **Extraction**: 118 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 143/146 values right, 1 invented value and harmless where it occurred, location 22/22 after the rules, ≈ $0.2 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
+| **Evals** | **Extraction**: 120 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 144/146 values right, 1 invented value and harmless where it occurred, location 22/22 after the rules, ≈ $0.2 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
 | **API** | `/api/conversations` for channels (web, WhatsApp, voice), `/api/candidates` + `/api/analytics` for recruiters and an ATS, `/api/config` for the read-only workspace rules. OpenAPI docs at `/docs` |
 
 ## How it works
@@ -119,7 +119,7 @@ docs/          process design, decision log, ADRs, live testing log, design docs
 | SQLite + event log | Zero setup for evaluators, real queries, an audit trail; Postgres is one URL away | [0004](docs/decisions/0004-sqlite-sqlalchemy.md) |
 | Grounded extraction | Structured output guarantees shape, not truth: every value must quote the candidate | [0005](docs/decisions/0005-grounding-and-layered-validation.md) |
 | Templates for recap and fallback | Data shown back to the candidate is never paraphrased; the conversation never breaks | [0006](docs/decisions/0006-templates-where-precision-matters.md) |
-| FAQ without a vector DB | 14 entries don't need retrieval infrastructure; the writer only sees the one approved answer | [0007](docs/decisions/0007-faq-without-vector-db.md) |
+| FAQ without a vector DB | 15 entries don't need retrieval infrastructure; the writer only sees the one approved answer | [0007](docs/decisions/0007-faq-without-vector-db.md) |
 | API-first, the UI is a client | Logic in one place, ready for WhatsApp/voice/ATS; the UI was replaced (Streamlit → React) without touching the core | [0008](docs/decisions/0008-api-first-recruiter-tool.md) |
 | React web app with a design system | Orbio's visual language with the client as workspace; motion that explains, accessible charts, light/dark tokens checked for contrast; one process in production | [0009](docs/decisions/0009-react-web-app.md) |
 
@@ -148,7 +148,7 @@ In the order I would do them with more time. Most come from what testing and the
 ### Quality and evals
 | Improvement | Why |
 |---|---|
-| Label a sample of real pilot conversations and grow the eval sets | 118 messages and 13 conversations find failure modes, but are not enough to quote error rates |
+| Label a sample of real pilot conversations and grow the eval sets | 120 messages and 13 conversations find failure modes, but are not enough to quote error rates |
 | Have recruiters rate a sample by hand | Calibrates the LLM judge on the client's own standard |
 | Turn every recruiter override into an eval case | Where the system and the recruiters disagree is the most useful data there is |
 | Evals in CI on prompt or model changes, plus canary rollouts | Catches regressions before they reach candidates |

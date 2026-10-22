@@ -58,7 +58,7 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
 |---|---|---|---|---|
 | Full name | string | at least first name + surname, no digits | ask for the surname once, then accept and flag | no |
 | Driver's licence | status (yes / no / in progress) + type (car / motorbike / both) | clear yes / no; type one of the client's accepted types | "más o menos" → ask for a clear yes/no; "sí" alone → one follow-up for the type | **yes** (no, still getting it, or a type the client doesn't accept) |
-| City / zone | canonical city id + zone | matches a configured service area (aliases, accents, typos) | ambiguous ("Ciutat Vella": Barcelona or Valencia?) → offer options; unknown → ask for the city | **yes** (outside the service area) |
+| City / zone | canonical city id + zone | matches a configured service area (aliases, accents, typos) | ambiguous ("Ciutat Vella": Barcelona or Valencia?) → offer options; unknown → ask for the city. The zone question has buttons: the zones, or parts of the city for big cities, plus "any area"; "which zones are there?" is answered from the configuration | **yes** (outside the service area) |
 | Availability | set of `full_time`, `part_time`, `weekends` | at least one; not full-time *and* part-time | contradiction → ask which one | no |
 | Preferred schedule | set of `morning`, `afternoon`, `evening`, `flexible` | at least one (all three = flexible) | ask again with options | no |
 | Experience | years (number) + platforms (normalised list) | 0–50 years; platforms asked only if years > 0 | "unos meses" → 0.5; no duration → ask | no |

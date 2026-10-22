@@ -18,6 +18,11 @@ faq:
       ES: Trabajas como empleado/a de Grupo Sazón, con contrato laboral y alta en la Seguridad Social. No necesitas darte de alta como autónomo.
       MX: Trabajas como empleado/a de Grupo Sazón, con contrato y alta en el IMSS desde el primer día.
 
+  - id: zones
+    question: ¿En qué zonas o barrios se reparte? ¿Qué zonas hay disponibles?
+    answer:
+      default: (built from service_areas.yaml for the candidate's city, so it is always the real list)
+
   - id: vehicle
     question: ¿Necesito vehículo propio? ¿Me dan moto?
     answer:

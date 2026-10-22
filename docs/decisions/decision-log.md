@@ -299,3 +299,12 @@ Every decision taken while building the agent, large or small (132 so far), with
 | D196 | Filling in a missing detail ("es de moto" after "sí") is logged as `field_refined`, not `field_corrected` | The audit trail must not suggest the candidate got something wrong; the recap still treats both as a change | One event for both | `policy._detect_corrections` |
 | D197 | Sofía uses feminine forms about herself ("encantada") | Found in live testing: "Encantado, Pablo". The gender-neutral rule is about the candidate, not about her | – | speak prompt |
 
+## Choosing the zone (found in manual testing)
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D198 | "Which zones are there?" is answered from the configuration (FAQ topic `zones` with an answer built from `service_areas.yaml`) | Found in manual testing: Sofía said "esa información no la tengo" about data the system has. Data the system owns is never "the team will confirm" | A static FAQ text (drifts from the configuration) | `policy._zones_answer`, `faq.yaml` |
+| D199 | The zone question shows buttons: the zones themselves for cities with up to 6, parts of the city ("Centro, Norte, Sur, Este") for bigger ones, plus "Cualquier zona" | Nobody should need to know district names to answer; 13 buttons help nobody (WhatsApp lists hold 10 rows). The zone is optional, so "any" skips it. Writing the neighbourhood still works ("Lavapiés" → Centro) | Listing every zone; free text only | `ServiceArea.zone_choices`, `engine._quick_replies` |
+| D200 | Which zones form each part of the city is client configuration (`group` per zone), illustrative until the client confirms it | It depends on where the restaurants are | Inferring it from geography | `service_areas.yaml` |
+| D201 | A tapped zone or part of the city counts even if the model extracted nothing: the button text is the quote | Buttons are exact; they must never depend on the model reading them | – | `policy._apply_extraction` |
+

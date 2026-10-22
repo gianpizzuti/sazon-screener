@@ -105,6 +105,34 @@ class TestHappyPath:
         assert state.field(FieldName.EXPERIENCE_PLATFORMS).status == FieldStatus.SKIPPED
 
 
+class TestZoneChoice:
+    def test_a_big_city_offers_its_parts_and_a_tapped_part_is_the_zone(self, policy, state):
+        to_location(policy, state)
+        d, _ = say(policy, state, "Madrid", location_text="Madrid")
+        assert (d.ask_field, d.ask_options) == (FieldName.ZONE, ["Centro", "Norte", "Sur", "Este"])
+        d, _ = say(policy, state, "Norte", intents=("provide_info",))  # a button tap, even if the model read nothing
+        assert state.data.zone == "Norte" and d.ask_field == FieldName.AVAILABILITY
+
+    def test_a_small_city_offers_its_zones(self, policy, state):
+        to_location(policy, state)
+        d, _ = say(policy, state, "Sevilla", location_text="Sevilla")
+        assert d.ask_options == ["Casco Antiguo", "Triana", "Nervión", "Macarena", "Sevilla Este"]
+
+    def test_any_area_skips_the_optional_zone(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid", location_text="Madrid")
+        d, _ = say(policy, state, "Cualquier zona", intents=("other",))
+        assert state.field(FieldName.ZONE).status == FieldStatus.SKIPPED and d.ask_field == FieldName.AVAILABILITY
+
+    def test_which_zones_is_answered_from_the_configuration(self, policy, state):
+        # found in manual testing: "¿qué barrios son disponibles?" got "esa información no la tengo"
+        to_location(policy, state)
+        say(policy, state, "Madrid", location_text="Madrid")
+        d, _ = say(policy, state, "¿qué barrios son disponibles?", intents=("question",),
+                   question="¿qué barrios son disponibles?", faq_id="zones")
+        assert "Chamberí" in d.answer.answer and "Norte:" in d.answer.answer and d.ask_field == FieldName.ZONE
+
+
 class TestLicenceType:
     def test_an_unclear_type_moves_on_without_harming_the_licence(self, policy, state):
         to_licence(policy, state)

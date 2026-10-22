@@ -279,6 +279,9 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
                 hint = ISSUE_HINTS.get(d.ask_issue, ISSUE_HINTS["no_answer"])
                 step += " " + hint.format(options=" / ".join(d.ask_options) or "the possible places")
             steps.append(step)
+            if d.ask_field == FieldName.ZONE and d.ask_options and not d.ask_issue:
+                steps.append(f"Buttons with these options are shown under your message: {', '.join(d.ask_options)}, and 'any area'. "
+                             "Say they can tap one or write their neighbourhood; don't list the options.")
             steps.append(f'Reference wording (adapt it, don\'t copy it): "{_reference(d, cfg)}"')
         case "outcome":
             key = "qualified_book" if d.outcome == "qualified" and d.interview_offer else d.outcome

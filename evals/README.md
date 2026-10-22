@@ -1,10 +1,10 @@
 # Evals
 
-The unit tests (`tests/`: 158 on the product, offline and free) prove the rules do the right thing **given** a model's reading. These evals measure the models themselves, on real API calls, and every result is committed so it can be read without running anything.
+The unit tests (`tests/`: 163 on the product, offline and free) prove the rules do the right thing **given** a model's reading. These evals measure the models themselves, on real API calls, and every result is committed so it can be read without running anything.
 
 | Eval | Question it answers | Latest results |
 |---|---|---|
-| **Extraction** (`extraction.py`, 118 hand-labelled messages) | Does the understanding model read each message correctly, and does it never invent a value? | [`results/extraction.md`](results/extraction.md) |
+| **Extraction** (`extraction.py`, 120 hand-labelled messages) | Does the understanding model read each message correctly, and does it never invent a value? | [`results/extraction.md`](results/extraction.md) |
 | **Conversations** (`conversations.py`, 13 simulated candidates + `judge.py`) | Does a whole screening end where it should, with the right data, in a way a candidate would find clear and respectful? | [`results/conversations.md`](results/conversations.md), [transcripts](results/conversations/) |
 
 ```bash
@@ -21,8 +21,8 @@ python -m evals.conversations --only p08 --no-judge       # one persona, no judg
 
 | Metric | Result |
 |---|---|
-| Fields correct | 143/146 |
-| Spurious values (said by nobody) | 1 in 118 messages ("esos días trabajo por la tarde", read as a preferred shift after qualifying, where it has no effect) |
+| Fields correct | 144/146 |
+| Spurious values (said by nobody) | 1 in 120 messages ("esos días trabajo por la tarde", read as a preferred shift after qualifying, where it has no effect) |
 | Interview time chosen, model reading (used only when the rules can't tell) | 5/5 |
 | Values backed by a verbatim quote | 100% |
 | Location after the deterministic rules | 22/22 (the model alone: 20/22) |
@@ -79,7 +79,7 @@ The point of an eval is the changes it causes. Each row below was found by an ev
 
 ## Limits
 
-- **Small datasets.** 118 messages and 13 conversations are enough to find failure modes and compare models, but not to quote precise error rates. The next step is to label a sample of real conversations from the pilot.
+- **Small datasets.** 120 messages and 13 conversations are enough to find failure modes and compare models, but not to quote precise error rates. The next step is to label a sample of real conversations from the pilot.
 - **Mixed prompt versions.** The Sonnet and Opus extraction runs used the prompt before the last two clarifications; the report shows each run's prompt fingerprint.
 - **An LLM judge has biases**, for example leniency and preferring longer answers. The controls bound this but do not remove it. For a client, a recruiter would also rate a sample by hand.
 - **A judge scores what its rubric asks.** Its "language" criterion rewarded the regional vocabulary I had chosen, so the 3.9 → 4.8 gain was circular and the change was rolled back (D192). Rubric criteria must come from the client or from candidates, not from the design being judged.

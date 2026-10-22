@@ -66,6 +66,18 @@ class LocationMatcher:
             return LocationMatch(status="resolved", city_id=fuzzy.id, source="fuzzy")
         return LocationMatch(status="no_match")
 
+    def group_in_city(self, city_id: str, text: str | None) -> str | None:
+        """A part of the city ("Norte", "zona norte", "el sur") offered as a button."""
+        if not text:
+            return None
+        norm = normalize(text)
+        for area in self.areas:
+            if area.id == city_id:
+                for group in dict.fromkeys(z.group for z in area.zones if z.group):
+                    if contains_phrase(norm, group):
+                        return group
+        return None
+
     def zone_in_city(self, city_id: str, text: str | None) -> str | None:
         """Canonical zone name if `text` names a zone of that city."""
         if not text:

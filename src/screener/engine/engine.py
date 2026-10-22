@@ -388,6 +388,8 @@ class ScreeningEngine:
         copy, loc = self.cfg.copy_, directive.locale
         if directive.kind == "ask" and directive.ask_issue == "license_type":  # before the licence's own Sí/No
             return copy.options("license_type", loc)
+        if directive.kind == "ask" and directive.ask_field == FieldName.ZONE and directive.ask_options and not directive.ask_issue:
+            return directive.ask_options + copy.options("zone_any", loc)
         if directive.kind == "ask" and directive.ask_field in QUICK_REPLIES_BY_FIELD:
             return copy.options(QUICK_REPLIES_BY_FIELD[directive.ask_field], loc)
         if directive.kind == "outcome" and directive.outcome in ("no_license", "license_in_progress", "out_of_area", "license_type_not_accepted"):

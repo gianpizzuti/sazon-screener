@@ -15,6 +15,9 @@ options:
   drivers_license:
     es: ["Sí", "No"]
     en: ["Yes", "No"]
+  zone_any:
+    es: ["Cualquier zona"]
+    en: ["Any area"]
   license_type:
     es-MX: ["Carro", "Moto", "Los dos"]
     es: ["Coche", "Moto", "Los dos"]

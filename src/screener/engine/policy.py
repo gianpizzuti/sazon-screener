@@ -186,6 +186,8 @@ class ScreeningPolicy:
         directive.ask_field = nxt
         directive.ask_issue = fs.last_error if fs.status == FieldStatus.INVALID else None
         directive.ask_options = list(fs.hint_options)
+        if nxt == FieldName.ZONE and not directive.ask_options and (area := self.cfg.area(state.data.city_id)):
+            directive.ask_options = area.zone_choices()  # tappable: nobody has to know the district names
         directive.zone_city = state.data.city
         state.current_field = nxt
         fs.times_asked += 1
@@ -415,12 +417,21 @@ class ScreeningPolicy:
         if state.data.country is None and analysis.spanish_variant != "unknown":
             state.spanish_variant = analysis.spanish_variant
 
+    def _zones_answer(self, state) -> str:
+        """Where we deliver, from the configuration: data the system has is never "the team will confirm"."""
+        area = self.cfg.area(state.data.city_id)
+        if area:
+            return (f"En {area.name} repartimos en estas zonas: {area.describe_zones()}. Puede elegir una zona, "
+                    "una parte de la ciudad o 'Cualquier zona' si le da igual.")
+        return "Repartimos en " + ", ".join(a.name for a in self.cfg.service_areas) + "."
+
     def _answer_question(self, state, analysis: TurnAnalysis, events) -> AnswerToQuestion:
         question = analysis.question or "(question)"
         entry = self.cfg.faq_entry(analysis.faq_id)
         if entry:
             events.append(Event("question_answered", {"faq_id": entry.id, "question": question}))
-            return AnswerToQuestion(question=question, answer=entry.answer_for(state.data.country), faq_id=entry.id)
+            answer = self._zones_answer(state) if entry.id == "zones" else entry.answer_for(state.data.country)
+            return AnswerToQuestion(question=question, answer=answer, faq_id=entry.id)
         state.pending_questions.append(question)
         events.append(Event("question_unanswered", {"question": question}))
         return AnswerToQuestion(question=question)
@@ -473,6 +484,10 @@ class ScreeningPolicy:
             else:
                 self._record(state, FieldName.DRIVERS_LICENSE, Validation(value=status), q, set_license, captured, events)
 
+        if (state.current_field == FieldName.ZONE and data.city_id and not (x.location_text or x.location_zone or x.location_city_id)
+                and (self.matcher.zone_in_city(data.city_id, message) or self.matcher.group_in_city(data.city_id, message))):
+            x = x.model_copy(update={"location_text": message})  # a tapped button: the message is the quote
+            quotes["location"] = message
         if (x.location_text or x.location_city_id or x.location_outside_service_area) and (q := grounded("location")):
             self._apply_location(state, x, q, captured, events, solicited=may_knock_out(FieldName.LOCATION, FieldName.ZONE))
 
@@ -521,6 +536,12 @@ class ScreeningPolicy:
             # Another place mentioned in passing does not move a location the candidate already gave.
             events.append(Event("unsolicited_value_ignored", {"field": FieldName.LOCATION, "text": raw}))
             return
+        if state.current_field == FieldName.ZONE and data.city_id and not self.matcher.zone_in_city(data.city_id, raw):
+            group = self.matcher.group_in_city(data.city_id, raw) or self.matcher.group_in_city(data.city_id, x.location_zone)
+            if group:  # "Norte": a part of the city offered as a button
+                data.zone = group
+                self._mark_valid(state, FieldName.ZONE, quote, captured, events)
+                return
         match = self.matcher.match(raw)
         city_id, zone = None, None
         if match.status == "resolved":

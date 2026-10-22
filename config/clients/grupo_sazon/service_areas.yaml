@@ -2,6 +2,7 @@
 # Aliases are matched accent- and case-insensitively, as whole words.
 # Values are illustrative: the real list comes from the client (see docs/process-design.md §8).
 # interview_place: where qualified candidates are interviewed (one restaurant per city, to confirm).
+# group: part of the city, offered as buttons when a city has many zones (to confirm with the client).
 
 service_areas:
   # ---------------- Spain ----------------
@@ -13,19 +14,19 @@ service_areas:
     interview_place: Grupo Sazón Malasaña (Madrid)
     aliases: [madrid]
     zones:
-      - {name: Centro, aliases: [centro, sol, malasaña, malasana, lavapiés, chueca, la latina]}
-      - {name: Chamberí, aliases: [chamberí, chamberi]}
-      - {name: Salamanca, aliases: [barrio de salamanca]}  # not "salamanca": also a city outside the area
-      - {name: Retiro, aliases: [retiro]}
-      - {name: Chamartín, aliases: [chamartín, chamartin]}
-      - {name: Tetuán, aliases: [tetuán, tetuan]}
-      - {name: Arganzuela, aliases: [arganzuela, delicias]}
-      - {name: Carabanchel, aliases: [carabanchel]}
-      - {name: Puente de Vallecas, aliases: [vallecas, puente de vallecas]}
-      - {name: Ciudad Lineal, aliases: [ciudad lineal]}
-      - {name: Getafe, aliases: [getafe]}
-      - {name: Leganés, aliases: [leganés, leganes]}
-      - {name: Alcobendas, aliases: [alcobendas]}
+      - {name: Centro, aliases: [centro, sol, malasaña, malasana, lavapiés, chueca, la latina], group: Centro}
+      - {name: Chamberí, aliases: [chamberí, chamberi], group: Centro}
+      - {name: Salamanca, aliases: [barrio de salamanca], group: Centro}  # not "salamanca": also a city outside the area
+      - {name: Retiro, aliases: [retiro], group: Centro}
+      - {name: Chamartín, aliases: [chamartín, chamartin], group: Norte}
+      - {name: Tetuán, aliases: [tetuán, tetuan], group: Norte}
+      - {name: Arganzuela, aliases: [arganzuela, delicias], group: Centro}
+      - {name: Carabanchel, aliases: [carabanchel], group: Sur}
+      - {name: Puente de Vallecas, aliases: [vallecas, puente de vallecas], group: Este}
+      - {name: Ciudad Lineal, aliases: [ciudad lineal], group: Este}
+      - {name: Getafe, aliases: [getafe], group: Sur}
+      - {name: Leganés, aliases: [leganés, leganes], group: Sur}
+      - {name: Alcobendas, aliases: [alcobendas], group: Norte}
 
   - id: barcelona
     name: Barcelona
@@ -35,14 +36,14 @@ service_areas:
     interview_place: Grupo Sazón Gràcia (Barcelona)
     aliases: [barcelona, bcn]
     zones:
-      - {name: Ciutat Vella, aliases: [ciutat vella, gótico, gotico, raval, born]}
-      - {name: Eixample, aliases: [eixample, ensanche]}
-      - {name: Gràcia, aliases: [gràcia, gracia]}
-      - {name: Sants-Montjuïc, aliases: [sants, montjuïc, montjuic]}
-      - {name: Sant Martí, aliases: [sant martí, sant marti, poblenou]}
-      - {name: Nou Barris, aliases: [nou barris]}
-      - {name: L'Hospitalet, aliases: [hospitalet, l'hospitalet]}
-      - {name: Badalona, aliases: [badalona]}
+      - {name: Ciutat Vella, aliases: [ciutat vella, gótico, gotico, raval, born], group: Centro}
+      - {name: Eixample, aliases: [eixample, ensanche], group: Centro}
+      - {name: Gràcia, aliases: [gràcia, gracia], group: Centro}
+      - {name: Sants-Montjuïc, aliases: [sants, montjuïc, montjuic], group: Oeste}
+      - {name: Sant Martí, aliases: [sant martí, sant marti, poblenou], group: Este}
+      - {name: Nou Barris, aliases: [nou barris], group: Norte}
+      - {name: L'Hospitalet, aliases: [hospitalet, l'hospitalet], group: Oeste}
+      - {name: Badalona, aliases: [badalona], group: Este}
 
   - id: valencia
     name: Valencia
@@ -105,14 +106,14 @@ service_areas:
     interview_place: Grupo Sazón Roma Norte (Ciudad de México)
     aliases: [cdmx, ciudad de méxico, ciudad de mexico, df, mexico city, chilangolandia]
     zones:
-      - {name: Cuauhtémoc, aliases: [cuauhtémoc, cuauhtemoc, roma, roma norte, condesa, juárez, centro histórico, centro historico]}
-      - {name: Benito Juárez, aliases: [benito juárez, benito juarez, narvarte, del valle]}
-      - {name: Miguel Hidalgo, aliases: [miguel hidalgo, polanco, anzures]}
-      - {name: Coyoacán, aliases: [coyoacán, coyoacan]}
-      - {name: Álvaro Obregón, aliases: [álvaro obregón, alvaro obregon, san ángel, san angel]}
-      - {name: Iztapalapa, aliases: [iztapalapa]}
-      - {name: Gustavo A. Madero, aliases: [gustavo a. madero, gam, lindavista]}
-      - {name: Tlalpan, aliases: [tlalpan]}
+      - {name: Cuauhtémoc, aliases: [cuauhtémoc, cuauhtemoc, roma, roma norte, condesa, juárez, centro histórico, centro historico], group: Centro}
+      - {name: Benito Juárez, aliases: [benito juárez, benito juarez, narvarte, del valle], group: Centro}
+      - {name: Miguel Hidalgo, aliases: [miguel hidalgo, polanco, anzures], group: Centro}
+      - {name: Coyoacán, aliases: [coyoacán, coyoacan], group: Sur}
+      - {name: Álvaro Obregón, aliases: [álvaro obregón, alvaro obregon, san ángel, san angel], group: Sur}
+      - {name: Iztapalapa, aliases: [iztapalapa], group: Oriente}
+      - {name: Gustavo A. Madero, aliases: [gustavo a. madero, gam, lindavista], group: Norte}
+      - {name: Tlalpan, aliases: [tlalpan], group: Sur}
 
   - id: guadalajara
     name: Guadalajara

@@ -135,6 +135,19 @@ def test_the_licence_type_follow_up_offers_buttons(make_engine):
     assert result.messages[0].quick_replies == ["Coche", "Moto", "Los dos"]
 
 
+def test_the_zone_question_offers_buttons_and_any_area(make_engine):
+    from conftest import analysis
+
+    engine = make_engine([analysis("sí", intents=("affirm",)), analysis("Ana López", full_name="Ana López"),
+                          analysis("sí, de coche", drivers_license="yes", license_type="car"),
+                          analysis("Madrid", location_text="Madrid")])
+    cid = engine.start().conversation_id
+    for text in ("sí", "Ana López", "sí, de coche"):
+        engine.handle(cid, text)
+    result = engine.handle(cid, "Madrid")
+    assert result.messages[0].quick_replies == ["Centro", "Norte", "Sur", "Este", "Cualquier zona"]
+
+
 def test_empty_messages_are_ignored(make_engine):
     engine = make_engine([])
     cid = engine.start().conversation_id
