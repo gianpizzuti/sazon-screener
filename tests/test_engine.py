@@ -117,6 +117,17 @@ def test_the_applications_country_sets_the_spanish_variant_from_the_first_messag
     assert engine.repo.get_state(engine.start().conversation_id).locale == "es"  # unknown: neutral Spanish
 
 
+def test_the_application_sets_variant_and_timezone_before_the_candidate_says_a_word(make_engine):
+    engine = make_engine([])
+    cid = engine.start(job="Repartidor/a · Grupo Sazón Roma Norte (Ciudad de México)", area_id="cdmx").conversation_id
+    state = engine.repo.get_state(cid)
+    assert (state.locale, state.application.country) == ("es-MX", "MX")
+    # reminders and "today" follow Mexico City even before the candidate names a city
+    assert engine._timezone(state) == "America/Mexico_City"
+    generic = engine.repo.get_state(engine.start().conversation_id)
+    assert generic.locale == "es" and engine._timezone(generic) == "Europe/Madrid"  # a generic link: neutral, default
+
+
 def test_empty_messages_are_ignored(make_engine):
     engine = make_engine([])
     cid = engine.start().conversation_id

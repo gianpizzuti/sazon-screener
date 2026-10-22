@@ -57,6 +57,7 @@ class CandidateRow(BaseModel):
     interview_at: datetime | None   # UTC; shown in the area's timezone
     interview_place: str | None
     interview_timezone: str | None
+    applied_to: str | None          # the job ad, from the application
     created_at: datetime
     last_activity: datetime
     priority: int
@@ -135,6 +136,7 @@ def build_row(state: ConversationState, summary: dict | None, review: dict, now:
         interview_at=state.interview.slot if state.interview else None,
         interview_place=state.interview.place if state.interview else None,
         interview_timezone=state.interview.timezone if state.interview else None,
+        applied_to=state.application.job,
         created_at=state.created_at,
         last_activity=state.last_candidate_message_at or state.created_at,
         priority=PRIORITY.get(status, 9) * 10 + (0 if review.get("status", "new") == "new" else 5),

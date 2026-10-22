@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field
 
 from screener.config import ClientConfig
 from screener.domain.models import TERMINAL_STAGES as TERMINAL
-from screener.domain.models import ConversationState, FieldName, InterviewState, InterviewStatus, ScreeningData, Stage, utcnow
+from screener.domain.models import Application, ConversationState, FieldName, InterviewState, InterviewStatus, ScreeningData, Stage, utcnow
 from screener.engine import followups
 from screener.engine.directive import Directive, Event
 from screener.engine.policy import ScreeningPolicy
@@ -43,6 +43,7 @@ from screener.storage.repository import Repository
 log = logging.getLogger(__name__)
 
 MAX_INBOUND_CHARS = 1000
+COUNTRY_TIMEZONES = {"ES": "Europe/Madrid", "MX": "America/Mexico_City"}
 QUICK_REPLIES_BY_FIELD = {
     FieldName.DRIVERS_LICENSE: "drivers_license",
     FieldName.AVAILABILITY: "availability",
@@ -87,18 +88,23 @@ class ScreeningEngine:
         self._locks_guard = threading.Lock()
 
     # ------------------------------------------------------------------ public API
-    def start(self, channel: str = "web", language: str | None = None, country: str | None = None) -> TurnResult:
+    def start(self, channel: str = "web", language: str | None = None, country: str | None = None,
+              job: str | None = None, area_id: str | None = None) -> TurnResult:
         """Open a conversation. The first message is a fixed template (as WhatsApp requires
         for business-initiated messages) disclosing that the agent is an AI.
 
-        `country` comes from the application (the restaurant applied to): it sets Spain or Mexico
-        Spanish from the first message instead of neutral Spanish until the city is known."""
+        The application (from the ATS: the job ad and its restaurant) tells the country before
+        the candidate says a word: Spain or Mexico Spanish from the first question, and reminders
+        in the right timezone. Without it: neutral Spanish until the city is known."""
+        area = self.cfg.area(area_id)
+        country = (country or (area.country if area else "") or "").upper() or None
         state = ConversationState(
             id=str(uuid.uuid4()),
             client_id=self.cfg.id,
             channel=channel,
             language=language or self.cfg.agent.default_language,
-            spanish_variant={"ES": "es-ES", "MX": "es-MX"}.get((country or "").upper()),
+            spanish_variant={"ES": "es-ES", "MX": "es-MX"}.get(country or ""),
+            application=Application(job=job, area_id=area.id if area else None, country=country),
             created_at=self.clock(),
         )
         greeting = OutboundMessage(
@@ -172,8 +178,11 @@ class ScreeningEngine:
         return copy.text(f"ask.{state.current_field.value}", loc, city=state.data.city or "")
 
     def _timezone(self, state: ConversationState) -> str:
-        area = self.cfg.area(state.data.city_id)
-        return area.timezone if area else self.cfg.agent.default_timezone
+        """The candidate's timezone: their city, else the restaurant they applied to, else their country."""
+        area = self.cfg.area(state.data.city_id) or self.cfg.area(state.application.area_id)
+        if area:
+            return area.timezone
+        return COUNTRY_TIMEZONES.get(state.application.country or "", self.cfg.agent.default_timezone)
 
     # ------------------------------------------------------------------ turn
     def _handle(self, conversation_id: str, text: str) -> TurnResult:

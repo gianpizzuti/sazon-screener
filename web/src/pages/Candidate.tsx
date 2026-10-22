@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import {
-  ArrowLeft, Bot, CalendarCheck, CalendarClock, Check, ChevronDown, CircleCheck, CircleDot, CircleX, Download, Flag, Gavel, Hourglass, Languages,
+  ArrowLeft, Bot, Briefcase, CalendarCheck, CalendarClock, Check, ChevronDown, CircleCheck, CircleDot, CircleX, Download, Flag, Gavel, Hourglass, Languages,
   MapPin, MessageCircle, MoonStar, Quote, RefreshCw, Sparkles, Trash2, TriangleAlert, User, X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -332,6 +332,7 @@ export function CandidatePage() {
             <ReviewBadge status={row.review_status} overridden={row.overridden} />
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-2">
+            {row.applied_to && <span className="inline-flex items-center gap-1" title="The job ad applied to (from the application)"><Briefcase className="size-4 text-ink-3" />{row.applied_to}</span>}
             {row.city && <span className="inline-flex items-center gap-1"><MapPin className="size-4 text-ink-3" />{row.city}{row.zone && ` · ${row.zone}`}</span>}
             <span className="inline-flex items-center gap-1"><Languages className="size-4 text-ink-3" />{row.language.toUpperCase()}</span>
             <span className="inline-flex items-center gap-1"><MessageCircle className="size-4 text-ink-3" />via {row.channel} · started {ago(row.created_at, now)}</span>

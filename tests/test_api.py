@@ -169,3 +169,13 @@ def test_the_web_app_is_revalidated_and_its_hashed_assets_are_cached(client_for)
         asset = next((WEB_DIST / "assets").iterdir()).name
         assert "immutable" in client.get(f"/assets/{asset}").headers["cache-control"]
 
+
+def test_the_job_ad_applied_to_is_shown_to_recruiters(client_for):
+    client, _ = client_for([])
+    with client:
+        start = client.post("/api/conversations", json={"job": "Repartidor/a · Grupo Sazón Malasaña (Madrid)", "area_id": "madrid"})
+        assert start.status_code == 200
+        row = client.get("/api/candidates").json()[0]
+        assert row["applied_to"] == "Repartidor/a · Grupo Sazón Malasaña (Madrid)"
+        assert client.post("/api/conversations", json={"area_id": "toledo"}).status_code == 422
+

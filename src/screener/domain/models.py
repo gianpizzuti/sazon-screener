@@ -165,6 +165,14 @@ class InterviewState(BaseModel):
     reminded: bool = False                                  # options re-shown once after an unclear reply
 
 
+class Application(BaseModel):
+    """What the application says before the conversation starts (from the ATS or the job ad)."""
+
+    job: str | None = None       # the job ad applied to, e.g. "Repartidor/a · Grupo Sazón Malasaña (Madrid)"
+    area_id: str | None = None   # the restaurant's service area
+    country: str | None = None   # ES / MX
+
+
 class Flag(BaseModel):
     code: str
     detail: str = ""
@@ -190,6 +198,7 @@ class ConversationState(BaseModel):
     abuse_strikes: int = 0
     recap_rounds: int = 0  # replies to the recap that did not confirm it
     interview: InterviewState | None = None
+    application: Application = Field(default_factory=Application)
     post_close_replies: int = 0  # courtesy replies sent after the screening ended
     followups_sent: int = 0          # follow-ups since the candidate's last message
     last_followup_at: datetime | None = None

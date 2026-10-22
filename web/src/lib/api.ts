@@ -39,6 +39,7 @@ export interface CandidateRow {
   interview_at: string | null;
   interview_place: string | null;
   interview_timezone: string | null;
+  applied_to: string | null;
   created_at: string;
   last_activity: string;
   priority: number;
@@ -170,7 +171,7 @@ export interface WorkspaceConfig {
   description: string;
   agent: string;
   role: Record<string, string>;
-  service_areas: { id: string; name: string; country: string; restaurants: number; zones: string[] }[];
+  service_areas: { id: string; name: string; country: string; restaurants: number; zones: string[]; interview_place: string | null }[];
   faq: { id: string; question: string }[];
   followups: { schedule_hours: number[]; quiet_hours_start: number; quiet_hours_end: number; abandon_after_hours: number; whatsapp_window_hours: number };
   thresholds: { max_failed_attempts: number; late_start_days: number; max_message_chars: number };
@@ -211,7 +212,9 @@ export const api = {
   regenerateSummary: (id: string) => request<Summary>("POST", `/candidates/${id}/summary`),
   analytics: () => request<Analytics>("GET", "/analytics"),
   config: () => request<WorkspaceConfig>("GET", "/config"),
-  start: (language: "es" | "en") => request<TurnResult>("POST", "/conversations", { channel: "web", language }),
+  /** `job`/`area_id`: what the application says; in production they come from the ATS. */
+  start: (language: "es" | "en", ad?: { job: string; area_id: string } | null) =>
+    request<TurnResult>("POST", "/conversations", { channel: "web", language, ...(ad ?? {}) }),
   send: (id: string, text: string) =>
     request<TurnResult>("POST", `/conversations/${id}/messages?debug=true`, { text }),
   demoClock: async (): Promise<DemoClock | null> => {

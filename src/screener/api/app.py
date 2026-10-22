@@ -32,7 +32,10 @@ from screener.views import CandidateDetail, CandidateRow, build_detail, build_ro
 class StartRequest(BaseModel):
     channel: str = "web"
     language: Literal["es", "en"] | None = None
-    country: Literal["ES", "MX"] | None = None  # of the restaurant applied to: sets Spain/Mexico Spanish
+    # What the application says (in production, from the ATS): the job ad and its restaurant.
+    country: Literal["ES", "MX"] | None = None  # sets Spain/Mexico Spanish and the timezone from the first message
+    job: str | None = Field(default=None, max_length=200)
+    area_id: str | None = None
 
 
 class MessageRequest(BaseModel):
@@ -89,7 +92,10 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
     @api.post("/conversations", response_model=TurnResult, tags=["channel"])
     def start_conversation(body: StartRequest, request: Request) -> TurnResult:
         """Open a conversation: returns the fixed greeting (AI disclosure + privacy note)."""
-        return get_engine(request).start(channel=body.channel, language=body.language, country=body.country)
+        engine = get_engine(request)
+        if body.area_id and not engine.cfg.area(body.area_id):
+            raise HTTPException(422, f"unknown area_id {body.area_id!r}")
+        return engine.start(channel=body.channel, language=body.language, country=body.country, job=body.job, area_id=body.area_id)
 
     @api.post("/conversations/{conversation_id}/messages", response_model=TurnResult, tags=["channel"])
     def send_message(
@@ -176,7 +182,8 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
             "agent": cfg.agent.name,
             "role": cfg.role,
             "service_areas": [
-                {"id": a.id, "name": a.name, "country": a.country, "restaurants": a.restaurants, "zones": [z.name for z in a.zones]}
+                {"id": a.id, "name": a.name, "country": a.country, "restaurants": a.restaurants, "zones": [z.name for z in a.zones],
+                 "interview_place": a.interview_place}
                 for a in cfg.service_areas
             ],
             "faq": [{"id": f.id, "question": f.question} for f in cfg.faq],
