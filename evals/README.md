@@ -1,6 +1,6 @@
 # Evals
 
-The unit tests (`tests/`: 163 on the product, offline and free) prove the rules do the right thing **given** a model's reading. These evals measure the models themselves, on real API calls, and every result is committed so it can be read without running anything.
+The unit tests (`tests/`: 171 on the product, offline and free) prove the rules do the right thing **given** a model's reading. These evals measure the models themselves, on real API calls, and every result is committed so it can be read without running anything.
 
 | Eval | Question it answers | Latest results |
 |---|---|---|
