@@ -23,6 +23,11 @@ faq:
     answer:
       default: (built from service_areas.yaml for the candidate's city, so it is always the real list)
 
+  - id: interviews
+    question: ¿Cuándo y dónde son las entrevistas? ¿Hay entrevistas en fin de semana o por la tarde?
+    answer:
+      default: "(built from the scheduling configuration: days, hours and the interview place)"
+
   - id: vehicle
     question: ¿Necesito vehículo propio? ¿Me dan moto?
     answer:
@@ -46,7 +51,7 @@ faq:
   - id: process
     question: ¿Qué pasa después? ¿Cuáles son los siguientes pasos? ¿Cuándo me contestan?
     answer:
-      default: Al terminar estas preguntas, si cumples los requisitos, un/a recruiter te escribe en menos de 48 horas para una entrevista breve (unos 20 minutos) en el restaurante más cercano.
+      default: Al terminar estas preguntas, si cumples los requisitos, eliges aquí mismo el día y la hora de una entrevista breve (unos 20 minutos) en uno de nuestros restaurantes. Si ningún horario te va bien, una persona del equipo de selección te ayuda a encontrar otro. Una persona revisa siempre cada candidatura.
 
   - id: documents
     question: ¿Qué documentos necesito?

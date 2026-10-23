@@ -197,7 +197,8 @@ outcome:
     es: "Gracias, {name}. Ahora mismo no repartimos en {place}. ¿Quieres que guardemos tus datos para avisarte si abrimos en tu zona?"
     en: "Thanks, {name}. We don't deliver in {place} yet. Would you like us to keep your details and let you know if we open in your area?"
   needs_review:
-    es: "Gracias, {name}. Un/a recruiter revisará tus respuestas y te contactará pronto."
+    es: "Gracias, {name}. Una persona del equipo de selección revisará tus respuestas y te contactará pronto."
+    es-MX: "Gracias, {name}. Una persona del equipo de reclutamiento revisará tus respuestas y te contactará pronto."
     en: "Thanks, {name}. A recruiter will review your answers and get back to you soon."
   withdrawn:
     es: "Entendido, no te escribiré más. Si cambias de opinión, escríbeme cuando quieras. ¡Mucha suerte!"

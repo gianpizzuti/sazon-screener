@@ -136,6 +136,17 @@ class TestBookingFlow:
         assert "interview_cancelled" in result.event_types and state.interview.status == InterviewStatus.OFFERED
         assert engine.repo.taken_interview_slots("madrid") == set()  # the old time is free again
 
+    def test_a_reschedule_asked_as_a_question_still_moves_the_interview(self, make_engine):
+        # found in exploratory testing (ex19): "no puedo ir, ¿lo podemos cambiar?" got "the team will confirm"
+        message = "uy, al final ese día no puedo ir, ¿lo podemos cambiar?"
+        engine = make_engine(full_screening() + [analysis("1"), analysis(message, intents=("question",), question=message)])
+        cid, _ = qualify(engine)
+        engine.handle(cid, "1")
+        result = engine.handle(cid, message)
+        state = engine.repo.get_state(cid)
+        assert "interview_cancelled" in result.event_types and "otras opciones" in result.messages[0].text
+        assert not state.pending_questions
+
     def test_a_time_taken_by_someone_else_meanwhile_is_offered_again(self, make_engine):
         script = full_screening() + full_screening() + [analysis("2"), analysis("2")]
         engine = make_engine(script)

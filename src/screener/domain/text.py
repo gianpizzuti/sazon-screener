@@ -69,3 +69,22 @@ def is_grounded(quote: str | None, message: str, min_token_overlap: float = 0.7)
     q_tokens, m_tokens = q.split(), set(m.split())
     hits = sum(1 for token in q_tokens if token in m_tokens)
     return hits / len(q_tokens) >= min_token_overlap
+
+
+# Words that clearly mark Mexican or Spain Spanish ("dale", "va", "ok" mark neither).
+_VARIANT_MARKERS = {
+    "es-MX": ["carro", "licencia de manejo", "manejo", "chamba", "chambear", "ahorita", "que onda", "orale",
+              "neta", "simon", "chido", "padrisimo", "mande", "platicar"],
+    "es-ES": ["coche", "carnet", "vale", "curro", "currar", "vosotros", "vuestro", "vuestra", "guay", "mola",
+              "molar", "tio", "tia"],
+}
+
+
+def spanish_variant_markers(text: str) -> str | None:
+    """Spain or Mexico Spanish if the message uses words that clearly mark only one of them.
+
+    A second opinion for the model's guess, like `function_word_language` for the language:
+    "dale" alone once switched a candidate in Spain to Mexican vocabulary."""
+    norm = normalize(text)
+    hits = {variant for variant, words in _VARIANT_MARKERS.items() if any(contains_phrase(norm, w) for w in words)}
+    return hits.pop() if len(hits) == 1 else None

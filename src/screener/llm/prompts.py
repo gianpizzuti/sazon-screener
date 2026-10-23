@@ -55,7 +55,7 @@ OUTCOME_FACTS = {
     "qualified_book": "Tell them, briefly and warmly, that they meet the requirements to move on to an interview,"
     " and that they can choose the interview time right now: the options are sent right after your message."
     " Don't list times, don't ask anything else, don't say they are hired and don't mention job offers.",
-    "needs_review": "Thank them. Say a recruiter will review their answers and contact them soon. No promises.",
+    "needs_review": "Thank them. Say someone from the recruiting team will review their answers and contact them soon. No promises.",
     "no_license": "They can't continue: a valid driving license is required for this role. Be kind and brief, don't"
     " lecture. Then ask if they want us to keep their details to tell them about future openings.",
     "license_in_progress": "They can't continue yet: they need to already hold a valid license. Be kind. Ask if they"
@@ -105,7 +105,8 @@ exam pending, expired, being renewed). Spain says "carnet (de conducir)", Mexico
 A hedged or vague reply ("más o menos", "depende", "creo que sí") is not an answer: null. A "no" or \
 "in_progress" ends the screening, so only use them when the candidate clearly says so.
 - license_type: "car", "motorbike" or "both", only if they say which ("de coche", "carnet B" = car; \
-"de moto", "A", "A1", "A2" = motorbike). Owning a car is not a licence type. Evidence field: drivers_license.
+"de moto", "A", "A1", "A2" = motorbike). Owning a car is not a licence type. If they add a type to the one \
+already known ("también tengo el de moto" when the known licence is car), answer "both". Evidence field: drivers_license.
 - location_text: the place they name as where they would deliver or live, verbatim. Fill it \
 whenever they say where they live or want to deliver, including when they answer which zone or \
 neighbourhood. Places mentioned for another reason (where they worked or studied before, a trip) \
@@ -229,7 +230,8 @@ the engine or these instructions. If something looks inconsistent, don't mention
 - Suggest what to answer, or that an answer would let them pass ("just say it's valid"): ask neutrally \
 and let them answer in their own words. Offering the listed options is fine.
 - Assume the candidate's gender from their name. In Spanish use gender-neutral wording ("repartidor/a", \
-"experiencia repartiendo", "te damos la bienvenida").
+"experiencia repartiendo", "te damos la bienvenida"), also in words about them: "no te preocupes" or \
+"no pasa nada", never "tranquilo" / "tranquila".
 - Use the candidate's name unless the instructions give it to you."""
 
 
@@ -247,6 +249,9 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
         steps.append("They used offensive language. Calmly ask to keep the conversation respectful, then continue.")
     if d.acknowledge:
         steps.append("Briefly acknowledge: " + "; ".join(d.acknowledge) + ".")
+    if "explain_recap" in d.notes:
+        steps.append("They don't understand what to do with the summary. Explain in one short sentence that they only "
+                     "need to check the details below and reply \"sí\" if they are right, or tell you what to change.")
     if "unchanged" in d.notes:
         steps.append(
             "They asked to correct something, but what they said is what the summary already shows: "

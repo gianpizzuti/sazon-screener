@@ -150,6 +150,44 @@ class TestZoneChoice:
         assert "Chamberí" in d.answer.answer and "Norte:" in d.answer.answer and d.ask_field == FieldName.ZONE
 
 
+class TestFoundInExploratoryTesting:
+    """Each case comes from evals/exploratory.yaml (real models, scripted like a person testing)."""
+
+    def test_one_ambiguous_word_does_not_switch_to_mexican_vocabulary(self, policy, state):
+        say(policy, state, "dale", intents=("affirm",), spanish_variant="es-MX")  # ex05
+        assert state.locale == "es"
+        say(policy, state, "qué onda, sí le entro", intents=("affirm",), spanish_variant="es-MX")  # ex14
+        assert state.locale == "es-MX"
+
+    def test_also_having_the_other_licence_means_both(self, policy, state):
+        to_licence(policy, state)
+        say(policy, state, "sí, de coche", drivers_license="yes", license_type="car")
+        say(policy, state, "bueno, en realidad también tengo el de moto", license_type="motorbike")  # ex07
+        assert state.data.license_type == "both"
+
+    def test_any_zone_skips_the_zone_and_keeps_the_city(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "madrid", location_text="madrid")
+        d, _ = say(policy, state, "Cualquier zona", location_text="Cualquier zona", location_city_id="madrid")  # ex09
+        assert state.data.location_raw == "madrid" and state.field(FieldName.ZONE).status == FieldStatus.SKIPPED
+        assert d.ask_field == FieldName.AVAILABILITY
+
+    def test_interview_days_and_hours_come_from_the_configuration(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid, Retiro", location_text="Madrid, Retiro")
+        d, _ = say(policy, state, "¿no hay entrevistas los sábados?", intents=("question",),
+                   question="¿no hay entrevistas los sábados?", faq_id="interviews")  # ex18
+        assert "de lunes a viernes" in d.answer.answer and "de 10:00 a 13:00 y de 16:00 a 19:00" in d.answer.answer
+        assert not state.pending_questions
+
+    def test_confusion_at_the_recap_is_explained_not_sent_to_the_team(self, policy, state):
+        complete_until_recap(policy, state)
+        d, _ = say(policy, state, "no entiendo qué tengo que hacer ahora", intents=("question",),
+                   question="¿qué tengo que hacer?", sentiment="confused")  # ex20
+        assert d.kind == "recap" and "explain_recap" in d.notes
+        assert d.answer is None and not state.pending_questions
+
+
 class TestLicenceType:
     def test_an_unclear_type_moves_on_without_harming_the_licence(self, policy, state):
         to_licence(policy, state)

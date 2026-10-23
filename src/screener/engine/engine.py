@@ -408,7 +408,8 @@ class ScreeningEngine:
         d = state.data
         known = {
             "name": d.full_name,
-            "licence": d.license_status.value if d.license_status else None,
+            "licence": (f"{d.license_status.value} ({d.license_type.value})" if d.license_type else d.license_status.value)
+            if d.license_status else None,
             "city": d.city,
             "zone": d.zone,
             "availability": ",".join(a.value for a in d.availability) or None,

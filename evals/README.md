@@ -5,6 +5,7 @@ The unit tests (`tests/`: 163 on the product, offline and free) prove the rules 
 | Eval | Question it answers | Latest results |
 |---|---|---|
 | **Extraction** (`extraction.py`, 120 hand-labelled messages) | Does the understanding model read each message correctly, and does it never invent a value? | [`results/extraction.md`](results/extraction.md) |
+| **Exploratory** (`explore.py`, 25 scripted conversations) | Does the agent cope when a candidate changes their mind, talks about something else, asks mid-flow or answers oddly? Read turn by turn by a person | [`results/exploratory/`](results/exploratory/README.md) |
 | **Conversations** (`conversations.py`, 13 simulated candidates + `judge.py`) | Does a whole screening end where it should, with the right data, in a way a candidate would find clear and respectful? | [`results/conversations.md`](results/conversations.md), [transcripts](results/conversations/) |
 
 ```bash
@@ -49,6 +50,12 @@ The judge's mean scores (1–5):
 | 4.7 | 4.4 | 4.5 | 4.8 | 4.6 | 4.2 | 4.5 |
 
 Both 2 "misses" in the conversation run ended in *needs review* through the recap hand-off (D154), and that hand-off is the intended behaviour. One was a simulator being pedantic about a date format. The other revealed a real gap, fixed after the run (D162–D163).
+
+## Exploratory testing
+
+25 conversations scripted the way a person tests the agent: small talk and personal questions to the bot, a rumour about the company, moving city mid-flow, changing availability or the start date, remembering a second licence, questions at every step, emojis and one-word replies, a long life story, typos and slang, Spanglish, full English and Mexican flows with interview booking, withdrawing and coming back, asking for a person, an insult and an apology, no interview time fitting, rescheduling, confusion at the recap, answering the wrong question, prompt injection, leaving and coming back.
+
+The first run found **7 issues**, all fixed with a regression test (D204–D210): one ambiguous word switched the vocabulary to Mexican, a second licence replaced the first, "Cualquier zona" overwrote the location, interview days were "unknown" although configured, a reschedule asked as a question was not done, confusion at the recap got a wrong answer, and gendered words about the candidate. The final run: 25/25 as expected, every transcript read again.
 
 ## What the evals changed
 

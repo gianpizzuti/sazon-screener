@@ -29,7 +29,7 @@ from screener.domain.models import (
     Stage,
     utcnow,
 )
-from screener.domain.text import function_word_language, is_grounded
+from screener.domain.text import contains_phrase, function_word_language, is_grounded, normalize, spanish_variant_markers
 from screener.domain.validators import (
     Validation,
     normalize_platforms,
@@ -47,6 +47,8 @@ from screener.llm.schemas import Extracted, TurnAnalysis
 DONE = {FieldStatus.VALID, FieldStatus.SKIPPED, FieldStatus.UNCLEAR}
 MIN_WORDS_WITHOUT_SIGNAL = 4
 # Intents that mean "I did not try to answer your question" (no failed attempt counted).
+ALSO_WORDS = ("tambien", "ademas", "also", "as well", "los dos", "ambos", "both")
+ANY_ZONE_WORDS = ("cualquier zona", "cualquiera", "me da igual", "any area", "anywhere", "doesnt matter", "don't mind")
 # Replies to the recap that don't confirm it before a person takes over (needs review).
 MAX_RECAP_ROUNDS = 3
 NON_ATTEMPT_INTENTS = {"question", "smalltalk", "human_request", "postpone", "abuse"}
@@ -266,6 +268,10 @@ class ScreeningPolicy:
         intents = set(analysis.intents)
         if "affirm" in intents and "deny" not in intents and not captured:
             return None  # confirmed: the normal path completes the screening
+        if analysis.sentiment == "confused" and not captured:
+            # found in exploratory testing: "no entiendo qué tengo que hacer" got "the team will confirm"
+            self._withdraw_unanswered(state, directive, events)
+            directive.notes.append("explain_recap")
         state.recap_rounds += 1
         if state.recap_rounds >= MAX_RECAP_ROUNDS:
             state.add_flag("recap_not_confirmed", message[:160])
@@ -376,7 +382,8 @@ class ScreeningPolicy:
                 return Decision(directive, events)
             return None
 
-        if iv.status == InterviewStatus.BOOKED and not directive.answer and wants_to_reschedule(message, intents):
+        if iv.status == InterviewStatus.BOOKED and wants_to_reschedule(message, intents):
+            self._withdraw_unanswered(state, directive, events)  # "¿lo podemos cambiar?" is answered by doing it
             events.append(Event("interview_cancelled", {"slot": iv.slot.isoformat() if iv.slot else None}))
             iv.status, iv.slot = InterviewStatus.OFFERED, None
             return self._reoffer(state, directive, events)
@@ -414,7 +421,8 @@ class ScreeningPolicy:
         if analysis.language_is_clear and analysis.language != state.language and confirmed:
             events.append(Event("language_switched", {"from": state.language, "to": analysis.language}))
             state.language = analysis.language
-        if state.data.country is None and analysis.spanish_variant != "unknown":
+        if (state.data.country is None and analysis.spanish_variant != "unknown"
+                and spanish_variant_markers(message) == analysis.spanish_variant):
             state.spanish_variant = analysis.spanish_variant
 
     def _zones_answer(self, state) -> str:
@@ -425,12 +433,36 @@ class ScreeningPolicy:
                     "una parte de la ciudad o 'Cualquier zona' si le da igual.")
         return "Repartimos en " + ", ".join(a.name for a in self.cfg.service_areas) + "."
 
+    def _interviews_answer(self, state) -> str:
+        """When and where interviews happen, from the scheduling configuration."""
+        sch = self.cfg.scheduling
+        names = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+        days = sorted(sch.weekdays)
+        if days == list(range(days[0], days[-1] + 1)) and len(days) > 2:
+            day_text = f"de {names[days[0]]} a {names[days[-1]]}"
+        else:
+            day_text = ", ".join(names[d] for d in days)
+        hours = " y ".join(f"de {w.split('-')[0].strip()} a {w.split('-')[1].strip()}" for w in sch.windows)
+        area = self.cfg.area(state.data.city_id)
+        place = f" en {area.interview_place}" if area and area.interview_place else " en el restaurante de tu ciudad"
+        return (f"Las entrevistas duran unos 20 minutos y son {day_text}, {hours}, {place.strip()}. "
+                "No hay entrevistas fuera de esos días. Si ningún horario te va bien, una persona del equipo te ayuda a encontrar otro.")
+
+    def _withdraw_unanswered(self, state, directive, events) -> None:
+        """A message handled otherwise (a reschedule, confusion at the recap) is not an open question."""
+        if directive.answer and directive.answer.answer is None:
+            if state.pending_questions and state.pending_questions[-1] == directive.answer.question:
+                state.pending_questions.pop()
+            events[:] = [e for e in events if e.type != "question_unanswered"]
+            directive.answer = None
+
     def _answer_question(self, state, analysis: TurnAnalysis, events) -> AnswerToQuestion:
         question = analysis.question or "(question)"
         entry = self.cfg.faq_entry(analysis.faq_id)
         if entry:
             events.append(Event("question_answered", {"faq_id": entry.id, "question": question}))
-            answer = self._zones_answer(state) if entry.id == "zones" else entry.answer_for(state.data.country)
+            answer = {"zones": self._zones_answer, "interviews": self._interviews_answer}.get(
+                entry.id, lambda s: entry.answer_for(s.data.country))(state)
             return AnswerToQuestion(question=question, answer=answer, faq_id=entry.id)
         state.pending_questions.append(question)
         events.append(Event("question_unanswered", {"question": question}))
@@ -466,13 +498,18 @@ class ScreeningPolicy:
         if licence and (q := grounded("drivers_license")):
             status = LicenseStatus(licence)
 
+            new_type = x.license_type
+            if (new_type in ("car", "motorbike") and data.license_type in ("car", "motorbike") and new_type != data.license_type
+                    and any(contains_phrase(normalize(message), w) for w in ALSO_WORDS)):
+                new_type = "both"  # "también tengo el de moto" after "de coche"
+
             def set_license(v: LicenseStatus) -> None:
                 data.license_status = v
                 data.has_drivers_license = v == LicenseStatus.YES
                 if v != LicenseStatus.YES:
                     data.license_type = None
-                elif x.license_type:
-                    data.license_type = LicenseType(x.license_type)
+                elif new_type:
+                    data.license_type = LicenseType(new_type)
 
             if status == LicenseStatus.YES and not self.cfg.license.accepts(x.license_type) \
                     and not may_knock_out(FieldName.DRIVERS_LICENSE):
@@ -484,6 +521,13 @@ class ScreeningPolicy:
             else:
                 self._record(state, FieldName.DRIVERS_LICENSE, Validation(value=status), q, set_license, captured, events)
 
+        if state.current_field == FieldName.ZONE and any(contains_phrase(normalize(message), w) for w in ANY_ZONE_WORDS):
+            # "Cualquier zona": the optional zone is skipped and the city they gave stays as it is
+            x = x.model_copy(update={"location_text": None, "location_city_id": None, "location_zone": None,
+                                     "location_outside_service_area": None})
+            if state.field(FieldName.ZONE).status not in DONE:
+                state.field(FieldName.ZONE).status = FieldStatus.SKIPPED
+                events.append(Event("field_skipped", {"field": FieldName.ZONE, "reason": "any_zone"}))
         if (state.current_field == FieldName.ZONE and data.city_id and not (x.location_text or x.location_zone or x.location_city_id)
                 and (self.matcher.zone_in_city(data.city_id, message) or self.matcher.group_in_city(data.city_id, message))):
             x = x.model_copy(update={"location_text": message})  # a tapped button: the message is the quote
