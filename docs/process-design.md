@@ -133,7 +133,7 @@ Knock-outs are objective rules set by the client, explained to the candidate and
 |---|---|
 | Are bicycles / e-bikes accepted? No licence is needed for them, so this knock-out could reject valid candidates. | No: licence required, as specified |
 | Which licence types count (car, motorbike, moped)? Is an own vehicle required? | Configurable per client (`license.accepted_types`); for Grupo Sazón both, and the type is asked once if the candidate only says "sí". Vehicle not asked |
-| Do foreign licences count (e.g. Venezuelan, Colombian)? Spain recognises some only for six months of residency. Found by the conversation eval. | The agent never judges validity: an unsure answer ends in *needs review* and the question is logged for the recruiter |
+| Do foreign licences count (e.g. Venezuelan, Colombian)? Spain recognises some only for six months of residency. Found by the conversation eval. | From the law of the hiring country, as configuration ([foreign licences](design/foreign-licences.md)): EU licences count; the 33 countries with an exchange agreement qualify with a note to exchange it; others, and every foreign licence in Mexico, go to a person. Sofía never asks where a licence is from. To confirm with the client's legal team |
 | Is "zone" where the candidate lives or where they can work? | Where they can work |
 | Who contacts qualified candidates, and how fast? | They book the interview in the chat; a recruiter only steps in if no offered time fits |
 | Where and when are interviews held (one restaurant per city, or each restaurant)? Is there a calendar we can read? | One restaurant per city, weekdays 10–13 and 16–19 (configuration); a calendar integration in production |

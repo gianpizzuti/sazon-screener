@@ -9,6 +9,7 @@ from __future__ import annotations
 from datetime import date
 
 from screener.config import Copy
+from screener.domain.countries import country_name
 from screener.domain.models import ConversationState, FieldName, FieldStatus
 
 WEEKDAYS = {
@@ -41,8 +42,10 @@ def render_recap(state: ConversationState, copy: Copy, today: date, updated: boo
     license_value = None
     if d.has_drivers_license is not None:
         license_value = copy.text("values.yes" if d.has_drivers_license else "values.no", loc)
-        if d.has_drivers_license and d.license_type:
-            license_value += f" ({copy.text(f'values.license_type.{d.license_type.value}', loc)})"
+        details = [copy.text(f"values.license_type.{d.license_type.value}", loc) if d.license_type else None,
+                   country_name(d.license_country, loc) if d.license_country and d.license_country != d.country else None]
+        if d.has_drivers_license and any(details):
+            license_value += f" ({', '.join(x for x in details if x)})"  # "Sí (coche, Marruecos)"
 
     place = d.city
     if place and (d.zone or d.unlisted_zone):

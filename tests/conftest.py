@@ -22,6 +22,7 @@ EVIDENCE_GROUP = {
     "full_name": "full_name",
     "drivers_license": "drivers_license",
     "license_type": "drivers_license",
+    "license_country": "drivers_license",
     "location_text": "location",
     "location_city_id": "location",
     "location_zone": "location",

@@ -51,6 +51,7 @@ export interface ScreeningData {
   has_drivers_license: boolean | null;
   license_status: "yes" | "no" | "in_progress" | null;
   license_type: "car" | "motorbike" | "both" | null;
+  license_country: string | null;
   location_raw: string | null;
   city: string | null;
   country: string | null;

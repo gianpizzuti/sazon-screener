@@ -444,3 +444,32 @@
     - "sí"
     - "1"
   expect: {stage: qualified, zone: Retiro}
+
+- id: ex28_italian_licence_just_moved
+  country: ES
+  messages:
+    - "sí"
+    - "Giulia Rossi"
+    - "sí, el carnet italiano de coche, me acabo de mudar a España. ¿Me sirve?"
+    - "Barcelona, Gràcia"
+    - "media jornada"
+    - "tardes"
+    - "un año en Deliveroo en Milán"
+    - "el lunes"
+    - "sí"
+    - "1"
+  expect: {stage: qualified, license_type: car}
+
+- id: ex29_venezuelan_licence
+  country: ES
+  messages:
+    - "sí"
+    - "Andrés Pérez"
+    - "tengo licencia venezolana de carro, ¿vale en España?"
+    - "Madrid, Tetuán"
+    - "jornada completa"
+    - "mañanas"
+    - "dos años en Rappi en Caracas"
+    - "ya"
+    - "sí"
+  expect: {stage: needs_review, flag: foreign_licence_check}

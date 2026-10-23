@@ -27,6 +27,7 @@ import yaml
 
 from evals.common import EVALS, MODELS, RESULTS, TODAY, UsageMeter, load_config, pct, percentile
 from screener.config import ClientConfig
+from screener.domain.countries import country_code
 from screener.domain.locations import LocationMatcher
 from screener.domain.models import FieldName, Stage
 from screener.domain.text import is_grounded, normalize
@@ -42,6 +43,7 @@ EVIDENCE_GROUP = {
     "full_name": "full_name",
     "drivers_license": "drivers_license",
     "license_type": "drivers_license",
+    "license_country": "drivers_license",
     "location_text": "location",
     "location_city_id": "location",
     "location_zone": "location",
@@ -145,6 +147,8 @@ def same(field: str, gold, got) -> bool:
         return len(g) == len(o) and all(any(a in b or b in a for b in o) for a in g)
     if field == "start_date":
         return all(got.get(k) == v for k, v in gold.items())
+    if field == "license_country":  # as written: "Marruecos" matches "marroquí"
+        return (country_code(got) or normalize(got)) == (country_code(gold) or normalize(gold))
     return got == gold
 
 

@@ -900,10 +900,13 @@
   faq: equipment
 
 - id: hold_licence_unsure_foreign
-  tags: [holdout, license, ambiguous]
+  tags: [holdout, license, foreign]
   asked: drivers_license
   msg: "tengo uno de Venezuela, no sé si vale aquí"
-  expect: {}
+  # was {} (a doubt read as a hedge). A licence from abroad is a licence; whether it is valid here is the
+  # rules' call (D222), and the doubt is a question.
+  expect: {drivers_license: "yes", license_country: Venezuela}
+  intents: [question]
 
 - id: hold_licence_clear_no
   tags: [holdout, license]
@@ -987,3 +990,36 @@
   intents: [question]
   faq: zones
   lang: en
+
+
+# ------------------------------------------------------------------ licences issued abroad (D222)
+# Found in exploratory testing (ex26): "es de Marruecos, ¿vale aquí?" was read as no licence at all.
+- id: lic_foreign_morocco_question
+  tags: [license, foreign]
+  asked: drivers_license
+  msg: "tengo carnet de coche, pero es de Marruecos, ¿vale aquí?"
+  expect: {drivers_license: "yes", license_type: car, license_country: Marruecos}
+  intents: [question]
+  faq: foreign_licence
+
+- id: lic_foreign_italian_moved
+  tags: [license, foreign]
+  asked: drivers_license
+  msg: "sí, el carnet italiano, me acabo de mudar a Madrid"
+  expect: {drivers_license: "yes", license_country: Italia}
+  ignore: [location_text, location_city_id, location_zone, location_outside_service_area]
+
+- id: lic_foreign_english
+  tags: [license, foreign, english]
+  asked: drivers_license
+  conv: en
+  msg: "Yes, a UK licence for cars"
+  expect: {drivers_license: "yes", license_type: car, license_country: UK}
+  lang: en
+
+- id: lic_country_not_inferred_from_name
+  tags: [license, foreign]
+  asked: drivers_license
+  known: {name: Youssef El Amrani}
+  msg: "sí, de coche"
+  expect: {drivers_license: "yes", license_type: car}

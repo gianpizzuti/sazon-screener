@@ -1,0 +1,34 @@
+# Driving licences issued abroad: what the law of each country where Grupo Sazón hires says.
+# Researched on 2026-10-23 (docs/design/foreign-licences.md has the sources); law changes, so this
+# is data, to confirm with the client's legal or HR team and to review when the DGT list changes.
+#
+# Used only when the candidate says their licence is from another country: Sofía never asks where
+# it is from (it is too close to nationality, D222). The rule decides two things:
+#   valid     the licence works like a local one                         -> nothing to do
+#   exchange  valid for the first 6 months of residence, then exchanged  -> qualified, recruiter note
+#   review    valid for 6 months at most, then a new local licence       -> a person decides
+# A country not listed gets `review`: the safe default.
+# answers: what Sofía can say when asked ({country} is the licence's country); the writer adapts them.
+
+foreign_licences:
+  ES:
+    # EU and EEA: valid while in force (DGT "Permisos válidos para conducir en España"; renewed in Spain
+    # after two years of residence when issued without an expiry date).
+    valid: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, SE,
+            IS, LI, "NO"]   # quoted: YAML reads a bare NO as false
+    # Countries with an exchange agreement (DGT "Países con convenio de canjes", updated 26/06/2026): valid
+    # for 6 months from becoming resident (art. 21), then exchanged at the DGT with no test for car or motorbike
+    # (art. 22), if it was obtained before becoming resident.
+    exchange: [AD, DZ, AR, BO, BR, CL, CO, KR, CR, EC, PH, GE, GT, HN, JP, MK, MA, MD, MC, NI, NZ, PA, PY, PE, GB,
+               DO, SV, RS, CH, TN, TR, UA, UY]
+    answers:
+      valid: Sí. Un carnet de {country} vale para conducir en España mientras esté en vigor, igual que el español.
+      exchange: Sí. Un carnet de {country} vale en España durante los 6 primeros meses desde que resides aquí; después hay que canjearlo por el español en la DGT, sin examen para coche o moto. El equipo lo revisa contigo en la entrevista.
+      review: Un carnet de {country} vale en España solo durante los 6 primeros meses desde que resides aquí; después hace falta sacarse el carnet español. Una persona del equipo lo revisará contigo.
+      unknown: Depende del país que lo expidió. Los de la Unión Europea valen como el español; los de países con convenio, como Marruecos, Colombia o Perú, valen 6 meses desde que resides en España y luego se canjean sin examen; los demás valen esos 6 meses y después hace falta el carnet español.
+  MX:
+    # No national exchange: each state issues licences, and a resident is expected to hold one from their
+    # state (CDMX: SEMOVI exam; Jalisco and Nuevo León: theory and practical tests). A person decides.
+    answers:
+      review: En México, quien vive aquí normalmente necesita la licencia de manejo de su estado. Con una licencia de {country}, una persona del equipo lo revisará contigo.
+      unknown: En México, quien vive aquí normalmente necesita la licencia de manejo de su estado. Una persona del equipo lo revisa contigo.

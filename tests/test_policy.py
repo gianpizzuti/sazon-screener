@@ -194,6 +194,90 @@ class TestNeighbourhoodWithoutAZone:
         assert (state.data.city_id, state.data.unlisted_zone) == ("valencia", None)
 
 
+class TestLicenceIssuedAbroad:
+    """A licence from another country is a licence; the law of the country they'd work in decides the rest (D222-D223)."""
+
+    def screen(self, policy, state, licence_msg, country, city="Madrid", hiring="ES"):
+        state.application.country = hiring
+        to_screening(policy, state)
+        say(policy, state, "Ana López", full_name="Ana López")
+        say(policy, state, licence_msg, drivers_license="yes", license_type="car", license_country=country)
+        say(policy, state, city, location_text=city)
+        if state.current_field == FieldName.ZONE:
+            say(policy, state, "Cualquier zona", intents=("other",))
+        say(policy, state, "media jornada", availability=["part_time"])
+        say(policy, state, "noches", schedule=["evening"])
+        say(policy, state, "nunca", experience_months=0)
+        say(policy, state, "el lunes", start_date=start_expr("next_weekday", weekday=0))
+        d, _ = say(policy, state, "sí", intents=("affirm",))
+        return d
+
+    def test_an_eu_licence_works_like_a_spanish_one(self, policy, state):
+        self.screen(policy, state, "sí, el italiano", "italiano")
+        assert state.stage == Stage.QUALIFIED and state.data.license_country == "IT" and not state.flags
+
+    def test_a_licence_from_a_country_with_an_agreement_qualifies_with_a_note(self, policy, state):
+        self.screen(policy, state, "tengo carnet de coche de Marruecos", "Marruecos")
+        assert state.stage == Stage.QUALIFIED
+        assert [(f.code, f.detail) for f in state.flags] == [("licence_exchange", "Marruecos")]
+
+    def test_a_licence_from_a_country_without_one_goes_to_a_person(self, policy, state):
+        d = self.screen(policy, state, "sí, venezolano", "venezolano")
+        assert (state.stage, d.outcome) == (Stage.NEEDS_REVIEW, "needs_review")
+        assert any(f.code == "foreign_licence_check" and f.detail == "Venezuela" for f in state.flags)
+
+    def test_a_country_we_dont_recognise_goes_to_a_person(self, policy, state):
+        self.screen(policy, state, "sí, de Narnia", "Narnia")
+        assert state.stage == Stage.NEEDS_REVIEW and state.data.license_country == "Narnia"
+
+    def test_in_mexico_a_foreign_licence_goes_to_a_person(self, policy, state):
+        self.screen(policy, state, "sí, de Estados Unidos", "Estados Unidos", city="Guadalajara", hiring="MX")
+        assert state.stage == Stage.NEEDS_REVIEW
+
+    def test_a_spanish_licence_in_spain_is_just_a_licence(self, policy, state):
+        self.screen(policy, state, "sí, español", "español")
+        assert state.stage == Stage.QUALIFIED and not state.flags
+
+    def test_the_country_said_later_refines_the_licence(self, policy, state):
+        to_location(policy, state)
+        _, events = say(policy, state, "ah, y es de Colombia", license_country="Colombia")
+        assert (state.data.license_status.value, state.data.license_country) == ("yes", "CO")
+
+    def test_the_question_is_answered_with_the_country_they_just_named(self, policy, state):
+        # found in exploratory testing (ex26): "es de Marruecos, ¿vale aquí?" got "depende del país"
+        state.application.country = "ES"
+        to_licence(policy, state)
+        msg = "tengo carnet de coche, pero es de Marruecos, ¿vale aquí?"
+        d, _ = say(policy, state, msg, intents=("provide_info", "question"), question="¿vale aquí?",
+                   faq_id="foreign_licence", drivers_license="yes", license_type="car", license_country="Marruecos")
+        assert "Marruecos" in d.answer.answer and "sin examen" in d.answer.answer
+        assert d.ask_field == FieldName.LOCATION  # the licence counts: no re-asking
+
+    def test_without_the_country_the_answer_explains_the_rule(self, policy, state):
+        state.application.country = "ES"
+        to_licence(policy, state)
+        d, _ = say(policy, state, "¿vale un carnet de fuera?", intents=("question",), question="¿vale un carnet de fuera?",
+                   faq_id="foreign_licence")
+        assert "Unión Europea" in d.answer.answer and "convenio" in d.answer.answer
+
+
+class TestNoEndlessReAsking:
+    def test_a_question_left_unanswered_three_times_goes_to_a_person(self, policy, state):
+        # found in exploratory testing (ex26): the licence question was asked seven times in a row
+        to_licence(policy, state)  # asked once
+        say(policy, state, "Madrid", location_text="Madrid")                        # asked twice
+        say(policy, state, "media jornada", availability=["part_time"])             # three times
+        d, events = say(policy, state, "por la noche", schedule=["evening"])
+        assert state.field(FieldName.DRIVERS_LICENSE).status == FieldStatus.UNCLEAR and "field_unclear" in events
+        assert d.ask_field != FieldName.DRIVERS_LICENSE
+
+    def test_questions_in_between_dont_count(self, policy, state):
+        to_licence(policy, state)
+        for _ in range(4):
+            say(policy, state, "¿cuánto se paga?", intents=("question",), question="¿cuánto se paga?", faq_id="pay")
+        assert state.field(FieldName.DRIVERS_LICENSE).status != FieldStatus.UNCLEAR
+
+
 class TestFoundInExploratoryTesting:
     """Each case comes from evals/exploratory.yaml (real models, scripted like a person testing)."""
 

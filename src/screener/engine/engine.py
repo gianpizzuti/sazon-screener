@@ -417,9 +417,10 @@ class ScreeningEngine:
     @staticmethod
     def _known(state: ConversationState) -> dict[str, str]:
         d = state.data
+        details = ", ".join(v for v in (d.license_type and d.license_type.value, d.license_country) if v)
         known = {
             "name": d.full_name,
-            "licence": (f"{d.license_status.value} ({d.license_type.value})" if d.license_type else d.license_status.value)
+            "licence": (f"{d.license_status.value} ({details})" if details else d.license_status.value)
             if d.license_status else None,
             "city": d.city,
             "zone": d.zone,

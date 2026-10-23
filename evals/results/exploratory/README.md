@@ -29,11 +29,15 @@ Run 2026-10-23 00:30 · 25 scenarios · $0.47. Triage compares the end state wit
 | [`ex23_no_experience_asks_if_it_matters`](ex23_no_experience_asks_if_it_matters.md) | qualified | ✓ |
 | [`ex24_vague_start_date`](ex24_vague_start_date.md) | qualified | ✓ |
 | [`ex25_leaves_and_comes_back`](ex25_leaves_and_comes_back.md) | qualified | ✓ |
-| [`ex26_asks_about_the_new_topics`](ex26_asks_about_the_new_topics.md) | confirming | stage: expected qualified, got confirming (see below) |
+| [`ex26_asks_about_the_new_topics`](ex26_asks_about_the_new_topics.md) | qualified | ✓ (after D222–D225, see below) |
 | [`ex27_neighbourhood_without_a_zone`](ex27_neighbourhood_without_a_zone.md) | qualified | ✓ |
+| [`ex28_italian_licence_just_moved`](ex28_italian_licence_just_moved.md) | qualified | ✓ |
+| [`ex29_venezuelan_licence`](ex29_venezuelan_licence.md) | needs_review | ✓ |
 
 Added with the 30-topic knowledge base (ADR 0010): ex26, plus the four scenarios full of questions (ex03, ex08, ex18, ex23), were run again on 2026-10-23 with embedding retrieval ($0.13), all as expected.
 
-Re-run on 2026-10-23 after D219–D221 (neighbourhoods without a delivery zone): ex26, ex27 and the Madrid scenarios ex01, ex08, ex09, ex10, ex22 ($0.18). "Madrid, Usera" is now kept and answered with the closest zones; ex27 as expected. ex26 ended at the recap for two reasons unrelated to zones, both **open**:
+Re-run on 2026-10-23 after D219–D221 (neighbourhoods without a delivery zone): ex26, ex27 and the Madrid scenarios ex01, ex08, ex09, ex10, ex22 ($0.18). "Madrid, Usera" is now kept and answered with the closest zones; ex27 as expected. ex26 ended at the recap for two reasons unrelated to zones (both **fixed** since, see below):
 - The model read "tengo carnet de coche, pero es de Marruecos, ¿vale aquí?" as a licence of unknown validity (the earlier run read it as "yes"). The script never answers the licence question again, so Sofía asked it seven times while the candidate answered other things: a re-ask has no limit when the candidate keeps giving other data.
 - Sofía retracted a correct approved answer one turn later ("antes me he pasado de rápida: no tengo ningún dato sobre propinas"): the writer treated a fact from an earlier turn as unapproved.
+
+Fixed on 2026-10-23 (D222–D226): a licence from abroad is a licence and the hiring country's law decides (research in docs/design/foreign-licences.md); a question unanswered after three asks goes to a person; Sofía never takes back an approved answer. Re-run: ex26 twice (both as expected, the Moroccan licence explained and noted for the recruiter, no retraction), ex28 (Italian: valid like a Spanish one) and ex29 (Venezuelan: a person decides), $0.10. The two turns that produced the retraction were also run 10 times: 0 retractions ($0.04).

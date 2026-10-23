@@ -12,7 +12,8 @@ from __future__ import annotations
 
 from datetime import date
 
-from screener.config import ClientConfig
+from screener.config import ClientConfig, fill
+from screener.domain.countries import country_code, country_name
 from screener.domain.locations import LocationMatcher
 from screener.domain.models import (
     InterviewStatus,
@@ -243,8 +244,15 @@ class ScreeningPolicy:
             fs.status = FieldStatus.SKIPPED  # an optional question is never repeated
             events.append(Event("field_skipped", {"field": current}))
             return
-        if captured:
+        if captured and fs.times_asked < self.cfg.agent.max_times_asked:
             return  # they answered something else: cooperative, just ask again
+        if captured:
+            # Asked three times and answered everything but this (found in exploratory testing, ex26):
+            # a person decides instead of a fourth identical question (D224).
+            fs.status = FieldStatus.UNCLEAR
+            state.add_flag("unclear_field", current.value)
+            events.append(Event("field_unclear", {"field": current, "error": "not_answered"}))
+            return
         fs.failed_attempts += 1
         if fs.status == FieldStatus.MISSING:
             fs.status = FieldStatus.INVALID
@@ -300,7 +308,25 @@ class ScreeningPolicy:
     def _complete(self, state, events, answer=None) -> Decision:
         if any(state.field(f).status == FieldStatus.UNCLEAR for f in KNOCKOUT_FIELDS):
             return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events, answer=answer)
+        if abroad := self._licence_abroad(state):
+            rule, name = abroad
+            if rule == "exchange":  # valid now, exchanged without tests later: the recruiter checks at the interview
+                state.add_flag("licence_exchange", name)
+            elif rule == "review":  # valid for 6 months at most, then a new licence with exams: a person decides
+                state.add_flag("foreign_licence_check", name)
+                events.append(Event("foreign_licence_review", {"country": state.data.license_country}))
+                return self._finish(state, Stage.NEEDS_REVIEW, "needs_review", events, answer=answer)
         return self._finish(state, Stage.QUALIFIED, "qualified", events, answer=answer)
+
+    def _licence_abroad(self, state, country: str | None = None) -> tuple[str, str] | None:
+        """(rule, country name) for a licence issued outside the country they would work in, once both
+        are known: the city's country, else the application's (the ATS knows it before they speak)."""
+        country = country or state.data.license_country
+        hiring = state.data.country or state.application.country
+        rules = self.cfg.foreign_licences.get(hiring or "")
+        if not country or not rules or country == hiring:
+            return None
+        return rules.rule(country), country_name(country)
 
     def _finish(self, state, stage, outcome, events, reason=None, answer=None) -> Decision:
         self._set_stage(state, stage, events)
@@ -455,6 +481,20 @@ class ScreeningPolicy:
         return (f"Las entrevistas duran unos 20 minutos y son {day_text}, {hours}, {place.strip()}. "
                 "No hay entrevistas fuera de esos días. Si ningún horario te va bien, una persona del equipo te ayuda a encontrar otro.")
 
+    def _foreign_licence_answer(self, state, analysis: TurnAnalysis) -> str:
+        """"¿Vale mi carnet de Marruecos?": the law of the country they'd work in, from configuration (D223).
+        The question is answered before this turn's data is stored, so the country they just named counts."""
+        said = analysis.extracted.license_country
+        country = (country_code(said) or _as_written(said)) if said else state.data.license_country
+        hiring = state.data.country or state.application.country
+        rules = self.cfg.foreign_licences.get(hiring or "")
+        if not rules:
+            return self.cfg.faq_entry("foreign_licence").answer_for(hiring)
+        if not country:
+            return rules.answers["unknown"]
+        rule = "valid" if country == hiring else rules.rule(country)
+        return fill(rules.answers.get(rule) or rules.answers["review"], country=country_name(country))
+
     def _withdraw_unanswered(self, state, directive, events) -> None:
         """A message handled otherwise (a reschedule, confusion at the recap) is not an open question."""
         if directive.answer and directive.answer.answer is None:
@@ -468,7 +508,8 @@ class ScreeningPolicy:
         entry = self.cfg.faq_entry(analysis.faq_id)
         if entry:
             events.append(Event("question_answered", {"faq_id": entry.id, "question": question}))
-            answer = {"zones": self._zones_answer, "interviews": self._interviews_answer}.get(
+            answer = {"zones": self._zones_answer, "interviews": self._interviews_answer,
+                      "foreign_licence": lambda s: self._foreign_licence_answer(s, analysis)}.get(
                 entry.id, lambda s: entry.answer_for(s.data.country))(state)
             return AnswerToQuestion(question=question, answer=answer, faq_id=entry.id)
         state.pending_questions.append(question)
@@ -500,8 +541,9 @@ class ScreeningPolicy:
             self._record(state, FieldName.FULL_NAME, validate_full_name(x.full_name), q,
                          lambda v: setattr(data, "full_name", v), captured, events)
 
-        # "es de moto" at the recap only adds the type to a licence they already have.
-        licence = x.drivers_license or ("yes" if x.license_type and data.license_status == LicenseStatus.YES else None)
+        # "es de moto" / "es de Marruecos" later only adds a detail to a licence they already have.
+        licence = x.drivers_license or (
+            "yes" if (x.license_type or x.license_country) and data.license_status == LicenseStatus.YES else None)
         if licence and (q := grounded("drivers_license")):
             status = LicenseStatus(licence)
 
@@ -514,9 +556,12 @@ class ScreeningPolicy:
                 data.license_status = v
                 data.has_drivers_license = v == LicenseStatus.YES
                 if v != LicenseStatus.YES:
-                    data.license_type = None
-                elif new_type:
-                    data.license_type = LicenseType(new_type)
+                    data.license_type = data.license_country = None
+                else:
+                    if new_type:
+                        data.license_type = LicenseType(new_type)
+                    if x.license_country:  # said by the candidate, never asked: it is close to nationality
+                        data.license_country = country_code(x.license_country) or _as_written(x.license_country)
 
             if status == LicenseStatus.YES and not self.cfg.license.accepts(x.license_type) \
                     and not may_knock_out(FieldName.DRIVERS_LICENSE):
@@ -652,7 +697,7 @@ class ScreeningPolicy:
         area = self.cfg.area(state.data.city_id)
         if not area or state.field(FieldName.ZONE).status == FieldStatus.VALID:
             return False
-        place = area.unlisted_place(raw) or area.unlisted_place(x.location_zone) or _clean_zone(x.location_zone)
+        place = area.unlisted_place(raw) or area.unlisted_place(x.location_zone) or _as_written(x.location_zone)
         if not place or normalize(place) in {normalize(n) for n in [area.name, *area.aliases]}:
             return False
         if state.data.unlisted_zone != place:
@@ -765,6 +810,7 @@ def _zone_from_options(options: list[str], city_name: str) -> str | None:
     return next((o.removesuffix(suffix) for o in options if o.endswith(suffix)), None)
 
 
-def _clean_zone(zone: str | None) -> str | None:
-    zone = (zone or "").strip()
-    return zone.title() if zone.islower() else zone or None
+def _as_written(text: str | None) -> str | None:
+    """A place or country as the candidate wrote it, capitalised if they wrote it all lower case."""
+    text = (text or "").strip()
+    return text.title() if text.islower() else text or None

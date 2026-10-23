@@ -12,6 +12,7 @@ from typing import ClassVar, Literal
 import yaml
 from pydantic import BaseModel, Field, model_validator
 
+from screener.domain.countries import COUNTRIES
 from screener.domain.text import contains_phrase, normalize
 
 Country = Literal["ES", "MX"]
@@ -92,6 +93,7 @@ class AgentSettings(BaseModel):
     recruiter_language: Language = "es"
     max_message_chars: int = 350
     max_failed_attempts: int = 2
+    max_times_asked: int = 3  # a question still unanswered after this, while they answer others: a person decides
     late_start_days: int = 90
     history_window: int = 30
     default_timezone: str = "Europe/Madrid"
@@ -121,6 +123,30 @@ class LicenseSettings(BaseModel):
 
     def describe(self) -> str:
         return " or ".join({"car": "car", "motorbike": "motorbike"}[t] for t in self.accepted_types)
+
+
+class ForeignLicenceRules(BaseModel):
+    """What one hiring country's law says about licences issued abroad (`foreign_licences.yaml`, D222)."""
+
+    valid: list[str] = Field(default_factory=list)     # works like a local licence while in force
+    exchange: list[str] = Field(default_factory=list)  # valid for the first months of residence, then exchanged
+    answers: dict[str, str]                             # valid / exchange / review / unknown
+
+    @model_validator(mode="after")
+    def _known_countries(self) -> ForeignLicenceRules:
+        if unknown := set(self.valid + self.exchange) - COUNTRIES.keys():
+            raise ValueError(f"foreign_licences: unknown country codes {sorted(unknown)}")
+        if missing := {"review", "unknown"} - self.answers.keys():
+            raise ValueError(f"foreign_licences: answers missing {sorted(missing)}")
+        return self
+
+    def rule(self, country: str | None) -> Literal["valid", "exchange", "review"]:
+        """A country not listed, or not recognised, is `review`: a person decides."""
+        if country in self.valid:
+            return "valid"
+        if country in self.exchange:
+            return "exchange"
+        return "review"
 
 
 class SchedulingSettings(BaseModel):
@@ -204,6 +230,7 @@ class ClientConfig(BaseModel):
     scheduling: SchedulingSettings = Field(default_factory=SchedulingSettings)
     license: LicenseSettings = Field(default_factory=LicenseSettings)
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
+    foreign_licences: dict[Country, ForeignLicenceRules] = Field(default_factory=dict)
     next_steps: dict[str, str]
     platforms: list[Platform]
     service_areas: list[ServiceArea]

@@ -121,6 +121,7 @@ class ScreeningData(BaseModel):
     has_drivers_license: bool | None = None
     license_status: LicenseStatus | None = None
     license_type: LicenseType | None = None  # car / motorbike, when they say (recruiters need it)
+    license_country: str | None = None  # ISO code (or their words) when they say it was issued abroad, D222
     location_raw: str | None = None
     city_id: str | None = None
     city: str | None = None
@@ -237,4 +238,5 @@ class ConversationState(BaseModel):
 
 
 # Flags that put a candidate in the recruiter's review queue.
-REVIEW_FLAGS = {"human_requested", "late_start", "abuse", "update_after_close", "recap_not_confirmed", "scheduling_needed"}
+REVIEW_FLAGS = {"human_requested", "late_start", "abuse", "update_after_close", "recap_not_confirmed", "scheduling_needed",
+                "foreign_licence_check"}

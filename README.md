@@ -11,7 +11,7 @@ The client has two different problems, and the design addresses each one separat
 
 📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 📊 **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · 💬 **[Sample conversations](samples/README.md)**
 
-🏗️ Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** with its **[API spec](docs/design/ats-api.yaml)** (OpenAPI 3.1) · **[Deployment and scaling](docs/design/deployment-and-scaling.md)** (from one process to 10,000 applications/week)
+🏗️ Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** with its **[API spec](docs/design/ats-api.yaml)** (OpenAPI 3.1) · **[Deployment and scaling](docs/design/deployment-and-scaling.md)** (from one process to 10,000 applications/week) · **[Licences issued abroad](docs/design/foreign-licences.md)** (research behind the rules, with sources)
 
 ---
 
@@ -24,7 +24,7 @@ make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
                              # the first start downloads the embedding model (≈ 240 MB, once) into data/models
-make test                    # offline, no API key: 193 tests of the product + 246 checks of the eval datasets
+make test                    # offline, no API key: 205 tests of the product + 254 checks of the eval datasets
 ```
 
 Optional:
@@ -44,7 +44,7 @@ make eval-retrieval          # knowledge-base retrieval: local models ($0) + Hai
 
 | | |
 |---|---|
-| **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts. **Qualified candidates book their interview in the chat**: three free times as buttons, no double booking, moved by writing again |
+| **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts. A licence issued abroad is judged by the law of the country they'd work in (EU: valid; 33 countries with an exchange agreement: qualified with a note; others: a person decides), and Sofía never asks where it is from. **Qualified candidates book their interview in the chat**: three free times as buttons, no double booking, moved by writing again |
 | **Knowledge base (RAG)** | Candidates' questions are answered from the client's knowledge base ([`faq.yaml`](config/clients/grupo_sazon/faq.yaml)): 30 topics such as pay, tips, payday, contract, fuel, parking, shifts, insurance, work permit or a foreign licence, plus **zones** and **interview times built live from the configuration**. **Retrieve**: a multilingual embedding model, run locally, finds the 5 closest topics (98% recall@5 on held-out questions, 4 ms, $0). **Augment**: the understanding model picks the topic whose approved answer answers the question, or none, and code inserts that single answer. **Generate**: Sofía phrases only that, or says "the team will confirm"; unanswered questions are logged for recruiters. Measured: 0 wrong topics in 254 runs; hybrid keyword search was tried and measured worse ([ADR 0010](docs/decisions/0010-knowledge-base-retrieval.md)). No knowledge base came with the assignment, so this one is illustrative, to validate with the client |
 | **Re-engagement** | Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in *their* timezone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. Any reply resumes the screening. The **recovery rate** shows whether it works. In the web app, the **demo clock** (top bar) moves time forward to show it live |
 | **Recruiter web app** (React) | **Pipeline**: queue ordered by what to do first, status filters, live counters. **Candidate**: AI summary, extracted data with the candidate's own words, chat transcript with the *why* behind every message, recruiter decision and audited override, audit timeline, JSON export, GDPR erasure. **Analytics**: funnel and charts that grow as you scroll, recovery-rate meter, FAQ gaps, AI health, table view. **Try the agent**: play the candidate and watch the screening checklist fill in live. **How it works**: the screening flow as an interactive flowchart (click a step for the exact question and rules, or trace a candidate's path) plus the workspace's live configuration. Light and dark theme, reduced-motion aware |
@@ -138,7 +138,7 @@ In the order I would do them with more time. Most come from what testing and the
 |---|---|---|
 | **A real WhatsApp channel** (Cloud API) and **authentication** on the API | The channel the candidates actually use; today the API is an open local demo | Greeting and reminders are already fixed templates, as WhatsApp requires |
 | **Production architecture**: Postgres, a queue ordered per conversation, scheduled follow-ups, outbox | Correctness with several workers (ordering, no double sends) | Designed in [deployment and scaling](docs/design/deployment-and-scaling.md) |
-| **Answers to the open questions** (e-bikes, foreign licences, data retention) | They change knock-out rules; once answered they become configuration | [Process design §8](docs/process-design.md) |
+| **Answers to the open questions** (e-bikes, data retention; confirm the [foreign-licence rules](docs/design/foreign-licences.md)) | They change knock-out rules; once answered they become configuration | [Process design §8](docs/process-design.md) |
 | **Pre-fill what the application already knows** (name, city) | Fewer questions; the candidate still confirms everything at the recap | Needs the ATS integration ([API spec](docs/design/ats-api.yaml)) |
 
 ### Product

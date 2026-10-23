@@ -27,6 +27,8 @@ export const FLAG_LABELS: Record<string, string> = {
   unclear_field: "Unclear answer",
   recap_not_confirmed: "Summary not confirmed",
   scheduling_needed: "Needs an interview time",
+  licence_exchange: "Foreign licence: exchange it within 6 months of residence",
+  foreign_licence_check: "Foreign licence: check it is valid here",
 };
 
 /** The delivery zone, or the neighbourhood they named when it isn't one (Sofía offered the closest zones). */

@@ -96,6 +96,20 @@ def test_recap_keeps_a_neighbourhood_that_is_not_a_delivery_zone(config):
     assert "Madrid (Usera)" in render_recap(state, config.copy_, TODAY)
 
 
+def test_recap_shows_where_a_licence_was_issued_only_if_abroad(config):
+    from screener.domain.models import ConversationState, LicenseStatus, LicenseType
+    from screener.engine.recap import render_recap
+    from conftest import TODAY
+
+    state = ConversationState(id="r", client_id="x", channel="t")
+    d = state.data
+    d.has_drivers_license, d.license_status, d.license_type = True, LicenseStatus.YES, LicenseType.CAR
+    d.license_country, d.country = "MA", "ES"
+    assert "Sí (coche, Marruecos)" in render_recap(state, config.copy_, TODAY)
+    d.license_country = "ES"
+    assert "Sí (coche)" in render_recap(state, config.copy_, TODAY)
+
+
 def test_the_closest_zones_are_the_buttons(make_engine):
     from conftest import analysis
 

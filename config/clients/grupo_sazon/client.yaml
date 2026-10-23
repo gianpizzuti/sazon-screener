@@ -14,6 +14,7 @@ agent:
   recruiter_language: es        # language of the summaries shown to recruiters
   max_message_chars: 350        # chat, not email
   max_failed_attempts: 2        # after this, a required field is marked "unclear" and flagged
+  max_times_asked: 3            # a question still unanswered after 3 asks (they answered other things): a person decides
   late_start_days: 90           # start dates further away are accepted but flagged
   history_window: 30            # messages of history given to the response model
   default_timezone: Europe/Madrid

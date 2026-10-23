@@ -27,7 +27,9 @@ function fieldValue(field: string, d: CandidateDetail["data"]): string {
     case "full_name": return d.full_name ?? "–";
     case "drivers_license": {
       const status = ({ yes: "Yes", no: "No", in_progress: "In progress" } as Record<string, string>)[d.license_status ?? ""] ?? "–";
-      return d.license_status === "yes" && d.license_type ? `${status} (${{ car: "car", motorbike: "motorbike", both: "car and motorbike" }[d.license_type]})` : status;
+      const details = [d.license_type && { car: "car", motorbike: "motorbike", both: "car and motorbike" }[d.license_type],
+        d.license_country && d.license_country !== d.country ? `issued in ${d.license_country}` : null].filter(Boolean);
+      return d.license_status === "yes" && details.length ? `${status} (${details.join(", ")})` : status;
     }
     case "location": return d.in_service_area === false ? `${d.location_raw} (outside area)` : d.city ?? "–";
     case "zone": return zoneText(d.zone, d.unlisted_zone) ?? "–";
