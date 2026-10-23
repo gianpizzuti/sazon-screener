@@ -28,7 +28,7 @@ export function speechLang(locale: string): string {
 }
 
 /** Listen until the candidate stops talking. Resolves with what they said ("" if nothing). */
-export function listen(locale: string, onInterim: (text: string) => void): { done: Promise<string>; stop: () => void } {
+export function listen(locale: string, onInterim: (text: string) => void): { done: Promise<string>; stop: () => void; abort: () => void } {
   const rec = new RecognitionCtor!();
   rec.lang = speechLang(locale);
   rec.interimResults = true;
@@ -48,7 +48,8 @@ export function listen(locale: string, onInterim: (text: string) => void): { don
     rec.onend = () => resolve(finalText.trim());
   });
   rec.start();
-  return { done, stop: () => rec.stop() };
+  // stop: send what was heard so far; abort: discard it (the candidate tapped or typed instead)
+  return { done, stop: () => rec.stop(), abort: () => { finalText = ""; rec.abort(); } };
 }
 
 let current: HTMLAudioElement | null = null;
@@ -70,8 +71,9 @@ export function stopSpeaking() {
   window.speechSynthesis.cancel();
 }
 
-/** Say one of Sofía's messages. Resolves when it has been spoken; reports which voice spoke. */
-export async function speak(conversationId: string, text: string): Promise<"elevenlabs" | "browser"> {
+/** Say one of Sofía's messages. Resolves when it has been spoken; reports which voice spoke.
+ * `stillWanted` is checked once the audio arrives: a turn interrupted meanwhile is not played. */
+export async function speak(conversationId: string, text: string, stillWanted: () => boolean = () => true): Promise<"elevenlabs" | "browser"> {
   const response = await fetch("/api/voice/speech", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -79,7 +81,9 @@ export async function speak(conversationId: string, text: string): Promise<"elev
   });
   if (!response.ok) throw new Error(`speech failed: ${response.status}`);
   if (response.headers.get("content-type")?.startsWith("audio/")) {
-    const url = URL.createObjectURL(await response.blob());
+    const blob = await response.blob();
+    if (!stillWanted()) return "elevenlabs";
+    const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     current = audio;
     await new Promise<void>((resolve) => {
@@ -91,7 +95,7 @@ export async function speak(conversationId: string, text: string): Promise<"elev
   }
   const { speech, locale } = (await response.json()) as { speech: string; locale: string };
   const voices = await browserVoices();
-  if (!voices.length) return "browser"; // no voice installed: the text is on screen, the conversation goes on
+  if (!voices.length || !stillWanted()) return "browser"; // no voice installed: the text is on screen, the conversation goes on
   await new Promise<void>((resolve) => {
     const utterance = new SpeechSynthesisUtterance(speech);
     const lang = speechLang(locale);

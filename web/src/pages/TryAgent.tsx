@@ -54,32 +54,49 @@ export function TryAgentPage() {
   const [mode, setMode] = useState<"chat" | "voice">("chat");
   const [phase, setPhase] = useState<Phase>("idle");
   const [heard, setHeard] = useState("");
-  const listener = useRef<{ stop: () => void } | null>(null);
+  const listener = useRef<{ stop: () => void; abort: () => void } | null>(null);
+  const turn = useRef(0); // each new turn invalidates what the previous one was still saying
   const { data: detail } = useCandidate(session?.id);
   const { data: voiceInfo } = useQuery({ queryKey: ["voice"], queryFn: api.voice, staleTime: Infinity, enabled: mode === "voice" || !!session?.voice });
   const scroller = useRef<HTMLDivElement>(null);
 
-  useEffect(() => () => { stopSpeaking(); listener.current?.stop(); }, []);
+  // Anything the candidate does (a tap, typing, the microphone) cuts Sofía off: never two voices at once.
+  const interrupt = () => {
+    turn.current += 1;
+    stopSpeaking();
+    listener.current?.abort();
+    listener.current = null;
+  };
+  useEffect(() => () => interrupt(), []);
 
   useEffect(() => { try { session ? sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session)) : sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ } }, [session]);
   useEffect(() => { scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }, [detail?.transcript.length, pending]);
 
   // Voice (ADR 0011): Sofía speaks her messages, then listens if she asked something. Hands-free, like a call.
   const startListening = (locale: string) => {
-    stopSpeaking();
+    interrupt();
+    const mine = turn.current;
     setHeard("");
     setPhase("listening");
     const l = listen(locale, setHeard);
     listener.current = l;
     l.done.then((said) => {
+      if (turn.current !== mine) return; // interrupted: a tap or a typed message took over
       listener.current = null;
       setHeard("");
       if (said) { setPhase("thinking"); send.mutate(said); } else setPhase("idle");
     }).catch(() => setPhase("idle"));
   };
   const sayAndListen = async (id: string, replies: Reply[], locale: string) => {
+    const mine = turn.current;
     setPhase("speaking");
-    try { for (const r of replies) await speak(id, r.text); } catch { /* the text is on screen anyway */ }
+    try {
+      for (const r of replies) {
+        if (turn.current !== mine) return; // the candidate moved on: don't read the rest
+        await speak(id, r.text, () => turn.current === mine);
+      }
+    } catch { /* the text is on screen anyway */ }
+    if (turn.current !== mine) return;
     const last = replies.at(-1);
     if (last && (last.text.includes("?") || last.quick_replies.length)) startListening(locale);
     else setPhase("idle");
@@ -91,7 +108,7 @@ export function TryAgentPage() {
   };
 
   const start = useMutation({
-    mutationFn: () => { stopSpeaking(); listener.current?.stop(); return api.start(language, mode === "voice" ? "voice" : "web"); },
+    mutationFn: () => { interrupt(); return api.start(language, mode === "voice" ? "voice" : "web"); },
     onSuccess: (r) => {
       const voice = mode === "voice";
       setSession({ id: r.conversation_id, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: null, topics: [], silent: false, voice, locale: r.locale });
@@ -115,6 +132,7 @@ export function TryAgentPage() {
 
   const submit = (message: string) => {
     if (!message.trim() || send.isPending) return;
+    if (session?.voice) { interrupt(); setPhase("thinking"); }
     setText("");
     send.mutate(message.trim());
   };
