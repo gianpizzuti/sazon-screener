@@ -19,6 +19,7 @@ import yaml
 from evals.common import EVALS, NOW, RESULTS, UsageMeter, load_config
 from screener.domain.text import normalize
 from screener.engine.engine import ScreeningEngine
+from screener.knowledge import build_knowledge
 from screener.llm.claude import ClaudeResponder, ClaudeUnderstander
 from screener.storage.repository import Repository
 
@@ -34,6 +35,7 @@ def run(scenario: dict) -> dict:
     engine = ScreeningEngine(
         config=cfg, repository=Repository("sqlite://"), understander=ClaudeUnderstander(client, cfg),
         responder=ClaudeResponder(client, cfg), summarizer=None, clock=lambda: clock["now"],
+        knowledge=build_knowledge(cfg),
     )
     result = engine.start(channel="eval", language=scenario.get("start_language"), country=scenario.get("country"))
     cid = result.conversation_id

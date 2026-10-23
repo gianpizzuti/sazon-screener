@@ -410,3 +410,20 @@
     - "sí"
     - "1"
   expect: {stage: qualified}
+
+- id: ex26_asks_about_the_new_topics
+  country: ES
+  messages:
+    - "sí, pero antes una cosa: ¿las propinas son para mí?"
+    - "vale. Soy Samira El Idrissi"
+    - "tengo carnet de coche, pero es de Marruecos, ¿vale aquí?"
+    - "ok. Madrid, Usera"
+    - "¿y hay sitio para dejar el coche en el restaurante?"
+    - "jornada completa"
+    - "tardes. Oye, ¿la gasolina la pagáis vosotros?"
+    - "un año en Glovo"
+    - "¿se puede llevar música con cascos mientras reparto?"
+    - "el lunes"
+    - "sí, todo bien"
+    - "1"
+  expect: {stage: qualified}

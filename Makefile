@@ -1,6 +1,6 @@
 PY := .venv/bin/python
 
-.PHONY: install web test chat run web-dev seed samples reset-demo eval-extraction eval-compare eval-conversations
+.PHONY: install web test chat run web-dev seed samples reset-demo eval-extraction eval-compare eval-conversations eval-retrieval
 
 install:       ## Python package + the web app (the web build needs Node 18+)
 	python3 -m venv .venv
@@ -41,4 +41,7 @@ eval-compare:       ## extraction eval on Haiku, Sonnet and Opus (real API, ~1.2
 
 eval-conversations: ## 13 simulated candidates + Opus judge (real API, ~1 USD)
 	$(PY) -m evals.conversations
+
+eval-retrieval:     ## knowledge-base retrieval (local, free) + the topic Haiku picks in 4 setups (real API, ~0.32 USD)
+	$(PY) -m evals.retrieval --models minilm mpnet --route --repeat 2
 

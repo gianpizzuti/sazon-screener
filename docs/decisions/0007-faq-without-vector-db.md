@@ -1,8 +1,8 @@
 # ADR 0007: FAQ answering without a vector database
 
-> This is the assessment's **RAG** bonus: retrieval (the understanding model classifies the question into one of the knowledge base's topics), augmentation (code inserts that topic's single approved answer, or one built from the configuration for zones and interview times) and generation (the writer phrases only that). What changes from classic RAG is the retrieval method, chosen for the size of the knowledge base.
+> This was the first version of the assessment's **RAG** bonus (the current one is [ADR 0010](0010-knowledge-base-retrieval.md)): retrieval (the understanding model classifies the question into one of the knowledge base's topics), augmentation (code inserts that topic's single approved answer, or one built from the configuration for zones and interview times) and generation (the writer phrases only that). What changes from classic RAG is the retrieval method, chosen for the size of the knowledge base.
 
-**Status:** accepted
+**Status:** superseded for the retrieval step by [ADR 0010](0010-knowledge-base-retrieval.md) (embedding search over a 30-topic knowledge base). The augmentation and generation rules below still apply. Kept as the record of the first design and why it was right at 16 topics.
 
 ## Context
 Candidates ask about pay, contract, vehicle, shifts. A wrong answer about pay is the most damaging hallucination this agent could produce: it creates false expectations and possibly legal exposure.

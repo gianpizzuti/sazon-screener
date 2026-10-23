@@ -23,7 +23,8 @@ Requirements: Python 3.11+, Node 18+ (for the web app), an Anthropic API key.
 make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
-make test                    # offline, no API key: 171 tests of the product + 242 checks of the eval datasets
+                             # the first start downloads the embedding model (≈ 240 MB, once) into data/models
+make test                    # offline, no API key: 184 tests of the product + 246 checks of the eval datasets
 ```
 
 Optional:
@@ -36,6 +37,7 @@ make reset-demo              # wipe the local database and re-seed (deletes your
 make web-dev                 # web app with hot reload on :5173 (with `make run` for the API)
 make eval-extraction         # extraction eval on the production model (real API, ~0.03 USD)
 make eval-conversations      # 13 simulated candidates + LLM judge (real API, ~1 USD)
+make eval-retrieval          # knowledge-base retrieval: local models ($0) + Haiku's choice (real API, ~0.32 USD)
 ```
 
 ## What's inside
@@ -43,10 +45,10 @@ make eval-conversations      # 13 simulated candidates + LLM judge (real API, ~1
 | | |
 |---|---|
 | **The agent (Sofía)** | Screens in Spanish (Spain or Mexico vocabulary) or English, switches when the candidate does, accepts several answers in one message, answers questions from the client's FAQ, handles corrections, ambiguity, frustration, opt-outs and manipulation attempts. **Qualified candidates book their interview in the chat**: three free times as buttons, no double booking, moved by writing again |
-| **Knowledge base (RAG)** | Candidates' questions are answered from the client's knowledge base ([`faq.yaml`](config/clients/grupo_sazon/faq.yaml), 16 topics: company, pay, contract, vehicle, shifts, equipment, insurance, training, documents, requirements, process, language, privacy, "are you a bot?", plus **zones** and **interview times built live from the configuration**). Retrieve → augment → generate: the understanding model picks the topic, code inserts the single approved answer, Sofía phrases only that and says "the team will confirm" if it doesn't fit; unanswered questions are logged for recruiters. No knowledge base came with the assignment, so this one is illustrative, to validate with the client. Why no vector database: [ADR 0007](docs/decisions/0007-faq-without-vector-db.md) |
+| **Knowledge base (RAG)** | Candidates' questions are answered from the client's knowledge base ([`faq.yaml`](config/clients/grupo_sazon/faq.yaml)): 30 topics such as pay, tips, payday, contract, fuel, parking, shifts, insurance, work permit or a foreign licence, plus **zones** and **interview times built live from the configuration**. **Retrieve**: a multilingual embedding model, run locally, finds the 5 closest topics (98% recall@5 on held-out questions, 4 ms, $0). **Augment**: the understanding model picks the topic whose approved answer answers the question, or none, and code inserts that single answer. **Generate**: Sofía phrases only that, or says "the team will confirm"; unanswered questions are logged for recruiters. Measured: 0 wrong topics in 254 runs; hybrid keyword search was tried and measured worse ([ADR 0010](docs/decisions/0010-knowledge-base-retrieval.md)). No knowledge base came with the assignment, so this one is illustrative, to validate with the client |
 | **Re-engagement** | Silent candidates get up to 3 reminders (+2 h, +24 h, +72 h), never at night in *their* timezone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. Any reply resumes the screening. The **recovery rate** shows whether it works. In the web app, the **demo clock** (top bar) moves time forward to show it live |
 | **Recruiter web app** (React) | **Pipeline**: queue ordered by what to do first, status filters, live counters. **Candidate**: AI summary, extracted data with the candidate's own words, chat transcript with the *why* behind every message, recruiter decision and audited override, audit timeline, JSON export, GDPR erasure. **Analytics**: funnel and charts that grow as you scroll, recovery-rate meter, FAQ gaps, AI health, table view. **Try the agent**: play the candidate and watch the screening checklist fill in live. **How it works**: the screening flow as an interactive flowchart (click a step for the exact question and rules, or trace a candidate's path) plus the workspace's live configuration. Light and dark theme, reduced-motion aware |
-| **Evals** | **Extraction**: 120 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 144/146 values right, 1 invented value and harmless where it occurred, location 22/22 after the rules, ≈ $0.2 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
+| **Evals** | **Extraction**: 120 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 144/146 values right, 1 invented value and harmless where it occurred, location 22/22 after the rules, ≈ $0.2 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). **Retrieval**: 127 held-out questions, keyword vs meaning vs hybrid and two embedding models, then the topic Haiku picks in four setups. Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
 | **API** | `/api/conversations` for channels (web, WhatsApp, voice), `/api/candidates` + `/api/analytics` for recruiters and an ATS, `/api/config` for the read-only workspace rules. OpenAPI docs at `/docs` |
 
 ## How it works
@@ -55,8 +57,11 @@ make eval-conversations      # 13 simulated candidates + LLM judge (real API, ~1
 candidate message
       │
       ▼
+ 0. RETRIEVE     local multilingual embeddings → the 5 closest FAQ topics, with their answers
+      │
+      ▼
  1. UNDERSTAND   Claude Haiku 5.5, structured output → TurnAnalysis
-                 values + verbatim evidence, intents, language, sentiment, FAQ match
+                 values + verbatim evidence, intents, language, sentiment, FAQ topic (or none)
       │
       ▼
  2. DECIDE       ScreeningPolicy, pure Python (no LLM)
@@ -120,7 +125,7 @@ docs/          process design, decision log, ADRs, live testing log, design docs
 | SQLite + event log | Zero setup for evaluators, real queries, an audit trail; Postgres is one URL away | [0004](docs/decisions/0004-sqlite-sqlalchemy.md) |
 | Grounded extraction | Structured output guarantees shape, not truth: every value must quote the candidate | [0005](docs/decisions/0005-grounding-and-layered-validation.md) |
 | Templates for recap and fallback | Data shown back to the candidate is never paraphrased; the conversation never breaks | [0006](docs/decisions/0006-templates-where-precision-matters.md) |
-| RAG without a vector DB | 16 topics don't need embedding search: the understanding model retrieves the topic, code inserts the one approved answer, the writer phrases only that | [0007](docs/decisions/0007-faq-without-vector-db.md) |
+| RAG: local embeddings, the model chooses, code inserts | Embeddings find the closest topics (meaning beat hybrid search when measured); the model picks by the approved answer, or none; the writer phrases only that answer. No vector database at 205 vectors, pgvector when it grows | [0010](docs/decisions/0010-knowledge-base-retrieval.md) (was [0007](docs/decisions/0007-faq-without-vector-db.md)) |
 | API-first, the UI is a client | Logic in one place, ready for WhatsApp/voice/ATS; the UI was replaced (Streamlit → React) without touching the core | [0008](docs/decisions/0008-api-first-recruiter-tool.md) |
 | React web app with a design system | Orbio's visual language with the client as workspace; motion that explains, accessible charts, light/dark tokens checked for contrast; one process in production | [0009](docs/decisions/0009-react-web-app.md) |
 
@@ -139,6 +144,7 @@ In the order I would do them with more time. Most come from what testing and the
 ### Product
 | Improvement | Why | Trade-off / note |
 |---|---|---|
+| **The client's own documents in the knowledge base** (rider handbook, policies, per-restaurant notes), split into passages and indexed like today's examples; questions recruiters answer by hand become new examples | Today's 30 topics are illustrative. The retrieval already scales to this, and stored shortlists show what it missed | Each passage needs an owner at the client who approves it. Re-measure hybrid search then: names and codes are where keywords help (ADR 0010) |
 | Confirm an opt-out that arrives with frustration | ≈ 3% of complaints are read as opt-out (D147). It is recoverable today: writing again resumes the screening | One more message for someone who really wants to stop |
 | Check the licence at the interview, and measure how often candidates lie about it | Protects recruiter time without collecting ID documents in a chat (data minimisation, bias, drop-off) | A rejection reason "no licence at the interview" gives the number before adding friction |
 | Voice channel | The assessment's "Great" tier; some candidates prefer to talk | Latency matters more: understanding and writing may become one call for voice only |

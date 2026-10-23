@@ -316,7 +316,7 @@ export function HowItWorksPage() {
           <CardTitle number={3}>At any moment</CardTitle>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {[
-              { icon: MessageCircleQuestion, title: "A question", text: "Answered from the client's approved FAQ. Not in the FAQ: “the team will confirm”, never improvised, and logged for the recruiter." },
+              { icon: MessageCircleQuestion, title: "A question", text: "Answered from the client's approved FAQ: a local embedding model finds the 5 closest topics, the model picks the one whose answer fits, or none. None: “the team will confirm”, never improvised, and logged for the recruiter." },
               { icon: BellRing, title: "Silence", text: f ? `Reminders at +${f.schedule_hours.join(" h, +")} h, never between ${f.quiet_hours_start}:00 and ${String(f.quiet_hours_end).padStart(2, "0")}:00 in their timezone. Abandoned ${f.abandon_after_hours} h after the last one; any reply resumes.` : "Reminders, then abandoned." },
               { icon: Undo2, title: "Not interested", text: "Withdrawn at once, no persuasion. Writing again later reopens the screening where it stopped." },
               { icon: Hand, title: "Asks for a person", text: "Flagged for a recruiter; Sofía offers to finish the questions meanwhile, so the human follow-up is faster." },
@@ -356,6 +356,7 @@ export function HowItWorksPage() {
                 <div>
                   <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-heading"><MessageCircleQuestion className="size-4 text-brand-ink" />Approved FAQ · {cfg.faq.length} topics</div>
                   <div className="flex flex-wrap gap-1.5">{cfg.faq.map((q) => <span key={q.id} title={q.question} className="rounded-md bg-surface-2 px-2 py-1 text-xs text-ink-2">{q.id.replace(/_/g, " ")}</span>)}</div>
+                  <p className="mt-2 text-xs text-ink-3">Retrieval by meaning (multilingual embeddings, run locally): 98% of questions have the right topic among the 5 shown, and none got another topic's answer in the eval.</p>
                 </div>
                 <div>
                   <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-heading"><Cpu className="size-4 text-brand-ink" />Models, one per task</div>

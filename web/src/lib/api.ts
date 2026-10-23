@@ -87,6 +87,7 @@ export interface Message {
     attempt?: number;
     whatsapp_template_required?: boolean;
     analysis?: Analysis;
+    faq_topics?: string[];
     directive?: Record<string, unknown>;
     error?: string;
   };
@@ -159,6 +160,7 @@ export interface TurnResult {
   data: ScreeningData;
   analysis: Analysis | null;
   event_types: string[];
+  faq_topics: string[];
 }
 
 export interface DemoClock {

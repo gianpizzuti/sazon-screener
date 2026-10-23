@@ -2,6 +2,7 @@ import clsx from "clsx";
 import {
   Ban,
   Calendar,
+  Check,
   CircleCheck,
   CircleX,
   Gavel,
@@ -125,6 +126,21 @@ export function Chip({ children, className }: { children: ReactNode; className?:
     <span className={clsx("inline-flex items-center gap-1 rounded-md bg-surface-2 px-2 py-0.5 text-xs font-medium text-ink-2", className)}>
       {children}
     </span>
+  );
+}
+
+/** The knowledge-base topics retrieval offered for a question (ADR 0010); the one the model chose is highlighted. */
+export function RetrievedTopics({ topics, chosen }: { topics: string[]; chosen: string | null }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="text-xs text-ink-3">Closest FAQ topics:</span>
+      {topics.map((t) => (
+        <Chip key={t} className={t === chosen ? "bg-brand-soft text-brand-ink ring-1 ring-brand" : undefined}>
+          {t === chosen && <Check className="size-3" aria-label="chosen" />}{t.replace(/_/g, " ")}
+        </Chip>
+      ))}
+      {!chosen && <span className="text-xs text-ink-3">none answers it, so the team will confirm</span>}
+    </div>
   );
 }
 

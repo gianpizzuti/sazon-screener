@@ -7,10 +7,11 @@ or running tests with fakes, means providing another implementation of these pro
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from typing import Literal, Protocol
 
+from screener.config import FaqEntry
 from screener.domain.models import ConversationState, FieldName, Stage
 from screener.engine.directive import Directive
 from screener.llm.schemas import CandidateSummary, TurnAnalysis
@@ -35,6 +36,7 @@ class UnderstandRequest:
     known: dict[str, str]
     today: date
     language: str
+    faq_topics: list[FaqEntry] = field(default_factory=list)  # the retrieval shortlist (ADR 0010)
 
 
 @dataclass

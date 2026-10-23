@@ -30,6 +30,7 @@ from screener.config import ClientConfig
 from screener.domain.locations import LocationMatcher
 from screener.domain.models import FieldName, Stage
 from screener.domain.text import is_grounded, normalize
+from screener.knowledge import KnowledgeIndex, build_knowledge
 from screener.llm.claude import ClaudeUnderstander
 from screener.llm.prompts import build_understand_system
 from screener.llm.interfaces import LLMError, UnderstandRequest
@@ -99,7 +100,7 @@ def known_for(case: dict) -> dict[str, str]:
     return known
 
 
-def request_for(case: dict, cfg: ClientConfig) -> UnderstandRequest:
+def request_for(case: dict, cfg: ClientConfig, knowledge: KnowledgeIndex | None = None) -> UnderstandRequest:
     asked = case.get("asked")
     conv = case.get("conv", "es")
     known = known_for(case)
@@ -117,6 +118,7 @@ def request_for(case: dict, cfg: ClientConfig) -> UnderstandRequest:
         known=known,
         today=TODAY,
         language=conv,
+        faq_topics=knowledge.search(case["msg"]) if knowledge else cfg.faq,
     )
 
 
@@ -227,9 +229,10 @@ def run_model(short: str, cases: list[dict]) -> dict:
     cfg = load_config(understand=model)
     meter = UsageMeter()
     understander = ClaudeUnderstander(meter.client(), cfg)
+    knowledge = build_knowledge(cfg)
 
     def one(case: dict) -> dict:
-        req = request_for(case, cfg)
+        req = request_for(case, cfg, knowledge)
         started = time.perf_counter()
         try:
             analysis = understander.analyze(req)

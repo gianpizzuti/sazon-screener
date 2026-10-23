@@ -38,6 +38,7 @@ def build_engine(config: ClientConfig | None = None, database_url: str | None = 
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise RuntimeError("ANTHROPIC_API_KEY is not set. Copy .env.example to .env and add your key.")
 
+    from screener.knowledge import build_knowledge
     from screener.llm.claude import ClaudeResponder, ClaudeSummarizer, ClaudeUnderstander, make_client
 
     client = make_client()
@@ -48,4 +49,5 @@ def build_engine(config: ClientConfig | None = None, database_url: str | None = 
         responder=ClaudeResponder(client, config),
         summarizer=ClaudeSummarizer(client, config),
         clock=DemoClock(DEMO_CLOCK_FILE) if demo_tools_enabled() else utcnow,
+        knowledge=build_knowledge(config),
     )

@@ -57,6 +57,7 @@ class Platform(BaseModel):
 class FaqEntry(BaseModel):
     id: str
     question: str
+    examples: list[str] = Field(default_factory=list)  # other ways candidates ask it (retrieval only)
     answer: dict[str, str]  # "default", or a country code overriding it
 
     def answer_for(self, country: str | None) -> str:
@@ -121,6 +122,14 @@ class ModelSettings(BaseModel):
     summary: str
 
 
+class RetrievalSettings(BaseModel):
+    """Which knowledge-base topics the understanding model chooses from (ADR 0010)."""
+
+    embedding_model: str | None = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    method: Literal["semantic", "hybrid"] = "semantic"  # hybrid adds keyword search (BM25)
+    shortlist: int = 5  # topics shown per message
+
+
 class Copy:
     """Localized fixed copy. Lookup order: exact locale, base language, then Spanish."""
 
@@ -174,6 +183,7 @@ class ClientConfig(BaseModel):
     followups: FollowUpSettings = Field(default_factory=FollowUpSettings)
     scheduling: SchedulingSettings = Field(default_factory=SchedulingSettings)
     license: LicenseSettings = Field(default_factory=LicenseSettings)
+    retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
     next_steps: dict[str, str]
     platforms: list[Platform]
     service_areas: list[ServiceArea]

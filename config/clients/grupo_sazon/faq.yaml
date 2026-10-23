@@ -1,90 +1,332 @@
-# Knowledge base used to answer candidate questions.
+# Knowledge base used to answer candidate questions (ADR 0010).
 # The response model only ever sees the ONE answer selected for the question, so it cannot
 # improvise on pay or benefits. Answers are written in Spanish; the model adapts language
 # and regional variant. `ES` / `MX` override `default` per country.
 #
-# PLACEHOLDERS: contents are plausible examples to be validated with Grupo Sazón.
+# `question` and `examples` are what retrieval searches: each topic is found by its closest
+# phrasing, so examples are ways candidates ask it (Spain, Mexico, English), not answers.
+# Never copy a case of evals/retrieval_cases.yaml here: those measure retrieval on unseen wording.
+#
+# PLACEHOLDERS: contents are plausible examples to be validated with Grupo Sazón. Where the
+# answer needs a figure only the client has (amounts, distances), it says the team confirms it
+# instead of inventing one. Topics come from questions asked in testing or typical of the role;
+# what candidates ask and nothing here answers is logged (question_unanswered) to grow this file.
 
 faq:
   - id: pay
-    question: ¿Cuánto se cobra? ¿Cómo es el sueldo? ¿Hay propinas?
+    question: ¿Cuánto se cobra? ¿Cómo es el sueldo?
+    examples:
+      - ¿cuánto pagan?
+      - ¿de cuánto es el salario?
+      - ¿cuánto se gana al mes con media jornada?
+      - ¿cuánto pagan por hora?
+      - ¿cuánto es el sueldo?  # MX
+      - what's the salary?
     answer:
       ES: Es un contrato laboral con Grupo Sazón (no como autónomo), con el salario del convenio de hostelería de tu provincia, más propinas. El importe exacto según horas te lo confirma el equipo en la entrevista.
       MX: Es una contratación directa con Grupo Sazón con prestaciones de ley (IMSS, aguinaldo y vacaciones), sueldo base más propinas. El monto exacto según tu horario te lo confirma el equipo en la entrevista.
 
+  - id: tips
+    question: ¿Hay propinas? ¿Las propinas son para el repartidor?
+    examples:
+      - ¿me quedo con las propinas?
+      - ¿las propinas se reparten entre todos?
+      - ¿la gente deja propina?
+      - ¿las propinas van aparte del sueldo?
+      - do I keep the tips?
+    answer:
+      default: Sí. Las propinas que te dejan los clientes en tus entregas son para ti y van aparte del sueldo.
+
+  - id: payday
+    question: ¿Cuándo se cobra? ¿Cada cuánto se paga?
+    examples:
+      - ¿qué día pagan?
+      - ¿se cobra a final de mes?
+      - ¿pagan por semana o por mes?
+      - ¿cada cuánto es la nómina?
+      - ¿pagan por quincena?  # MX
+      - when do I get paid?
+    answer:
+      ES: Se cobra por nómina mensual, por transferencia a tu cuenta.
+      MX: El pago es quincenal, por depósito a tu cuenta.
+
   - id: contract
     question: ¿Qué tipo de contrato es? ¿Soy autónomo o empleado?
+    examples:
+      - ¿hay que ser autónomo?
+      - ¿me dais de alta?
+      - ¿es por honorarios o con prestaciones?  # MX
+      - ¿es un contrato fijo?
+      - am I an employee or a freelancer?
     answer:
       ES: Trabajas como empleado/a de Grupo Sazón, con contrato laboral y alta en la Seguridad Social. No necesitas darte de alta como autónomo.
       MX: Trabajas como empleado/a de Grupo Sazón, con contrato y alta en el IMSS desde el primer día.
 
+  - id: trial_period
+    question: ¿Hay periodo de prueba? ¿Cuánto dura el contrato?
+    examples:
+      - ¿cuánto dura el periodo de prueba?
+      - ¿el contrato es temporal o indefinido?
+      - ¿por cuántos meses es el contrato?
+      - is there a probation period?
+    answer:
+      default: El contrato incluye el periodo de prueba que marca la ley. La duración y el tipo de contrato te los confirma el equipo en la entrevista.
+
   - id: zones
     question: ¿En qué zonas o barrios se reparte? ¿Qué zonas hay disponibles?
+    examples:
+      - ¿qué barrios tenéis?
+      - ¿en qué colonias reparten?  # MX
+      - ¿puedo elegir la zona?
+      - ¿qué zonas hay en mi ciudad?
+      - which neighbourhoods are available?
     answer:
-      default: (built from service_areas.yaml for the candidate's city, so it is always the real list)
+      default: (the delivery zones of the candidate's city, built from service_areas.yaml so it is always the real list)
+
+  - id: delivery_radius
+    question: ¿Cómo de lejos son las entregas? ¿Cuántos pedidos se hacen por turno?
+    examples:
+      - ¿hay que ir muy lejos con los pedidos?
+      - ¿qué distancia se recorre?
+      - ¿cuántas entregas se hacen por hora?
+      - ¿son entregas cerca del restaurante?
+      - how far are the deliveries?
+    answer:
+      default: Repartes los pedidos de tu restaurante, a domicilios de la zona que lo rodea. La distancia y el número de pedidos dependen del restaurante y del turno; el equipo te da los datos de tu zona en la entrevista.
 
   - id: interviews
     question: ¿Cuándo y dónde son las entrevistas? ¿Hay entrevistas en fin de semana o por la tarde?
+    examples:
+      - ¿dónde es la entrevista?
+      - ¿la entrevista es presencial?
+      - ¿qué días hacéis entrevistas?
+      - ¿cuánto dura la entrevista?
+      - where is the interview?
     answer:
-      default: "(built from the scheduling configuration: days, hours and the interview place)"
+      default: "(the interview days, hours, length and place, built from the scheduling configuration)"
 
   - id: vehicle
     question: ¿Necesito vehículo propio? ¿Me dan moto?
+    examples:
+      - ¿hace falta tener coche?
+      - ¿la empresa pone la moto?
+      - ¿puedo repartir en bici o patinete?
+      - ¿tengo que tener carro propio?  # MX
+      - do I need my own car?
     answer:
-      default: Puedes repartir con tu propia moto o coche y te compensamos el combustible por kilómetro. En algunos restaurantes también hay motos de la empresa; el equipo te lo confirma según tu zona.
+      default: Puedes repartir con tu propia moto o coche. En algunos restaurantes también hay motos de la empresa; el equipo te lo confirma según tu zona. Hace falta un vehículo a motor, no bici ni patinete.
+
+  - id: expenses
+    question: ¿Me pagan la gasolina? ¿Quién paga los gastos del vehículo?
+    examples:
+      - ¿la gasolina corre de mi cuenta?
+      - ¿pagáis el kilometraje?
+      - ¿quién paga el mantenimiento de la moto?
+      - ¿me reembolsan la gasolina?  # MX
+      - is fuel paid?
+    answer:
+      default: Si repartes con tu vehículo, te compensamos el combustible por kilómetro recorrido en las entregas. El importe por kilómetro te lo confirma el equipo en la entrevista.
+
+  - id: parking
+    question: ¿Hay aparcamiento para el vehículo en el restaurante?
+    examples:
+      - ¿dónde dejo la moto durante el turno?
+      - ¿hay parking para los repartidores?
+      - ¿dónde estaciono el carro?  # MX
+      - is there parking at the restaurant?
+    answer:
+      default: Depende del restaurante; el equipo te explica dónde se deja el vehículo durante el turno en el tuyo.
 
   - id: shifts
     question: ¿Cuántas horas son los turnos? ¿Cuáles son los horarios?
+    examples:
+      - ¿qué horario tendría?
+      - ¿cuántas horas a la semana son?
+      - ¿se trabaja de noche?
+      - ¿cuántas horas es el turno?  # MX
+      - what are the working hours?
     answer:
       default: Hay turnos de mediodía (aprox. 12:00-16:00) y de noche (aprox. 19:00-00:00), de lunes a domingo. Puedes combinarlos según tu disponibilidad; el horario final se acuerda contigo.
 
+  - id: time_off
+    question: ¿Puedo cambiar turnos? ¿Hay vacaciones y días libres?
+    examples:
+      - ¿cuántos días libres hay a la semana?
+      - ¿puedo pedir un día libre?
+      - ¿se pueden cambiar los turnos con un compañero?
+      - ¿tengo vacaciones?  # MX
+      - can I swap shifts?
+    answer:
+      ES: Tienes las vacaciones y descansos del convenio. Los turnos se publican con antelación y puedes cambiarlos con compañeros avisando a tu encargado.
+      MX: Tienes los días de descanso y las vacaciones de ley. Los turnos se publican con antelación y puedes cambiarlos con compañeros avisando a tu encargado.
+
+  - id: studies_other_job
+    question: ¿Puedo compaginarlo con los estudios u otro trabajo?
+    examples:
+      - estoy estudiando, ¿me da para hacerlo?
+      - ¿es compatible con otro empleo?
+      - tengo otro trabajo por las mañanas, ¿puedo?
+      - can I do this while studying?
+    answer:
+      default: Sí, muchas personas del equipo lo compaginan; la media jornada y los fines de semana encajan bien con estudios u otro trabajo. El horario se acuerda contigo.
+
   - id: equipment
     question: ¿Dan uniforme, casco o mochila?
+    examples:
+      - ¿hay que llevar uniforme?
+      - ¿me tengo que comprar el casco?
+      - ¿dais la caja térmica?
+      - do you provide a helmet?
     answer:
       default: Sí, te damos uniforme, mochila o caja térmica y soporte para el móvil. Si usas moto, el casco debe estar homologado; si no tienes, el equipo te dice cómo conseguirlo.
 
+  - id: phone_app
+    question: ¿Necesito móvil? ¿Qué aplicación se usa?
+    examples:
+      - ¿hace falta smartphone?
+      - ¿con qué app se trabaja?
+      - ¿necesito datos en el celular?  # MX
+      - do I need a smartphone?
+    answer:
+      default: Necesitas un smartphone con datos. Usamos nuestra propia app de reparto, que te enseñamos el primer día.
+
+  - id: weather
+    question: ¿Se reparte cuando llueve o hace mal tiempo?
+    examples:
+      - ¿qué pasa si llueve mucho?
+      - ¿hay que salir con lluvia?
+      - ¿dais ropa para la lluvia?
+      - do you deliver in the rain?
+    answer:
+      default: Sí, con lluvia se reparte con el equipo impermeable que te damos. Si hay alerta meteorológica, el encargado puede pausar el reparto por seguridad.
+
   - id: insurance
     question: ¿Tengo seguro si tengo un accidente?
+    examples:
+      - ¿estoy asegurado mientras reparto?
+      - ¿quién me cubre si me caigo con la moto?
+      - ¿hay seguro médico?  # MX
+      - am I insured while working?
     answer:
       default: Sí. Al ser contrato laboral estás cubierto/a por el seguro de accidentes de trabajo durante tus turnos.
 
+  - id: accident
+    question: ¿Qué hago si tengo un accidente o se me estropea el vehículo en un reparto?
+    examples:
+      - ¿qué pasa si pincho una rueda?
+      - si me multan durante un reparto, ¿quién paga?
+      - ¿a quién aviso si tengo un problema en la calle?
+      - what if I crash during a delivery?
+    answer:
+      default: Si tienes un accidente o una avería, lo primero es tu seguridad; después avisas a tu encargado, que te dice cómo seguir. Las multas por infracciones de tráfico son responsabilidad de quien conduce.
+
+  - id: staff_meal
+    question: ¿Hay comida de personal o descuento en los restaurantes?
+    examples:
+      - ¿se come en el turno?
+      - ¿tenemos descuento en la comida?
+      - is there a staff meal?
+    answer:
+      default: Sí, en tu turno tienes comida de personal en el restaurante, y descuento como cliente en Grupo Sazón.
+
   - id: process
     question: ¿Qué pasa después? ¿Cuáles son los siguientes pasos? ¿Cuándo me contestan?
+    examples:
+      - ¿cuándo sabré si me cogen?
+      - ¿cuánto tarda el proceso?
+      - ¿cuándo me hablan?  # MX
+      - what happens next?
     answer:
       default: Al terminar estas preguntas, si cumples los requisitos, eliges aquí mismo el día y la hora de una entrevista breve (unos 20 minutos) en uno de nuestros restaurantes. Si ningún horario te va bien, una persona del equipo de selección te ayuda a encontrar otro. Una persona revisa siempre cada candidatura.
 
   - id: documents
     question: ¿Qué documentos necesito?
+    examples:
+      - ¿qué papeles tengo que llevar?
+      - ¿qué necesito para firmar el contrato?
+      - ¿qué documentación piden?  # MX
+      - which documents do I need?
     answer:
       ES: Para la contratación necesitarás tu DNI o NIE con permiso de trabajo, el carnet de conducir y tu número de la Seguridad Social.
       MX: Para la contratación necesitarás tu INE, la licencia de manejo vigente, CURP, RFC y número de seguro social (NSS).
 
   - id: requirements
-    question: ¿Cuáles son los requisitos? ¿Hay edad mínima? ¿Necesito papeles?
+    question: ¿Cuáles son los requisitos? ¿Hay edad mínima?
+    examples:
+      - ¿qué piden para el puesto?
+      - ¿hay que ser mayor de edad?
+      - ¿con 17 años puedo?
+      - what are the requirements?
     answer:
       default: Los requisitos son ser mayor de edad, tener permiso para trabajar en el país, carnet o licencia de conducir en vigor y repartir en una de nuestras zonas. No hace falta experiencia previa.
 
+  - id: work_permit
+    question: Soy extranjero, ¿puedo trabajar? ¿Necesito permiso de trabajo?
+    examples:
+      - ¿hace falta tener los papeles en regla?
+      - tengo el NIE en trámite, ¿puedo aplicar?
+      - ¿sirve con permiso de residencia?
+      - do I need a work permit?
+    answer:
+      ES: Necesitas un permiso de trabajo en vigor (NIE o TIE que te autorice a trabajar). Si lo tienes en trámite, coméntaselo al equipo en la entrevista y lo revisa contigo.
+      MX: Necesitas poder trabajar legalmente en México (por ejemplo, la residencia con permiso de trabajo). Si lo tienes en trámite, coméntaselo al equipo en la entrevista y lo revisa contigo.
+
+  - id: foreign_licence
+    question: ¿Vale un carnet de conducir de otro país?
+    examples:
+      - tengo el carnet de Colombia, ¿me sirve?
+      - ¿se puede con licencia extranjera?  # MX
+      - ¿vale el permiso internacional?
+      - is a foreign driving licence ok?
+    answer:
+      default: Depende del país que lo expidió y de tu situación de residencia. Coméntaselo al equipo en la entrevista y trae el carnet; lo revisa contigo.
+
   - id: training
     question: ¿Hay formación? ¿Necesito experiencia?
+    examples:
+      - nunca he repartido, ¿pasa algo?
+      - ¿os enseñáis cómo funciona?
+      - ¿el primer día qué se hace?
+      - do I need experience?
     answer:
       default: No necesitas experiencia. El primer día haces una formación pagada en el restaurante, con un compañero que te enseña rutas, la app y el protocolo de entrega.
 
   - id: company
     question: ¿Qué es Grupo Sazón? ¿Dónde están los restaurantes?
+    examples:
+      - ¿qué tipo de restaurantes sois?
+      - ¿cuántos restaurantes tenéis?
+      - ¿sois una plataforma como Glovo?
+      - what kind of company is this?
     answer:
       default: Grupo Sazón es un grupo de 45 restaurantes en España (Madrid, Barcelona, Valencia, Sevilla, Málaga y Bilbao) y México (Ciudad de México, Guadalajara y Monterrey). Repartimos nuestros propios pedidos con un equipo propio.
 
   - id: language
     question: ¿Podemos hablar en inglés? ¿En qué idioma es el proceso?
+    examples:
+      - ¿hace falta hablar español bien?
+      - ¿puedo hacer la entrevista en inglés?
+      - can we continue in English?
+      - do I need to speak Spanish?
     answer:
       default: Sí, podemos seguir en español o en inglés, como prefieras. La entrevista suele ser en español; si lo necesitas, el equipo te confirma si puede ser en inglés.
 
   - id: is_bot
     question: ¿Eres un bot? ¿Hablo con una persona?
+    examples:
+      - ¿esto es automático?
+      - ¿eres una persona real?
+      - ¿me está contestando una máquina?
+      - am I talking to a robot?
     answer:
       default: Soy una asistente virtual con inteligencia artificial. Te hago estas preguntas para agilizar el proceso, y una persona del equipo de selección revisa siempre cada candidatura.
 
   - id: privacy
     question: ¿Qué hacéis con mis datos? ¿Podéis borrarlos?
+    examples:
+      - ¿con quién compartís mi información?
+      - quiero que borréis mis datos
+      - ¿mis datos están protegidos?
+      - how do you use my data?
     answer:
       default: Tus datos solo se usan para este proceso de selección de Grupo Sazón y no se comparten con terceros. Puedes pedir que los borremos cuando quieras y el equipo lo hará.

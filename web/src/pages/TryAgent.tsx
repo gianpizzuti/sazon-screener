@@ -5,12 +5,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Button, Card, CardTitle, Chip, PageHeader, StatusBadge } from "../components/ui";
+import { Button, Card, CardTitle, Chip, PageHeader, RetrievedTopics, StatusBadge } from "../components/ui";
 import { type Analysis, api, type CandidateDetail } from "../lib/api";
 import { AVAILABILITY, SCHEDULE, experience, interviewTime, shortDate, titleCase } from "../lib/format";
 import { useCandidate } from "../lib/hooks";
 
-type Session = { id: string; quick: string[]; analysis: Analysis | null; silent: boolean };
+type Session = { id: string; quick: string[]; analysis: Analysis | null; topics: string[]; silent: boolean };
 const STORAGE_KEY = "try-agent-session";
 
 const CHECKLIST: { label: string; value: (detail: CandidateDetail) => string | null }[] = [
@@ -53,13 +53,13 @@ export function TryAgentPage() {
 
   const start = useMutation({
     mutationFn: () => api.start(language),
-    onSuccess: (r) => { setSession({ id: r.conversation_id, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: null, silent: false }); client.invalidateQueries({ queryKey: ["candidates"] }); },
+    onSuccess: (r) => { setSession({ id: r.conversation_id, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: null, topics: [], silent: false }); client.invalidateQueries({ queryKey: ["candidates"] }); },
   });
   const send = useMutation({
     mutationFn: (message: string) => api.send(session!.id, message),
     onMutate: (message) => setPending(message),
     onSuccess: async (r) => {
-      setSession((s) => s && { ...s, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: r.analysis, silent: !r.messages.length });
+      setSession((s) => s && { ...s, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: r.analysis, topics: r.faq_topics ?? [], silent: !r.messages.length });
       await client.invalidateQueries({ queryKey: ["candidate", session!.id] });
       client.invalidateQueries({ queryKey: ["candidates"] });
     },
@@ -214,6 +214,7 @@ export function TryAgentPage() {
                   <Chip>Sentiment: {a.sentiment}</Chip>
                   {a.faq_id && <Chip>FAQ: {titleCase(a.faq_id)}</Chip>}
                 </div>
+                {a.intents.includes("question") && session?.topics?.length ? <RetrievedTopics topics={session.topics} chosen={a.faq_id} /> : null}
                 {a.evidence.length ? a.evidence.map((e, i) => (
                   <div key={i} className="flex gap-2 text-sm text-ink-2"><Quote className="mt-0.5 size-3.5 shrink-0 text-brand-ink" /><span><span className="text-ink-3">{titleCase(e.field)}:</span> “{e.quote}”</span></div>
                 )) : <p className="text-sm text-ink-3">No screening data in this message.</p>}

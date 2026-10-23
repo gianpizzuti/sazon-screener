@@ -82,7 +82,6 @@ def build_understand_system(cfg: ClientConfig) -> str:
         f"- {a.id}: {a.name} ({a.country}). Zones: {', '.join(z.name for z in a.zones)}"
         for a in cfg.service_areas
     )
-    faq = "\n".join(f"- {f.id}: {f.question}" for f in cfg.faq)
     return f"""You are the language-understanding component of a recruiting assistant that screens \
 delivery-driver applicants for {cfg.name}, a {cfg.description}. You never talk to the candidate. \
 You read the candidate's latest message and return a structured analysis. A separate rules engine \
@@ -142,8 +141,8 @@ and the candidate picks one, its number (1 = first): "el martes a las 5" is the 
 # Intents (list every one that applies)
 provide_info (gives screening data), affirm / deny (yes / no to the agent's last question; for a \
 yes/no screening question also fill the field), question (asks something: copy it into `question` \
-and set `faq_id` only if a topic below directly answers what they asked; a merely related topic is \
-not enough, leave it null and a person will answer), correction (changes something said before; if they \
+and set `faq_id` only if the answer of one of the FAQ TOPICS directly answers what they asked; a merely \
+related topic is not enough, leave it null and a person will answer), correction (changes something said before; if they \
 say a detail is wrong without giving the new value, set `correction_target` to that detail), \
 postpone (says they can't continue now or want to continue later; \
 complaining about the number of questions is frustration, not postpone), opt_out (clearly says they are no longer interested or want to stop; impatience or a \
@@ -167,21 +166,23 @@ asked; frustrated if annoyed, impatient or complaining.
 
 # Service cities
 {cities}
-
-# FAQ topics (for faq_id)
-{faq}
 """
 
 
 def build_understand_user(req: UnderstandRequest) -> str:
     known = "; ".join(f"{k}={v}" for k, v in req.known.items()) or "nothing yet"
     asked = req.current_field.value if req.current_field else "none (opening message)"
+    topics = "\n".join(
+        f"- {f.id}: {f.question}" + (f"\n  answer: {a}" if (a := f.answer_for(None)) else "") for f in req.faq_topics
+    ) or "(none)"
     return f"""TODAY: {req.today.isoformat()} ({WEEKDAY_NAMES[req.today.weekday()]})
 STAGE: {req.stage.value}
 FIELD JUST ASKED: {asked}
 CONVERSATION LANGUAGE SO FAR: {req.language}
 KNOWN DATA: {known}
 AGENT'S LAST MESSAGE: {req.last_agent_message or "(none)"}
+FAQ TOPICS (knowledge-base entries that may answer it, with their approved answer, for faq_id):
+{topics}
 
 <candidate_message>
 {req.message}

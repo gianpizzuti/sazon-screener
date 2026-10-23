@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Reveal } from "../components/charts";
-import { Button, Card, CardTitle, Chip, ErrorState, ReviewBadge, Skeleton, StatusBadge } from "../components/ui";
+import { Button, Card, CardTitle, Chip, ErrorState, ReviewBadge, RetrievedTopics, Skeleton, StatusBadge } from "../components/ui";
 import { api, type CandidateDetail, type Message, type ReviewStatus } from "../lib/api";
 import { AVAILABILITY, FIELD_LABELS, FLAG_LABELS, REASONS, SCHEDULE, ago, experience, initials, interviewTime, parseUtc, shortDate, titleCase, until } from "../lib/format";
 import { useCandidate, useNow, useToast } from "../lib/hooks";
@@ -180,6 +180,7 @@ function WhyPanel({ message }: { message: Message }) {
           <Chip>Sentiment: {a.sentiment}</Chip>
           {a.faq_id && <Chip>FAQ: {titleCase(a.faq_id)}</Chip>}
         </div>
+        {a.intents.includes("question") && message.meta.faq_topics?.length ? <RetrievedTopics topics={message.meta.faq_topics} chosen={a.faq_id} /> : null}
         {extracted.length > 0 && (
           <div className="rounded-lg bg-surface p-3 ring-1 ring-line">
             <div className="mb-1.5 text-xs font-semibold text-ink-3 uppercase">Extracted</div>

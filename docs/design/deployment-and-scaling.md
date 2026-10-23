@@ -44,6 +44,7 @@ Recruiter web app (static files, CDN) ──► Recruiter API (SSO)
 | **Coalesce bursts**: wait about 3 s after a message before processing, and treat the messages that arrive in that window as one turn | People send "hola" / "soy Ana" / "de Madrid" as three messages; one turn reads them together and answers once (process design §5) | One turn per message (three replies, some to half-sentences) |
 | **Follow-ups as a scheduled job** that claims due conversations with `SELECT … FOR UPDATE SKIP LOCKED` | Several workers can run it with no double sends; the in-process loop is the pilot version (comment in `api/app.py`) | The loop inside every API process |
 | **PostgreSQL**, with Alembic migrations | Concurrent writers, row locks, JSONB for state and events. The code already goes through SQLAlchemy, so the switch is the connection URL plus migrations | Staying on SQLite (one writer at a time) |
+| **The knowledge-base embedding model inside the worker image** (≈ 240 MB, baked in at build time, loaded once per process in ≈ 1 s); vectors in memory, rebuilt when the configuration changes. **pgvector** in the same Postgres once the index passes ≈ 10,000 passages (client documents) or must change without a restart | 4 ms per message on CPU, $0, candidates' messages never leave the platform (ADR 0010). At 30 topics (205 vectors, 315 KB) a database would add a moving part for nothing | An embeddings API (a second AI vendor and its data terms on the hot path); a dedicated vector database such as Qdrant (another service to run, when Postgres already does it) |
 | **Containers on a managed platform**: Cloud Run or ECS Fargate, managed Postgres, a managed queue, a managed scheduler | Nothing to operate; scales on queue depth; both clouds have regions in Spain and Mexico | Kubernetes (operational weight not justified at this size) |
 
 The platform choice should follow what Orbio and the client already run. The design only needs containers, Postgres, a queue with per-key ordering and a scheduler.
@@ -108,7 +109,7 @@ Infrastructure at this size is small next to the model cost: a few containers, a
 ## 7. Multi-client
 
 Every row carries a client (tenant) id. Each client has its own:
-- configuration folder, as today;
+- configuration folder, as today, including its knowledge base (each client's topics are indexed separately, so one client's answers can never be retrieved for another);
 - WhatsApp number and approved templates;
 - API keys and ATS adapter mapping;
 - retention policy.

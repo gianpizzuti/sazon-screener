@@ -27,6 +27,7 @@ import yaml
 from evals.common import EVALS, MODELS, NOW, RESULTS, UsageMeter, load_config, pct
 from screener.domain.text import function_word_language, normalize
 from screener.engine.engine import ScreeningEngine
+from screener.knowledge import build_knowledge
 from screener.llm.claude import ClaudeResponder, ClaudeSummarizer, ClaudeUnderstander
 from screener.storage.repository import Repository
 
@@ -83,6 +84,7 @@ def run_persona(p: dict) -> dict:
         responder=ClaudeResponder(client, cfg),
         summarizer=ClaudeSummarizer(client, cfg),
         clock=lambda: clock["now"],
+        knowledge=build_knowledge(cfg),
     )
     sim_client, system = sim_meter.client(), simulator_system(p)
 

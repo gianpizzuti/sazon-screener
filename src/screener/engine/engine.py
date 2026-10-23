@@ -27,6 +27,7 @@ from screener.engine.directive import Directive, Event
 from screener.engine.policy import ScreeningPolicy
 from screener.engine.recap import render_recap
 from screener.engine.scheduling import candidate_slots, slot_label, slot_long
+from screener.knowledge import KnowledgeIndex
 from screener.llm.interfaces import (
     ChatMessage,
     LLMError,
@@ -64,6 +65,7 @@ class TurnResult(BaseModel):
     data: ScreeningData
     analysis: TurnAnalysis | None = None  # exposed for debugging / the dashboard
     event_types: list[str] = Field(default_factory=list)
+    faq_topics: list[str] = Field(default_factory=list)  # the knowledge-base shortlist the model chose from (ADR 0010)
 
 
 class ScreeningEngine:
@@ -75,12 +77,14 @@ class ScreeningEngine:
         responder: Responder,
         summarizer: Summarizer | None = None,
         clock=utcnow,
+        knowledge: KnowledgeIndex | None = None,
     ):
         self.cfg = config
         self.repo = repository
         self.understander = understander
         self.responder = responder
         self.summarizer = summarizer
+        self.knowledge = knowledge or KnowledgeIndex(config.faq)  # without embeddings: every topic
         self.templates = TemplateResponder(config)
         self.policy = ScreeningPolicy(config)
         self.clock = clock
@@ -195,6 +199,7 @@ class ScreeningEngine:
         today = self._today(state)
         events: list[Event] = []
 
+        topics = self.knowledge.search(text)
         try:
             analysis = self.understander.analyze(
                 UnderstandRequest(
@@ -205,6 +210,7 @@ class ScreeningEngine:
                     known=self._known(state),
                     today=today,
                     language=state.language,
+                    faq_topics=topics,
                 )
             )
         except LLMError as exc:
@@ -236,7 +242,10 @@ class ScreeningEngine:
         history.append(ChatMessage(role="candidate", text=text))
         outbound, metas = self._render(working, decision.directive, history, today, events)
 
-        rows = [("candidate", text, {"analysis": analysis.model_dump(mode="json")})]
+        read = {"analysis": analysis.model_dump(mode="json")}
+        if len(topics) < len(self.cfg.faq):
+            read["faq_topics"] = [t.id for t in topics]  # what retrieval offered, to audit misses
+        rows = [("candidate", text, read)]
         rows += [("agent", m.text, meta) for m, meta in zip(outbound, metas)]
         self.repo.save_turn(working, rows, events, interview_changes)
         return TurnResult(
@@ -247,6 +256,7 @@ class ScreeningEngine:
             data=working.data,
             analysis=analysis,
             event_types=[e.type for e in events],
+            faq_topics=read.get("faq_topics", []),
         )
 
     # ------------------------------------------------------------------ interview booking

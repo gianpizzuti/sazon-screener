@@ -1,0 +1,149 @@
+# Knowledge-base retrieval eval (python -m evals.retrieval). Each message is a candidate question
+# and the topic of faq.yaml that answers it, or null when no topic does (a person answers).
+#
+# Held out: no message here is an example in faq.yaml (tests/test_evals.py checks it), so these
+# measure wording the index has never seen.
+# Honest limit: `written` cases and the knowledge base are written by the same person, so they
+# share a vocabulary (the circular-evidence lesson, D192). `observed` cases were asked by the
+# simulated candidates (Sonnet, evals/results/conversations.json), nobody wrote them for this eval.
+# conv: en marks an English conversation.
+
+# ------------------------------------------------------------------ observed
+- {id: obs_pay, source: observed, faq: pay, msg: "¡Hola, Sofía! Sí, empecemos. Antes de nada, ¿cuánto se paga por el puesto? Me gustaría saberlo antes de seguir."}
+- {id: obs_vehicle, source: observed, faq: vehicle, msg: "Estoy en Sevilla, en Triana. Pero antes de decidir, ¿necesito tener moto propia para este puesto?"}
+- {id: obs_parking, source: observed, faq: parking, msg: "Mañanas, por favor. Pero antes de confirmar el turno, ¿hay sitio para aparcar la moto en el restaurante?"}
+- {id: obs_foreign_licence, source: observed, faq: foreign_licence, msg: "Hola Sofía, tengo un carnet de conducir venezolano, pero no sé muy bien si es válido aquí en España 🤔 ¿Eso importa para el puesto?"}
+- {id: obs_process, source: observed, faq: process, msg: "Sí, todo correcto. Venga, ¿y ahora qué?"}
+- {id: obs_none_how_many, source: observed, faq: null, msg: "Sí, de coche, en vigor. ¿Cuántas preguntas más?"}
+- {id: obs_none_next, source: observed, faq: null, msg: "Raúl Ortega. ¿Y ya está? Venga, siguiente."}
+- {id: obs_none_city, source: observed, faq: null, msg: "Pues vivo en Valencia, aunque... bueno, lo de la zona ya te lo cuento luego 😅 ¿Me preguntas por Valencia?"}
+
+# ------------------------------------------------------------------ written: one topic each
+- {id: pay_1, source: written, faq: pay, msg: "¿y de sueldo qué tal?"}
+- {id: pay_2, source: written, faq: pay, msg: "oye y cuanto pagan? es q necesito saberlo"}
+- {id: pay_3, source: written, faq: pay, msg: "how much would I earn per month?", conv: en}
+- {id: tips_1, source: written, faq: tips, msg: "¿las propinas me las quedo yo o van a un bote común?"}
+- {id: tips_2, source: written, faq: tips, msg: "¿hay que compartir las propinas con cocina?"}
+- {id: tips_3, source: written, faq: tips, msg: "the tips, are they mine?", conv: en}
+- {id: payday_1, source: written, faq: payday, msg: "¿el sueldo llega a principios o a final de mes?"}
+- {id: payday_2, source: written, faq: payday, msg: "¿cada cuándo depositan?"}
+- {id: payday_3, source: written, faq: payday, msg: "how often do you pay?", conv: en}
+- {id: contract_1, source: written, faq: contract, msg: "¿me hacéis contrato o tengo que facturar yo?"}
+- {id: contract_2, source: written, faq: contract, msg: "¿es contrato de verdad o como en Glovo, de autónomo?"}
+- {id: contract_3, source: written, faq: contract, msg: "is it a proper employment contract?", conv: en}
+- {id: trial_1, source: written, faq: trial_period, msg: "¿cuántos días de prueba hay?"}
+- {id: trial_2, source: written, faq: trial_period, msg: "¿el contrato sería indefinido?"}
+- {id: trial_3, source: written, faq: trial_period, msg: "is the contract permanent?", conv: en}
+- {id: zones_1, source: written, faq: zones, msg: "¿por qué zonas de Madrid se reparte?"}
+- {id: zones_2, source: written, faq: zones, msg: "¿qué colonias cubren en Guadalajara?"}
+- {id: zones_3, source: written, faq: zones, msg: "what areas can I choose from?", conv: en}
+- {id: radius_1, source: written, faq: delivery_radius, msg: "¿los pedidos quedan muy lejos?"}
+- {id: radius_2, source: written, faq: delivery_radius, msg: "¿cuántos kilómetros se hacen en un turno?"}
+- {id: radius_3, source: written, faq: delivery_radius, msg: "how many orders per shift?", conv: en}
+- {id: interviews_1, source: written, faq: interviews, msg: "¿la entrevista es por teléfono o en persona?"}
+- {id: interviews_2, source: written, faq: interviews, msg: "¿no hay entrevistas los sábados?"}
+- {id: interviews_3, source: written, faq: interviews, msg: "can the interview be in the evening?", conv: en}
+- {id: vehicle_1, source: written, faq: vehicle, msg: "no tengo coche, ¿me dejáis uno?"}
+- {id: vehicle_2, source: written, faq: vehicle, msg: "¿vale con una bici eléctrica?"}
+- {id: vehicle_3, source: written, faq: vehicle, msg: "do you give us a scooter?", conv: en}
+- {id: expenses_1, source: written, faq: expenses, msg: "¿la gasolina la ponéis vosotros?"}
+- {id: expenses_2, source: written, faq: expenses, msg: "¿quién paga la gasolina del carro?"}
+- {id: expenses_3, source: written, faq: expenses, msg: "who pays for petrol?", conv: en}
+- {id: parking_1, source: written, faq: parking, msg: "¿hay donde dejar el coche cerca del restaurante?"}
+- {id: parking_2, source: written, faq: parking, msg: "where do I park?", conv: en}
+- {id: shifts_1, source: written, faq: shifts, msg: "¿cómo son los horarios de reparto?"}
+- {id: shifts_2, source: written, faq: shifts, msg: "¿a qué hora se empieza?"}
+- {id: shifts_3, source: written, faq: shifts, msg: "what time do shifts start?", conv: en}
+- {id: time_off_1, source: written, faq: time_off, msg: "¿libro algún fin de semana?"}
+- {id: time_off_2, source: written, faq: time_off, msg: "¿cuántos días de vacaciones tengo?"}
+- {id: time_off_3, source: written, faq: time_off, msg: "can I take holidays in summer?", conv: en}
+- {id: studies_1, source: written, faq: studies_other_job, msg: "voy a la uni por las mañanas, ¿me cuadra?"}
+- {id: studies_2, source: written, faq: studies_other_job, msg: "¿puedo tenerlo como segundo trabajo?"}
+- {id: studies_3, source: written, faq: studies_other_job, msg: "I'm a student, is that a problem?", conv: en}
+- {id: equipment_1, source: written, faq: equipment, msg: "¿la mochila térmica me la dais o la compro yo?"}
+- {id: equipment_2, source: written, faq: equipment, msg: "¿el uniforme lo ponéis vosotros?"}
+- {id: equipment_3, source: written, faq: equipment, msg: "do I need to bring my own helmet?", conv: en}
+- {id: phone_1, source: written, faq: phone_app, msg: "mi móvil es muy viejo, ¿sirve?"}
+- {id: phone_2, source: written, faq: phone_app, msg: "¿qué aplicación usáis para los pedidos?"}
+- {id: phone_3, source: written, faq: phone_app, msg: "is there an app?", conv: en}
+- {id: weather_1, source: written, faq: weather, msg: "¿y cuando hay tormenta qué?"}
+- {id: weather_2, source: written, faq: weather, msg: "¿se trabaja con lluvia?"}
+- {id: weather_3, source: written, faq: weather, msg: "what about bad weather?", conv: en}
+- {id: insurance_1, source: written, faq: insurance, msg: "¿tengo seguro de accidentes?"}
+- {id: insurance_2, source: written, faq: insurance, msg: "¿cuento con seguro si me pasa algo con la moto?"}
+- {id: insurance_3, source: written, faq: insurance, msg: "if I get hurt, am I covered?", conv: en}
+- {id: accident_1, source: written, faq: accident, msg: "¿qué hago si se me rompe la moto en mitad de un pedido?"}
+- {id: accident_2, source: written, faq: accident, msg: "¿las multas de tráfico las cubre la empresa?"}
+- {id: accident_3, source: written, faq: accident, msg: "who do I call if something goes wrong on the road?", conv: en}
+- {id: meal_1, source: written, faq: staff_meal, msg: "¿dan comida gratis a los repartidores?"}
+- {id: meal_2, source: written, faq: staff_meal, msg: "¿hay descuento para empleados?"}
+- {id: meal_3, source: written, faq: staff_meal, msg: "do we get free food?", conv: en}
+- {id: process_1, source: written, faq: process, msg: "¿cuándo me decís algo?"}
+- {id: process_2, source: written, faq: process, msg: "what are the next steps?", conv: en}
+- {id: documents_1, source: written, faq: documents, msg: "¿qué tengo que traer para hacer el contrato?"}
+- {id: documents_2, source: written, faq: documents, msg: "¿necesito el número de la seguridad social?"}
+- {id: documents_3, source: written, faq: documents, msg: "what paperwork do you need?", conv: en}
+- {id: requirements_1, source: written, faq: requirements, msg: "¿qué hace falta para entrar?"}
+- {id: requirements_2, source: written, faq: requirements, msg: "¿hay un límite de edad?"}
+- {id: requirements_3, source: written, faq: requirements, msg: "what do I need to apply?", conv: en}
+- {id: permit_1, source: written, faq: work_permit, msg: "estoy con la residencia en trámite, ¿puedo trabajar ya?"}
+- {id: permit_2, source: written, faq: work_permit, msg: "no tengo papeles todavía, ¿me podéis contratar?"}
+- {id: permit_3, source: written, faq: work_permit, msg: "I'm from Venezuela, am I allowed to work here?", conv: en}
+- {id: foreign_1, source: written, faq: foreign_licence, msg: "mi licencia es de Estados Unidos, ¿sirve?"}
+- {id: foreign_2, source: written, faq: foreign_licence, msg: "I have a UK licence, is that valid?", conv: en}
+- {id: training_1, source: written, faq: training, msg: "¿hay alguien que me enseñe al principio?"}
+- {id: training_2, source: written, faq: training, msg: "nunca he hecho repartos, ¿es un problema?"}
+- {id: training_3, source: written, faq: training, msg: "is there any training?", conv: en}
+- {id: company_1, source: written, faq: company, msg: "¿sois una cadena de restaurantes?"}
+- {id: company_2, source: written, faq: company, msg: "¿cuántos locales tiene Sazón?"}
+- {id: company_3, source: written, faq: company, msg: "what restaurants are part of the group?", conv: en}
+- {id: language_1, source: written, faq: language, msg: "¿puedo hacer todo en inglés?"}
+- {id: language_2, source: written, faq: language, msg: "mi español no es muy bueno, ¿pasa algo?"}
+- {id: language_3, source: written, faq: language, msg: "can we speak English?", conv: en}
+- {id: is_bot_1, source: written, faq: is_bot, msg: "¿hablo con alguien de verdad?"}
+- {id: is_bot_2, source: written, faq: is_bot, msg: "¿eres humana?"}
+- {id: is_bot_3, source: written, faq: is_bot, msg: "is this an AI?", conv: en}
+- {id: privacy_1, source: written, faq: privacy, msg: "¿mis datos se van a quedar guardados?"}
+- {id: privacy_2, source: written, faq: privacy, msg: "¿vais a pasar mi teléfono a otras empresas?"}
+- {id: privacy_3, source: written, faq: privacy, msg: "can you delete my info?", conv: en}
+
+# ------------------------------------------------------------------ written: nothing answers it
+# Retrieval always returns its closest topics; choosing none is the understanding model's job.
+# Some are close to a topic on purpose ("bonus" is about pay, but the pay answer does not say).
+- {id: none_weather_today, source: written, faq: null, msg: "¿qué tiempo hace hoy en Madrid?"}
+- {id: none_personal, source: written, faq: null, msg: "¿tienes novio? jaja"}
+- {id: none_bonus, source: written, faq: null, msg: "¿hay bonus por número de pedidos?"}
+- {id: none_smoking, source: written, faq: null, msg: "¿se puede fumar durante el turno?"}
+- {id: none_passenger, source: written, faq: null, msg: "¿puedo llevar a un amigo de paquete en la moto?"}
+- {id: none_promotion, source: written, faq: null, msg: "¿hay posibilidad de ascender a encargado?"}
+- {id: none_menu, source: written, faq: null, msg: "¿qué plato me recomiendas de la carta?"}
+- {id: none_christmas, source: written, faq: null, msg: "do you have a Christmas party?", conv: en}
+
+# ------------------------------------------------------------------ written after the first run
+# The first routing run led to a change (the shortlist now shows each topic's approved answer,
+# D213). Re-scoring the cases above after a change they inspired is optimistic, so these were
+# written before that change was run, and are reported on their own.
+- {id: r2_pay, source: written, round: 2, faq: pay, msg: "¿sabes más o menos cuánto se saca al mes?"}
+- {id: r2_tips, source: written, round: 2, faq: tips, msg: "¿la propina que da el cliente es para el repartidor?"}
+- {id: r2_payday, source: written, round: 2, faq: payday, msg: "¿la nómina se cobra el día 1?"}
+- {id: r2_contract, source: written, round: 2, faq: contract, msg: "¿cotizo a la seguridad social o voy por mi cuenta?"}
+- {id: r2_trial, source: written, round: 2, faq: trial_period, msg: "¿cuánto tiempo estaría a prueba?"}
+- {id: r2_radius, source: written, round: 2, faq: delivery_radius, msg: "¿se va muy lejos del restaurante con cada pedido?"}
+- {id: r2_vehicle, source: written, round: 2, faq: vehicle, msg: "¿la moto la tengo que poner yo?"}
+- {id: r2_expenses, source: written, round: 2, faq: expenses, msg: "¿el combustible corre por cuenta de la empresa?"}
+- {id: r2_parking, source: written, round: 2, faq: parking, msg: "¿hay un sitio para dejar la moto mientras espero los pedidos?"}
+- {id: r2_shifts, source: written, round: 2, faq: shifts, msg: "¿hasta qué hora se trabaja por la noche?"}
+- {id: r2_time_off, source: written, round: 2, faq: time_off, msg: "¿cuántas semanas de vacaciones dan al año?"}
+- {id: r2_equipment, source: written, round: 2, faq: equipment, msg: "¿me prestáis una caja para llevar la comida?"}
+- {id: r2_phone, source: written, round: 2, faq: phone_app, msg: "¿los pedidos llegan por una app al móvil?"}
+- {id: r2_insurance, source: written, round: 2, faq: insurance, msg: "¿tengo cobertura si me lesiono trabajando?"}
+- {id: r2_accident, source: written, round: 2, faq: accident, msg: "si me para la policía y me multan, ¿quién la paga?"}
+- {id: r2_documents, source: written, round: 2, faq: documents, msg: "¿qué documentación hay que presentar para el alta?"}
+- {id: r2_permit, source: written, round: 2, faq: work_permit, msg: "tengo pasaporte pero aún no tengo permiso de trabajo, ¿puedo?"}
+- {id: r2_foreign, source: written, round: 2, faq: foreign_licence, msg: "¿mi carnet de Marruecos vale para conducir aquí?"}
+- {id: r2_language, source: written, round: 2, faq: language, msg: "do I have to speak good Spanish for the job?", conv: en}
+- {id: r2_privacy, source: written, round: 2, faq: privacy, msg: "¿quién va a ver la información que te doy?"}
+- {id: r2_none_bonus, source: written, round: 2, faq: null, msg: "¿dais algún extra por trabajar en Navidad?"}
+- {id: r2_none_pets, source: written, round: 2, faq: null, msg: "¿puedo llevar a mi perro en el coche durante el turno?"}
+- {id: r2_none_music, source: written, round: 2, faq: null, msg: "¿se pueden llevar auriculares mientras conduces?"}
+- {id: r2_none_relocation, source: written, round: 2, faq: null, msg: "¿pagáis la mudanza si me cambio de ciudad?"}

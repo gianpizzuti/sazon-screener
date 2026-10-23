@@ -29,3 +29,6 @@ Run 2026-10-23 00:30 · 25 scenarios · $0.47. Triage compares the end state wit
 | [`ex23_no_experience_asks_if_it_matters`](ex23_no_experience_asks_if_it_matters.md) | qualified | ✓ |
 | [`ex24_vague_start_date`](ex24_vague_start_date.md) | qualified | ✓ |
 | [`ex25_leaves_and_comes_back`](ex25_leaves_and_comes_back.md) | qualified | ✓ |
+| [`ex26_asks_about_the_new_topics`](ex26_asks_about_the_new_topics.md) | qualified | ✓ |
+
+Added with the 30-topic knowledge base (ADR 0010): ex26, plus the four scenarios full of questions (ex03, ex08, ex18, ex23), were run again on 2026-10-23 with embedding retrieval ($0.13), all as expected.

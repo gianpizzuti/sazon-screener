@@ -51,6 +51,13 @@ models:
   speak: claude-sonnet-5-5      # hot path, candidate-facing text: tone matters most
   summary: claude-opus-5-5      # off the hot path (runs after the conversation): quality matters most
 
+# Knowledge-base retrieval (faq.yaml, ADR 0010): embedding search picks the closest
+# topics, the understanding model chooses one of them or none. The embedding model runs locally.
+retrieval:
+  embedding_model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+  method: semantic              # meaning only; "hybrid" adds keywords (measured worse here, ADR 0010)
+  shortlist: 5
+
 # What happens after a candidate qualifies (said by the agent, never invented by the model)
 next_steps:
   es: Una persona del equipo de selección de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano.

@@ -1,0 +1,2426 @@
+{
+ "run_at": "2026-10-23T14:12",
+ "cases": [
+  {
+   "id": "obs_pay",
+   "source": "observed",
+   "faq": "pay",
+   "msg": "¡Hola, Sofía! Sí, empecemos. Antes de nada, ¿cuánto se paga por el puesto? Me gustaría saberlo antes de seguir."
+  },
+  {
+   "id": "obs_vehicle",
+   "source": "observed",
+   "faq": "vehicle",
+   "msg": "Estoy en Sevilla, en Triana. Pero antes de decidir, ¿necesito tener moto propia para este puesto?"
+  },
+  {
+   "id": "obs_parking",
+   "source": "observed",
+   "faq": "parking",
+   "msg": "Mañanas, por favor. Pero antes de confirmar el turno, ¿hay sitio para aparcar la moto en el restaurante?"
+  },
+  {
+   "id": "obs_foreign_licence",
+   "source": "observed",
+   "faq": "foreign_licence",
+   "msg": "Hola Sofía, tengo un carnet de conducir venezolano, pero no sé muy bien si es válido aquí en España 🤔 ¿Eso importa para el puesto?"
+  },
+  {
+   "id": "obs_process",
+   "source": "observed",
+   "faq": "process",
+   "msg": "Sí, todo correcto. Venga, ¿y ahora qué?"
+  },
+  {
+   "id": "obs_none_how_many",
+   "source": "observed",
+   "faq": null,
+   "msg": "Sí, de coche, en vigor. ¿Cuántas preguntas más?"
+  },
+  {
+   "id": "obs_none_next",
+   "source": "observed",
+   "faq": null,
+   "msg": "Raúl Ortega. ¿Y ya está? Venga, siguiente."
+  },
+  {
+   "id": "obs_none_city",
+   "source": "observed",
+   "faq": null,
+   "msg": "Pues vivo en Valencia, aunque... bueno, lo de la zona ya te lo cuento luego 😅 ¿Me preguntas por Valencia?"
+  },
+  {
+   "id": "pay_1",
+   "source": "written",
+   "faq": "pay",
+   "msg": "¿y de sueldo qué tal?"
+  },
+  {
+   "id": "pay_2",
+   "source": "written",
+   "faq": "pay",
+   "msg": "oye y cuanto pagan? es q necesito saberlo"
+  },
+  {
+   "id": "pay_3",
+   "source": "written",
+   "faq": "pay",
+   "msg": "how much would I earn per month?",
+   "conv": "en"
+  },
+  {
+   "id": "tips_1",
+   "source": "written",
+   "faq": "tips",
+   "msg": "¿las propinas me las quedo yo o van a un bote común?"
+  },
+  {
+   "id": "tips_2",
+   "source": "written",
+   "faq": "tips",
+   "msg": "¿hay que compartir las propinas con cocina?"
+  },
+  {
+   "id": "tips_3",
+   "source": "written",
+   "faq": "tips",
+   "msg": "the tips, are they mine?",
+   "conv": "en"
+  },
+  {
+   "id": "payday_1",
+   "source": "written",
+   "faq": "payday",
+   "msg": "¿el sueldo llega a principios o a final de mes?"
+  },
+  {
+   "id": "payday_2",
+   "source": "written",
+   "faq": "payday",
+   "msg": "¿cada cuándo depositan?"
+  },
+  {
+   "id": "payday_3",
+   "source": "written",
+   "faq": "payday",
+   "msg": "how often do you pay?",
+   "conv": "en"
+  },
+  {
+   "id": "contract_1",
+   "source": "written",
+   "faq": "contract",
+   "msg": "¿me hacéis contrato o tengo que facturar yo?"
+  },
+  {
+   "id": "contract_2",
+   "source": "written",
+   "faq": "contract",
+   "msg": "¿es contrato de verdad o como en Glovo, de autónomo?"
+  },
+  {
+   "id": "contract_3",
+   "source": "written",
+   "faq": "contract",
+   "msg": "is it a proper employment contract?",
+   "conv": "en"
+  },
+  {
+   "id": "trial_1",
+   "source": "written",
+   "faq": "trial_period",
+   "msg": "¿cuántos días de prueba hay?"
+  },
+  {
+   "id": "trial_2",
+   "source": "written",
+   "faq": "trial_period",
+   "msg": "¿el contrato sería indefinido?"
+  },
+  {
+   "id": "trial_3",
+   "source": "written",
+   "faq": "trial_period",
+   "msg": "is the contract permanent?",
+   "conv": "en"
+  },
+  {
+   "id": "zones_1",
+   "source": "written",
+   "faq": "zones",
+   "msg": "¿por qué zonas de Madrid se reparte?"
+  },
+  {
+   "id": "zones_2",
+   "source": "written",
+   "faq": "zones",
+   "msg": "¿qué colonias cubren en Guadalajara?"
+  },
+  {
+   "id": "zones_3",
+   "source": "written",
+   "faq": "zones",
+   "msg": "what areas can I choose from?",
+   "conv": "en"
+  },
+  {
+   "id": "radius_1",
+   "source": "written",
+   "faq": "delivery_radius",
+   "msg": "¿los pedidos quedan muy lejos?"
+  },
+  {
+   "id": "radius_2",
+   "source": "written",
+   "faq": "delivery_radius",
+   "msg": "¿cuántos kilómetros se hacen en un turno?"
+  },
+  {
+   "id": "radius_3",
+   "source": "written",
+   "faq": "delivery_radius",
+   "msg": "how many orders per shift?",
+   "conv": "en"
+  },
+  {
+   "id": "interviews_1",
+   "source": "written",
+   "faq": "interviews",
+   "msg": "¿la entrevista es por teléfono o en persona?"
+  },
+  {
+   "id": "interviews_2",
+   "source": "written",
+   "faq": "interviews",
+   "msg": "¿no hay entrevistas los sábados?"
+  },
+  {
+   "id": "interviews_3",
+   "source": "written",
+   "faq": "interviews",
+   "msg": "can the interview be in the evening?",
+   "conv": "en"
+  },
+  {
+   "id": "vehicle_1",
+   "source": "written",
+   "faq": "vehicle",
+   "msg": "no tengo coche, ¿me dejáis uno?"
+  },
+  {
+   "id": "vehicle_2",
+   "source": "written",
+   "faq": "vehicle",
+   "msg": "¿vale con una bici eléctrica?"
+  },
+  {
+   "id": "vehicle_3",
+   "source": "written",
+   "faq": "vehicle",
+   "msg": "do you give us a scooter?",
+   "conv": "en"
+  },
+  {
+   "id": "expenses_1",
+   "source": "written",
+   "faq": "expenses",
+   "msg": "¿la gasolina la ponéis vosotros?"
+  },
+  {
+   "id": "expenses_2",
+   "source": "written",
+   "faq": "expenses",
+   "msg": "¿quién paga la gasolina del carro?"
+  },
+  {
+   "id": "expenses_3",
+   "source": "written",
+   "faq": "expenses",
+   "msg": "who pays for petrol?",
+   "conv": "en"
+  },
+  {
+   "id": "parking_1",
+   "source": "written",
+   "faq": "parking",
+   "msg": "¿hay donde dejar el coche cerca del restaurante?"
+  },
+  {
+   "id": "parking_2",
+   "source": "written",
+   "faq": "parking",
+   "msg": "where do I park?",
+   "conv": "en"
+  },
+  {
+   "id": "shifts_1",
+   "source": "written",
+   "faq": "shifts",
+   "msg": "¿cómo son los horarios de reparto?"
+  },
+  {
+   "id": "shifts_2",
+   "source": "written",
+   "faq": "shifts",
+   "msg": "¿a qué hora se empieza?"
+  },
+  {
+   "id": "shifts_3",
+   "source": "written",
+   "faq": "shifts",
+   "msg": "what time do shifts start?",
+   "conv": "en"
+  },
+  {
+   "id": "time_off_1",
+   "source": "written",
+   "faq": "time_off",
+   "msg": "¿libro algún fin de semana?"
+  },
+  {
+   "id": "time_off_2",
+   "source": "written",
+   "faq": "time_off",
+   "msg": "¿cuántos días de vacaciones tengo?"
+  },
+  {
+   "id": "time_off_3",
+   "source": "written",
+   "faq": "time_off",
+   "msg": "can I take holidays in summer?",
+   "conv": "en"
+  },
+  {
+   "id": "studies_1",
+   "source": "written",
+   "faq": "studies_other_job",
+   "msg": "voy a la uni por las mañanas, ¿me cuadra?"
+  },
+  {
+   "id": "studies_2",
+   "source": "written",
+   "faq": "studies_other_job",
+   "msg": "¿puedo tenerlo como segundo trabajo?"
+  },
+  {
+   "id": "studies_3",
+   "source": "written",
+   "faq": "studies_other_job",
+   "msg": "I'm a student, is that a problem?",
+   "conv": "en"
+  },
+  {
+   "id": "equipment_1",
+   "source": "written",
+   "faq": "equipment",
+   "msg": "¿la mochila térmica me la dais o la compro yo?"
+  },
+  {
+   "id": "equipment_2",
+   "source": "written",
+   "faq": "equipment",
+   "msg": "¿el uniforme lo ponéis vosotros?"
+  },
+  {
+   "id": "equipment_3",
+   "source": "written",
+   "faq": "equipment",
+   "msg": "do I need to bring my own helmet?",
+   "conv": "en"
+  },
+  {
+   "id": "phone_1",
+   "source": "written",
+   "faq": "phone_app",
+   "msg": "mi móvil es muy viejo, ¿sirve?"
+  },
+  {
+   "id": "phone_2",
+   "source": "written",
+   "faq": "phone_app",
+   "msg": "¿qué aplicación usáis para los pedidos?"
+  },
+  {
+   "id": "phone_3",
+   "source": "written",
+   "faq": "phone_app",
+   "msg": "is there an app?",
+   "conv": "en"
+  },
+  {
+   "id": "weather_1",
+   "source": "written",
+   "faq": "weather",
+   "msg": "¿y cuando hay tormenta qué?"
+  },
+  {
+   "id": "weather_2",
+   "source": "written",
+   "faq": "weather",
+   "msg": "¿se trabaja con lluvia?"
+  },
+  {
+   "id": "weather_3",
+   "source": "written",
+   "faq": "weather",
+   "msg": "what about bad weather?",
+   "conv": "en"
+  },
+  {
+   "id": "insurance_1",
+   "source": "written",
+   "faq": "insurance",
+   "msg": "¿tengo seguro de accidentes?"
+  },
+  {
+   "id": "insurance_2",
+   "source": "written",
+   "faq": "insurance",
+   "msg": "¿cuento con seguro si me pasa algo con la moto?"
+  },
+  {
+   "id": "insurance_3",
+   "source": "written",
+   "faq": "insurance",
+   "msg": "if I get hurt, am I covered?",
+   "conv": "en"
+  },
+  {
+   "id": "accident_1",
+   "source": "written",
+   "faq": "accident",
+   "msg": "¿qué hago si se me rompe la moto en mitad de un pedido?"
+  },
+  {
+   "id": "accident_2",
+   "source": "written",
+   "faq": "accident",
+   "msg": "¿las multas de tráfico las cubre la empresa?"
+  },
+  {
+   "id": "accident_3",
+   "source": "written",
+   "faq": "accident",
+   "msg": "who do I call if something goes wrong on the road?",
+   "conv": "en"
+  },
+  {
+   "id": "meal_1",
+   "source": "written",
+   "faq": "staff_meal",
+   "msg": "¿dan comida gratis a los repartidores?"
+  },
+  {
+   "id": "meal_2",
+   "source": "written",
+   "faq": "staff_meal",
+   "msg": "¿hay descuento para empleados?"
+  },
+  {
+   "id": "meal_3",
+   "source": "written",
+   "faq": "staff_meal",
+   "msg": "do we get free food?",
+   "conv": "en"
+  },
+  {
+   "id": "process_1",
+   "source": "written",
+   "faq": "process",
+   "msg": "¿cuándo me decís algo?"
+  },
+  {
+   "id": "process_2",
+   "source": "written",
+   "faq": "process",
+   "msg": "what are the next steps?",
+   "conv": "en"
+  },
+  {
+   "id": "documents_1",
+   "source": "written",
+   "faq": "documents",
+   "msg": "¿qué tengo que traer para hacer el contrato?"
+  },
+  {
+   "id": "documents_2",
+   "source": "written",
+   "faq": "documents",
+   "msg": "¿necesito el número de la seguridad social?"
+  },
+  {
+   "id": "documents_3",
+   "source": "written",
+   "faq": "documents",
+   "msg": "what paperwork do you need?",
+   "conv": "en"
+  },
+  {
+   "id": "requirements_1",
+   "source": "written",
+   "faq": "requirements",
+   "msg": "¿qué hace falta para entrar?"
+  },
+  {
+   "id": "requirements_2",
+   "source": "written",
+   "faq": "requirements",
+   "msg": "¿hay un límite de edad?"
+  },
+  {
+   "id": "requirements_3",
+   "source": "written",
+   "faq": "requirements",
+   "msg": "what do I need to apply?",
+   "conv": "en"
+  },
+  {
+   "id": "permit_1",
+   "source": "written",
+   "faq": "work_permit",
+   "msg": "estoy con la residencia en trámite, ¿puedo trabajar ya?"
+  },
+  {
+   "id": "permit_2",
+   "source": "written",
+   "faq": "work_permit",
+   "msg": "no tengo papeles todavía, ¿me podéis contratar?"
+  },
+  {
+   "id": "permit_3",
+   "source": "written",
+   "faq": "work_permit",
+   "msg": "I'm from Venezuela, am I allowed to work here?",
+   "conv": "en"
+  },
+  {
+   "id": "foreign_1",
+   "source": "written",
+   "faq": "foreign_licence",
+   "msg": "mi licencia es de Estados Unidos, ¿sirve?"
+  },
+  {
+   "id": "foreign_2",
+   "source": "written",
+   "faq": "foreign_licence",
+   "msg": "I have a UK licence, is that valid?",
+   "conv": "en"
+  },
+  {
+   "id": "training_1",
+   "source": "written",
+   "faq": "training",
+   "msg": "¿hay alguien que me enseñe al principio?"
+  },
+  {
+   "id": "training_2",
+   "source": "written",
+   "faq": "training",
+   "msg": "nunca he hecho repartos, ¿es un problema?"
+  },
+  {
+   "id": "training_3",
+   "source": "written",
+   "faq": "training",
+   "msg": "is there any training?",
+   "conv": "en"
+  },
+  {
+   "id": "company_1",
+   "source": "written",
+   "faq": "company",
+   "msg": "¿sois una cadena de restaurantes?"
+  },
+  {
+   "id": "company_2",
+   "source": "written",
+   "faq": "company",
+   "msg": "¿cuántos locales tiene Sazón?"
+  },
+  {
+   "id": "company_3",
+   "source": "written",
+   "faq": "company",
+   "msg": "what restaurants are part of the group?",
+   "conv": "en"
+  },
+  {
+   "id": "language_1",
+   "source": "written",
+   "faq": "language",
+   "msg": "¿puedo hacer todo en inglés?"
+  },
+  {
+   "id": "language_2",
+   "source": "written",
+   "faq": "language",
+   "msg": "mi español no es muy bueno, ¿pasa algo?"
+  },
+  {
+   "id": "language_3",
+   "source": "written",
+   "faq": "language",
+   "msg": "can we speak English?",
+   "conv": "en"
+  },
+  {
+   "id": "is_bot_1",
+   "source": "written",
+   "faq": "is_bot",
+   "msg": "¿hablo con alguien de verdad?"
+  },
+  {
+   "id": "is_bot_2",
+   "source": "written",
+   "faq": "is_bot",
+   "msg": "¿eres humana?"
+  },
+  {
+   "id": "is_bot_3",
+   "source": "written",
+   "faq": "is_bot",
+   "msg": "is this an AI?",
+   "conv": "en"
+  },
+  {
+   "id": "privacy_1",
+   "source": "written",
+   "faq": "privacy",
+   "msg": "¿mis datos se van a quedar guardados?"
+  },
+  {
+   "id": "privacy_2",
+   "source": "written",
+   "faq": "privacy",
+   "msg": "¿vais a pasar mi teléfono a otras empresas?"
+  },
+  {
+   "id": "privacy_3",
+   "source": "written",
+   "faq": "privacy",
+   "msg": "can you delete my info?",
+   "conv": "en"
+  },
+  {
+   "id": "none_weather_today",
+   "source": "written",
+   "faq": null,
+   "msg": "¿qué tiempo hace hoy en Madrid?"
+  },
+  {
+   "id": "none_personal",
+   "source": "written",
+   "faq": null,
+   "msg": "¿tienes novio? jaja"
+  },
+  {
+   "id": "none_bonus",
+   "source": "written",
+   "faq": null,
+   "msg": "¿hay bonus por número de pedidos?"
+  },
+  {
+   "id": "none_smoking",
+   "source": "written",
+   "faq": null,
+   "msg": "¿se puede fumar durante el turno?"
+  },
+  {
+   "id": "none_passenger",
+   "source": "written",
+   "faq": null,
+   "msg": "¿puedo llevar a un amigo de paquete en la moto?"
+  },
+  {
+   "id": "none_promotion",
+   "source": "written",
+   "faq": null,
+   "msg": "¿hay posibilidad de ascender a encargado?"
+  },
+  {
+   "id": "none_menu",
+   "source": "written",
+   "faq": null,
+   "msg": "¿qué plato me recomiendas de la carta?"
+  },
+  {
+   "id": "none_christmas",
+   "source": "written",
+   "faq": null,
+   "msg": "do you have a Christmas party?",
+   "conv": "en"
+  },
+  {
+   "id": "r2_pay",
+   "source": "written",
+   "round": 2,
+   "faq": "pay",
+   "msg": "¿sabes más o menos cuánto se saca al mes?"
+  },
+  {
+   "id": "r2_tips",
+   "source": "written",
+   "round": 2,
+   "faq": "tips",
+   "msg": "¿la propina que da el cliente es para el repartidor?"
+  },
+  {
+   "id": "r2_payday",
+   "source": "written",
+   "round": 2,
+   "faq": "payday",
+   "msg": "¿la nómina se cobra el día 1?"
+  },
+  {
+   "id": "r2_contract",
+   "source": "written",
+   "round": 2,
+   "faq": "contract",
+   "msg": "¿cotizo a la seguridad social o voy por mi cuenta?"
+  },
+  {
+   "id": "r2_trial",
+   "source": "written",
+   "round": 2,
+   "faq": "trial_period",
+   "msg": "¿cuánto tiempo estaría a prueba?"
+  },
+  {
+   "id": "r2_radius",
+   "source": "written",
+   "round": 2,
+   "faq": "delivery_radius",
+   "msg": "¿se va muy lejos del restaurante con cada pedido?"
+  },
+  {
+   "id": "r2_vehicle",
+   "source": "written",
+   "round": 2,
+   "faq": "vehicle",
+   "msg": "¿la moto la tengo que poner yo?"
+  },
+  {
+   "id": "r2_expenses",
+   "source": "written",
+   "round": 2,
+   "faq": "expenses",
+   "msg": "¿el combustible corre por cuenta de la empresa?"
+  },
+  {
+   "id": "r2_parking",
+   "source": "written",
+   "round": 2,
+   "faq": "parking",
+   "msg": "¿hay un sitio para dejar la moto mientras espero los pedidos?"
+  },
+  {
+   "id": "r2_shifts",
+   "source": "written",
+   "round": 2,
+   "faq": "shifts",
+   "msg": "¿hasta qué hora se trabaja por la noche?"
+  },
+  {
+   "id": "r2_time_off",
+   "source": "written",
+   "round": 2,
+   "faq": "time_off",
+   "msg": "¿cuántas semanas de vacaciones dan al año?"
+  },
+  {
+   "id": "r2_equipment",
+   "source": "written",
+   "round": 2,
+   "faq": "equipment",
+   "msg": "¿me prestáis una caja para llevar la comida?"
+  },
+  {
+   "id": "r2_phone",
+   "source": "written",
+   "round": 2,
+   "faq": "phone_app",
+   "msg": "¿los pedidos llegan por una app al móvil?"
+  },
+  {
+   "id": "r2_insurance",
+   "source": "written",
+   "round": 2,
+   "faq": "insurance",
+   "msg": "¿tengo cobertura si me lesiono trabajando?"
+  },
+  {
+   "id": "r2_accident",
+   "source": "written",
+   "round": 2,
+   "faq": "accident",
+   "msg": "si me para la policía y me multan, ¿quién la paga?"
+  },
+  {
+   "id": "r2_documents",
+   "source": "written",
+   "round": 2,
+   "faq": "documents",
+   "msg": "¿qué documentación hay que presentar para el alta?"
+  },
+  {
+   "id": "r2_permit",
+   "source": "written",
+   "round": 2,
+   "faq": "work_permit",
+   "msg": "tengo pasaporte pero aún no tengo permiso de trabajo, ¿puedo?"
+  },
+  {
+   "id": "r2_foreign",
+   "source": "written",
+   "round": 2,
+   "faq": "foreign_licence",
+   "msg": "¿mi carnet de Marruecos vale para conducir aquí?"
+  },
+  {
+   "id": "r2_language",
+   "source": "written",
+   "round": 2,
+   "faq": "language",
+   "msg": "do I have to speak good Spanish for the job?",
+   "conv": "en"
+  },
+  {
+   "id": "r2_privacy",
+   "source": "written",
+   "round": 2,
+   "faq": "privacy",
+   "msg": "¿quién va a ver la información que te doy?"
+  },
+  {
+   "id": "r2_none_bonus",
+   "source": "written",
+   "round": 2,
+   "faq": null,
+   "msg": "¿dais algún extra por trabajar en Navidad?"
+  },
+  {
+   "id": "r2_none_pets",
+   "source": "written",
+   "round": 2,
+   "faq": null,
+   "msg": "¿puedo llevar a mi perro en el coche durante el turno?"
+  },
+  {
+   "id": "r2_none_music",
+   "source": "written",
+   "round": 2,
+   "faq": null,
+   "msg": "¿se pueden llevar auriculares mientras conduces?"
+  },
+  {
+   "id": "r2_none_relocation",
+   "source": "written",
+   "round": 2,
+   "faq": null,
+   "msg": "¿pagáis la mudanza si me cambio de ciudad?"
+  }
+ ],
+ "topics": 30,
+ "retrieval": {
+  "minilm": {
+   "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "phrasings": 205,
+   "load_s": 0.77,
+   "index_s": 0.94,
+   "methods": {
+    "keyword": {
+     "recall@1": 0.5535714285714286,
+     "recall@3": 0.6696428571428571,
+     "recall@5": 0.75,
+     "mrr": 0.6273809523809524,
+     "observed recall@5": 0.8,
+     "median_ms": 0.032854004530236125,
+     "misses@5": [
+      {
+       "id": "obs_process",
+       "msg": "Sí, todo correcto. Venga, ¿y ahora qué?",
+       "faq": "process",
+       "rank": null,
+       "top": [
+        "tips"
+       ]
+      },
+      {
+       "id": "pay_3",
+       "msg": "how much would I earn per month?",
+       "faq": "pay",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "payday_3",
+       "msg": "how often do you pay?",
+       "faq": "payday",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "contract_3",
+       "msg": "is it a proper employment contract?",
+       "faq": "contract",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "trial_3",
+       "msg": "is the contract permanent?",
+       "faq": "trial_period",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "zones_3",
+       "msg": "what areas can I choose from?",
+       "faq": "zones",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "radius_3",
+       "msg": "how many orders per shift?",
+       "faq": "delivery_radius",
+       "rank": null,
+       "top": [
+        "time_off"
+       ]
+      },
+      {
+       "id": "vehicle_3",
+       "msg": "do you give us a scooter?",
+       "faq": "vehicle",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "expenses_3",
+       "msg": "who pays for petrol?",
+       "faq": "expenses",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "parking_2",
+       "msg": "where do I park?",
+       "faq": "parking",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "shifts_3",
+       "msg": "what time do shifts start?",
+       "faq": "shifts",
+       "rank": null,
+       "top": [
+        "time_off"
+       ]
+      },
+      {
+       "id": "time_off_3",
+       "msg": "can I take holidays in summer?",
+       "faq": "time_off",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "studies_3",
+       "msg": "I'm a student, is that a problem?",
+       "faq": "studies_other_job",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "weather_1",
+       "msg": "¿y cuando hay tormenta qué?",
+       "faq": "weather",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "weather_3",
+       "msg": "what about bad weather?",
+       "faq": "weather",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "accident_2",
+       "msg": "¿las multas de tráfico las cubre la empresa?",
+       "faq": "accident",
+       "rank": null,
+       "top": [
+        "vehicle",
+        "insurance"
+       ]
+      },
+      {
+       "id": "meal_3",
+       "msg": "do we get free food?",
+       "faq": "staff_meal",
+       "rank": null,
+       "top": [
+        "payday",
+        "language"
+       ]
+      },
+      {
+       "id": "process_1",
+       "msg": "¿cuándo me decís algo?",
+       "faq": "process",
+       "rank": null,
+       "top": [
+        "training"
+       ]
+      },
+      {
+       "id": "documents_1",
+       "msg": "¿qué tengo que traer para hacer el contrato?",
+       "faq": "documents",
+       "rank": 6,
+       "top": [
+        "language",
+        "insurance",
+        "contract"
+       ]
+      },
+      {
+       "id": "requirements_1",
+       "msg": "¿qué hace falta para entrar?",
+       "faq": "requirements",
+       "rank": null,
+       "top": [
+        "phone_app",
+        "vehicle",
+        "work_permit"
+       ]
+      },
+      {
+       "id": "requirements_3",
+       "msg": "what do I need to apply?",
+       "faq": "requirements",
+       "rank": null,
+       "top": [
+        "phone_app",
+        "documents",
+        "training"
+       ]
+      },
+      {
+       "id": "training_1",
+       "msg": "¿hay alguien que me enseñe al principio?",
+       "faq": "training",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "training_3",
+       "msg": "is there any training?",
+       "faq": "training",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "company_3",
+       "msg": "what restaurants are part of the group?",
+       "faq": "company",
+       "rank": null,
+       "top": [
+        "parking"
+       ]
+      },
+      {
+       "id": "is_bot_3",
+       "msg": "is this an AI?",
+       "faq": "is_bot",
+       "rank": null,
+       "top": [
+        "studies_other_job",
+        "company"
+       ]
+      },
+      {
+       "id": "privacy_2",
+       "msg": "¿vais a pasar mi teléfono a otras empresas?",
+       "faq": "privacy",
+       "rank": null,
+       "top": [
+        "vehicle"
+       ]
+      },
+      {
+       "id": "privacy_3",
+       "msg": "can you delete my info?",
+       "faq": "privacy",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "r2_contract",
+       "msg": "¿cotizo a la seguridad social o voy por mi cuenta?",
+       "faq": "contract",
+       "rank": null,
+       "top": [
+        "expenses"
+       ]
+      }
+     ]
+    },
+    "semantic": {
+     "recall@1": 0.8392857142857143,
+     "recall@3": 0.9732142857142857,
+     "recall@5": 0.9821428571428571,
+     "mrr": 0.9056967338217339,
+     "observed recall@5": 1.0,
+     "median_ms": 3.6703129881061614,
+     "misses@5": [
+      {
+       "id": "documents_2",
+       "msg": "¿necesito el número de la seguridad social?",
+       "faq": "documents",
+       "rank": 13,
+       "top": [
+        "insurance",
+        "payday",
+        "accident"
+       ]
+      },
+      {
+       "id": "privacy_2",
+       "msg": "¿vais a pasar mi teléfono a otras empresas?",
+       "faq": "privacy",
+       "rank": 9,
+       "top": [
+        "phone_app",
+        "delivery_radius",
+        "studies_other_job"
+       ]
+      }
+     ]
+    },
+    "hybrid": {
+     "recall@1": 0.7678571428571429,
+     "recall@3": 0.9553571428571429,
+     "recall@5": 0.9732142857142857,
+     "mrr": 0.8596938775510204,
+     "observed recall@5": 1.0,
+     "median_ms": 3.73504200251773,
+     "misses@5": [
+      {
+       "id": "requirements_1",
+       "msg": "¿qué hace falta para entrar?",
+       "faq": "requirements",
+       "rank": 7,
+       "top": [
+        "training",
+        "work_permit",
+        "vehicle"
+       ]
+      },
+      {
+       "id": "requirements_3",
+       "msg": "what do I need to apply?",
+       "faq": "requirements",
+       "rank": 7,
+       "top": [
+        "documents",
+        "training",
+        "work_permit"
+       ]
+      },
+      {
+       "id": "privacy_2",
+       "msg": "¿vais a pasar mi teléfono a otras empresas?",
+       "faq": "privacy",
+       "rank": 10,
+       "top": [
+        "vehicle",
+        "phone_app",
+        "delivery_radius"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "mpnet": {
+   "model": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+   "phrasings": 205,
+   "load_s": 1.58,
+   "index_s": 3.02,
+   "methods": {
+    "keyword": {
+     "recall@1": 0.5535714285714286,
+     "recall@3": 0.6696428571428571,
+     "recall@5": 0.75,
+     "mrr": 0.6273809523809524,
+     "observed recall@5": 0.8,
+     "median_ms": 0.0338544778060168,
+     "misses@5": [
+      {
+       "id": "obs_process",
+       "msg": "Sí, todo correcto. Venga, ¿y ahora qué?",
+       "faq": "process",
+       "rank": null,
+       "top": [
+        "tips"
+       ]
+      },
+      {
+       "id": "pay_3",
+       "msg": "how much would I earn per month?",
+       "faq": "pay",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "payday_3",
+       "msg": "how often do you pay?",
+       "faq": "payday",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "contract_3",
+       "msg": "is it a proper employment contract?",
+       "faq": "contract",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "trial_3",
+       "msg": "is the contract permanent?",
+       "faq": "trial_period",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "zones_3",
+       "msg": "what areas can I choose from?",
+       "faq": "zones",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "radius_3",
+       "msg": "how many orders per shift?",
+       "faq": "delivery_radius",
+       "rank": null,
+       "top": [
+        "time_off"
+       ]
+      },
+      {
+       "id": "vehicle_3",
+       "msg": "do you give us a scooter?",
+       "faq": "vehicle",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "expenses_3",
+       "msg": "who pays for petrol?",
+       "faq": "expenses",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "parking_2",
+       "msg": "where do I park?",
+       "faq": "parking",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "shifts_3",
+       "msg": "what time do shifts start?",
+       "faq": "shifts",
+       "rank": null,
+       "top": [
+        "time_off"
+       ]
+      },
+      {
+       "id": "time_off_3",
+       "msg": "can I take holidays in summer?",
+       "faq": "time_off",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "studies_3",
+       "msg": "I'm a student, is that a problem?",
+       "faq": "studies_other_job",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "weather_1",
+       "msg": "¿y cuando hay tormenta qué?",
+       "faq": "weather",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "weather_3",
+       "msg": "what about bad weather?",
+       "faq": "weather",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "accident_2",
+       "msg": "¿las multas de tráfico las cubre la empresa?",
+       "faq": "accident",
+       "rank": null,
+       "top": [
+        "vehicle",
+        "insurance"
+       ]
+      },
+      {
+       "id": "meal_3",
+       "msg": "do we get free food?",
+       "faq": "staff_meal",
+       "rank": null,
+       "top": [
+        "payday",
+        "language"
+       ]
+      },
+      {
+       "id": "process_1",
+       "msg": "¿cuándo me decís algo?",
+       "faq": "process",
+       "rank": null,
+       "top": [
+        "training"
+       ]
+      },
+      {
+       "id": "documents_1",
+       "msg": "¿qué tengo que traer para hacer el contrato?",
+       "faq": "documents",
+       "rank": 6,
+       "top": [
+        "language",
+        "insurance",
+        "contract"
+       ]
+      },
+      {
+       "id": "requirements_1",
+       "msg": "¿qué hace falta para entrar?",
+       "faq": "requirements",
+       "rank": null,
+       "top": [
+        "phone_app",
+        "vehicle",
+        "work_permit"
+       ]
+      },
+      {
+       "id": "requirements_3",
+       "msg": "what do I need to apply?",
+       "faq": "requirements",
+       "rank": null,
+       "top": [
+        "phone_app",
+        "documents",
+        "training"
+       ]
+      },
+      {
+       "id": "training_1",
+       "msg": "¿hay alguien que me enseñe al principio?",
+       "faq": "training",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "training_3",
+       "msg": "is there any training?",
+       "faq": "training",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "company_3",
+       "msg": "what restaurants are part of the group?",
+       "faq": "company",
+       "rank": null,
+       "top": [
+        "parking"
+       ]
+      },
+      {
+       "id": "is_bot_3",
+       "msg": "is this an AI?",
+       "faq": "is_bot",
+       "rank": null,
+       "top": [
+        "studies_other_job",
+        "company"
+       ]
+      },
+      {
+       "id": "privacy_2",
+       "msg": "¿vais a pasar mi teléfono a otras empresas?",
+       "faq": "privacy",
+       "rank": null,
+       "top": [
+        "vehicle"
+       ]
+      },
+      {
+       "id": "privacy_3",
+       "msg": "can you delete my info?",
+       "faq": "privacy",
+       "rank": null,
+       "top": []
+      },
+      {
+       "id": "r2_contract",
+       "msg": "¿cotizo a la seguridad social o voy por mi cuenta?",
+       "faq": "contract",
+       "rank": null,
+       "top": [
+        "expenses"
+       ]
+      }
+     ]
+    },
+    "semantic": {
+     "recall@1": 0.8839285714285714,
+     "recall@3": 0.9821428571428571,
+     "recall@5": 0.9910714285714286,
+     "mrr": 0.9329613095238095,
+     "observed recall@5": 1.0,
+     "median_ms": 10.901833011303097,
+     "misses@5": [
+      {
+       "id": "documents_2",
+       "msg": "¿necesito el número de la seguridad social?",
+       "faq": "documents",
+       "rank": 8,
+       "top": [
+        "insurance",
+        "payday",
+        "tips"
+       ]
+      }
+     ]
+    },
+    "hybrid": {
+     "recall@1": 0.7767857142857143,
+     "recall@3": 0.9642857142857143,
+     "recall@5": 0.9821428571428571,
+     "mrr": 0.8730867346938777,
+     "observed recall@5": 1.0,
+     "median_ms": 11.085708509199321,
+     "misses@5": [
+      {
+       "id": "requirements_1",
+       "msg": "¿qué hace falta para entrar?",
+       "faq": "requirements",
+       "rank": 7,
+       "top": [
+        "work_permit",
+        "training",
+        "vehicle"
+       ]
+      },
+      {
+       "id": "requirements_3",
+       "msg": "what do I need to apply?",
+       "faq": "requirements",
+       "rank": 7,
+       "top": [
+        "documents",
+        "work_permit",
+        "training"
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "routing": {
+  "shortlist + answers": {
+   "runs": 254,
+   "errors": 0,
+   "answerable_correct": 208,
+   "answerable_wrong_topic": 0,
+   "answerable_missed": 16,
+   "answerable": 224,
+   "none_correct": 30,
+   "none_wrong_topic": 0,
+   "unanswerable": 30,
+   "round2_correct": 48,
+   "round2": 48,
+   "usage": {
+    "claude-haiku-5-5": {
+     "calls": 254,
+     "input": 185116,
+     "cache_write": 46032,
+     "cache_read": 1415484,
+     "output": 56389,
+     "usd": 0.06661494000000008
+    }
+   },
+   "usd": 0.0666,
+   "failures": [
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "delivery_radius",
+      "work_permit"
+     ]
+    },
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "delivery_radius",
+      "work_permit"
+     ]
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "insurance",
+      "delivery_radius"
+     ]
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "insurance",
+      "delivery_radius"
+     ]
+    },
+    {
+     "id": "zones_2",
+     "msg": "¿qué colonias cubren en Guadalajara?",
+     "faq": "zones",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "zones",
+      "company",
+      "foreign_licence",
+      "delivery_radius",
+      "language"
+     ]
+    },
+    {
+     "id": "zones_2",
+     "msg": "¿qué colonias cubren en Guadalajara?",
+     "faq": "zones",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "zones",
+      "company",
+      "foreign_licence",
+      "delivery_radius",
+      "language"
+     ]
+    },
+    {
+     "id": "radius_2",
+     "msg": "¿cuántos kilómetros se hacen en un turno?",
+     "faq": "delivery_radius",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "delivery_radius",
+      "expenses",
+      "shifts",
+      "payday",
+      "time_off"
+     ]
+    },
+    {
+     "id": "radius_2",
+     "msg": "¿cuántos kilómetros se hacen en un turno?",
+     "faq": "delivery_radius",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "delivery_radius",
+      "expenses",
+      "shifts",
+      "payday",
+      "time_off"
+     ]
+    },
+    {
+     "id": "interviews_1",
+     "msg": "¿la entrevista es por teléfono o en persona?",
+     "faq": "interviews",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "interviews",
+      "language",
+      "phone_app",
+      "is_bot",
+      "requirements"
+     ]
+    },
+    {
+     "id": "interviews_1",
+     "msg": "¿la entrevista es por teléfono o en persona?",
+     "faq": "interviews",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "interviews",
+      "language",
+      "phone_app",
+      "is_bot",
+      "requirements"
+     ]
+    },
+    {
+     "id": "documents_2",
+     "msg": "¿necesito el número de la seguridad social?",
+     "faq": "documents",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "insurance",
+      "payday",
+      "accident",
+      "work_permit",
+      "requirements"
+     ]
+    },
+    {
+     "id": "documents_2",
+     "msg": "¿necesito el número de la seguridad social?",
+     "faq": "documents",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "insurance",
+      "payday",
+      "accident",
+      "work_permit",
+      "requirements"
+     ]
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "language",
+      "is_bot",
+      "tips",
+      "contract",
+      "training"
+     ]
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "language",
+      "is_bot",
+      "tips",
+      "contract",
+      "training"
+     ]
+    },
+    {
+     "id": "privacy_2",
+     "msg": "¿vais a pasar mi teléfono a otras empresas?",
+     "faq": "privacy",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "phone_app",
+      "delivery_radius",
+      "studies_other_job",
+      "company",
+      "accident"
+     ]
+    },
+    {
+     "id": "privacy_2",
+     "msg": "¿vais a pasar mi teléfono a otras empresas?",
+     "faq": "privacy",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "phone_app",
+      "delivery_radius",
+      "studies_other_job",
+      "company",
+      "accident"
+     ]
+    }
+   ]
+  },
+  "shortlist": {
+   "runs": 254,
+   "errors": 0,
+   "answerable_correct": 204,
+   "answerable_wrong_topic": 4,
+   "answerable_missed": 16,
+   "answerable": 224,
+   "none_correct": 28,
+   "none_wrong_topic": 2,
+   "unanswerable": 30,
+   "round2_correct": 42,
+   "round2": 48,
+   "usage": {
+    "claude-haiku-5-5": {
+     "calls": 254,
+     "input": 100888,
+     "cache_write": 0,
+     "cache_read": 1461516,
+     "output": 58212,
+     "usd": 0.05380995999999994
+    }
+   },
+   "usd": 0.0538,
+   "failures": [
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "delivery_radius",
+      "work_permit"
+     ]
+    },
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "delivery_radius",
+      "work_permit"
+     ]
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "insurance",
+      "delivery_radius"
+     ]
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": [
+      "trial_period",
+      "contract",
+      "documents",
+      "insurance",
+      "delivery_radius"
+     ]
+    },
+    {
+     "id": "interviews_1",
+     "msg": "¿la entrevista es por teléfono o en persona?",
+     "faq": "interviews",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "interviews",
+      "language",
+      "phone_app",
+      "is_bot",
+      "requirements"
+     ]
+    },
+    {
+     "id": "interviews_1",
+     "msg": "¿la entrevista es por teléfono o en persona?",
+     "faq": "interviews",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "interviews",
+      "language",
+      "phone_app",
+      "is_bot",
+      "requirements"
+     ]
+    },
+    {
+     "id": "time_off_1",
+     "msg": "¿libro algún fin de semana?",
+     "faq": "time_off",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "time_off",
+      "payday",
+      "interviews",
+      "process",
+      "weather"
+     ]
+    },
+    {
+     "id": "time_off_1",
+     "msg": "¿libro algún fin de semana?",
+     "faq": "time_off",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "time_off",
+      "payday",
+      "interviews",
+      "process",
+      "weather"
+     ]
+    },
+    {
+     "id": "accident_2",
+     "msg": "¿las multas de tráfico las cubre la empresa?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "foreign_licence",
+      "expenses",
+      "accident",
+      "contract",
+      "parking"
+     ]
+    },
+    {
+     "id": "accident_2",
+     "msg": "¿las multas de tráfico las cubre la empresa?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "foreign_licence",
+      "expenses",
+      "accident",
+      "contract",
+      "parking"
+     ]
+    },
+    {
+     "id": "documents_2",
+     "msg": "¿necesito el número de la seguridad social?",
+     "faq": "documents",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "insurance",
+      "payday",
+      "accident",
+      "work_permit",
+      "requirements"
+     ]
+    },
+    {
+     "id": "documents_2",
+     "msg": "¿necesito el número de la seguridad social?",
+     "faq": "documents",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "insurance",
+      "payday",
+      "accident",
+      "work_permit",
+      "requirements"
+     ]
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "language",
+      "is_bot",
+      "tips",
+      "contract",
+      "training"
+     ]
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "language",
+      "is_bot",
+      "tips",
+      "contract",
+      "training"
+     ]
+    },
+    {
+     "id": "privacy_2",
+     "msg": "¿vais a pasar mi teléfono a otras empresas?",
+     "faq": "privacy",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "phone_app",
+      "delivery_radius",
+      "studies_other_job",
+      "company",
+      "accident"
+     ]
+    },
+    {
+     "id": "privacy_2",
+     "msg": "¿vais a pasar mi teléfono a otras empresas?",
+     "faq": "privacy",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": [
+      "phone_app",
+      "delivery_radius",
+      "studies_other_job",
+      "company",
+      "accident"
+     ]
+    },
+    {
+     "id": "r2_equipment",
+     "msg": "¿me prestáis una caja para llevar la comida?",
+     "faq": "equipment",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": [
+      "equipment",
+      "staff_meal",
+      "contract",
+      "tips",
+      "delivery_radius"
+     ]
+    },
+    {
+     "id": "r2_equipment",
+     "msg": "¿me prestáis una caja para llevar la comida?",
+     "faq": "equipment",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": [
+      "equipment",
+      "staff_meal",
+      "contract",
+      "tips",
+      "delivery_radius"
+     ]
+    },
+    {
+     "id": "r2_accident",
+     "msg": "si me para la policía y me multan, ¿quién la paga?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": [
+      "accident",
+      "pay",
+      "expenses",
+      "payday",
+      "contract"
+     ]
+    },
+    {
+     "id": "r2_accident",
+     "msg": "si me para la policía y me multan, ¿quién la paga?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": [
+      "accident",
+      "pay",
+      "expenses",
+      "payday",
+      "contract"
+     ]
+    },
+    {
+     "id": "r2_none_bonus",
+     "msg": "¿dais algún extra por trabajar en Navidad?",
+     "faq": null,
+     "got": "pay",
+     "outcome": "wrong topic",
+     "round": 2,
+     "shown": [
+      "studies_other_job",
+      "shifts",
+      "time_off",
+      "work_permit",
+      "pay"
+     ]
+    },
+    {
+     "id": "r2_none_bonus",
+     "msg": "¿dais algún extra por trabajar en Navidad?",
+     "faq": null,
+     "got": "pay",
+     "outcome": "wrong topic",
+     "round": 2,
+     "shown": [
+      "studies_other_job",
+      "shifts",
+      "time_off",
+      "work_permit",
+      "pay"
+     ]
+    }
+   ]
+  },
+  "every topic + answers": {
+   "runs": 254,
+   "errors": 0,
+   "answerable_correct": 211,
+   "answerable_wrong_topic": 4,
+   "answerable_missed": 9,
+   "answerable": 224,
+   "none_correct": 30,
+   "none_wrong_topic": 0,
+   "unanswerable": 30,
+   "round2_correct": 46,
+   "round2": 48,
+   "usage": {
+    "claude-haiku-5-5": {
+     "calls": 254,
+     "input": 818000,
+     "cache_write": 0,
+     "cache_read": 1461516,
+     "output": 56522,
+     "usd": 0.12467615999999992
+    }
+   },
+   "usd": 0.1247,
+   "failures": [
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "zones_2",
+     "msg": "¿qué colonias cubren en Guadalajara?",
+     "faq": "zones",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "zones_2",
+     "msg": "¿qué colonias cubren en Guadalajara?",
+     "faq": "zones",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "vehicle_1",
+     "msg": "no tengo coche, ¿me dejáis uno?",
+     "faq": "vehicle",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "time_off_1",
+     "msg": "¿libro algún fin de semana?",
+     "faq": "time_off",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "time_off_1",
+     "msg": "¿libro algún fin de semana?",
+     "faq": "time_off",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "training_2",
+     "msg": "nunca he hecho repartos, ¿es un problema?",
+     "faq": "training",
+     "got": "requirements",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "r2_equipment",
+     "msg": "¿me prestáis una caja para llevar la comida?",
+     "faq": "equipment",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    },
+    {
+     "id": "r2_equipment",
+     "msg": "¿me prestáis una caja para llevar la comida?",
+     "faq": "equipment",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    }
+   ]
+  },
+  "every topic": {
+   "runs": 254,
+   "errors": 0,
+   "answerable_correct": 204,
+   "answerable_wrong_topic": 4,
+   "answerable_missed": 16,
+   "answerable": 224,
+   "none_correct": 30,
+   "none_wrong_topic": 0,
+   "unanswerable": 30,
+   "round2_correct": 42,
+   "round2": 48,
+   "usage": {
+    "claude-haiku-5-5": {
+     "calls": 254,
+     "input": 314826,
+     "cache_write": 0,
+     "cache_read": 1461516,
+     "output": 60465,
+     "usd": 0.07633026000000005
+    }
+   },
+   "usd": 0.0763,
+   "failures": [
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "trial_2",
+     "msg": "¿el contrato sería indefinido?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "trial_3",
+     "msg": "is the contract permanent?",
+     "faq": "trial_period",
+     "got": "contract",
+     "outcome": "wrong topic",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "zones_2",
+     "msg": "¿qué colonias cubren en Guadalajara?",
+     "faq": "zones",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "zones_2",
+     "msg": "¿qué colonias cubren en Guadalajara?",
+     "faq": "zones",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "interviews_1",
+     "msg": "¿la entrevista es por teléfono o en persona?",
+     "faq": "interviews",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "interviews_1",
+     "msg": "¿la entrevista es por teléfono o en persona?",
+     "faq": "interviews",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "vehicle_2",
+     "msg": "¿vale con una bici eléctrica?",
+     "faq": "vehicle",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "accident_2",
+     "msg": "¿las multas de tráfico las cubre la empresa?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "accident_2",
+     "msg": "¿las multas de tráfico las cubre la empresa?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "documents_2",
+     "msg": "¿necesito el número de la seguridad social?",
+     "faq": "documents",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "language_2",
+     "msg": "mi español no es muy bueno, ¿pasa algo?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 1,
+     "shown": "all"
+    },
+    {
+     "id": "r2_equipment",
+     "msg": "¿me prestáis una caja para llevar la comida?",
+     "faq": "equipment",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    },
+    {
+     "id": "r2_equipment",
+     "msg": "¿me prestáis una caja para llevar la comida?",
+     "faq": "equipment",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    },
+    {
+     "id": "r2_accident",
+     "msg": "si me para la policía y me multan, ¿quién la paga?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    },
+    {
+     "id": "r2_accident",
+     "msg": "si me para la policía y me multan, ¿quién la paga?",
+     "faq": "accident",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    },
+    {
+     "id": "r2_language",
+     "msg": "do I have to speak good Spanish for the job?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    },
+    {
+     "id": "r2_language",
+     "msg": "do I have to speak good Spanish for the job?",
+     "faq": "language",
+     "got": null,
+     "outcome": "missed",
+     "round": 2,
+     "shown": "all"
+    }
+   ]
+  }
+ },
+ "routing_repeat": 2
+}

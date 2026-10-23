@@ -617,10 +617,18 @@
   intents: [question]
   faq: privacy
 
-- id: faq_not_in_faq
+- id: faq_parking
   tags: [faq]
   asked: schedule
   msg: "¿hay parking para la moto en el restaurante?"
+  expect: {}
+  intents: [question]
+  faq: parking   # was null (D211 added the topic: asked in testing, p07)
+
+- id: faq_not_in_faq
+  tags: [faq]
+  asked: schedule
+  msg: "¿se puede fumar durante el turno?"
   expect: {}
   intents: [question]
   faq: null
@@ -867,10 +875,18 @@
   expect: {}
   intents: [postpone]
 
-- id: hold_faq_unrelated_topic
+- id: hold_faq_staff_meal
   tags: [holdout, faq]
   asked: availability
   msg: "¿dan comida gratis a los repartidores?"
+  expect: {}
+  intents: [question]
+  faq: staff_meal   # was null (D211 added the topic)
+
+- id: hold_faq_unrelated_topic
+  tags: [holdout, faq]
+  asked: availability
+  msg: "¿hay posibilidad de ascender a encargado?"
   expect: {}
   intents: [question]
   faq: null
