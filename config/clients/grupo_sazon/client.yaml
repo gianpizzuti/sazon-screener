@@ -59,6 +59,17 @@ retrieval:
   method: semantic              # meaning only; "hybrid" adds keywords (measured worse here, ADR 0010)
   shortlist: 5
 
+# Voice channel (ADR 0011): Sofía's voice per locale. Without ELEVENLABS_API_KEY in .env, or if
+# ElevenLabs fails, the browser's own voice reads the same text.
+voice:
+  model: eleven_flash_v2_5
+  voices:                         # ElevenLabs voice library, chosen for a native accent and a conversational style
+    es-ES: UOIqAnmS11Reiei1Ytkc     # Carolina: Spain, natural and clear
+    es: UOIqAnmS11Reiei1Ytkc        # before the city is known: the same voice
+    es-MX: m7yTemJqdIqrcNleANfX     # Ana María: Mexico, calm and clear, made for agents
+    en: EXAVITQu4vr4xnSDxMaL        # Sarah
+    default: UOIqAnmS11Reiei1Ytkc
+
 # What happens after a candidate qualifies (said by the agent, never invented by the model)
 next_steps:
   es: Una persona del equipo de selección de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano.

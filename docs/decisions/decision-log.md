@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (227 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (232 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -358,3 +358,13 @@ Every decision taken while building the agent, large or small (227 so far), with
 | # | Decision | Why | Rejected alternative / trade-off | Where |
 |---|---|---|---|---|
 | D227 | The process design is two A4 pages covering the brief's six points in its order; the full tables, examples and open questions move to an appendix | The brief asks for 1–2 pages, and the document had grown to four as the product did. Nothing is lost: the appendix and the decision log keep the detail, and the two pages were rewritten to match the current product (foreign licences, unserved neighbourhoods, the knowledge base, the 3-ask limit) | Keeping four pages (ignores the brief); cutting content altogether (loses the edge-case examples reviewers look for) | `process-design.md`, `process-design-appendix.md` |
+
+## Voice agent (the "Great" bonus, [ADR 0011](0011-voice-channel.md))
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D228 | Voice is a `voice` channel on the same API and engine; "Try the agent" gets a Chat / Voice switch and a hands-free loop (Sofía speaks, then listens if she asked something) | Who decides must not change with the channel (ADR 0001, 0008). Same data, same recruiter view, same tests | ElevenLabs Agents, where their model drives the conversation (it would need our engine wrapped as their custom LLM, behind a tunnel; 5–6 hours and a new failure point) | `TryAgent.tsx`, `lib/voice.ts` |
+| D229 | The candidate is transcribed in the browser (Web Speech API); only Sofía's text goes to ElevenLabs | The candidate's audio never reaches our server. Trade-off: Chrome's recognition uses Google's service and works in Chrome and Edge only; in production, a speech-to-text provider under a data-processing agreement in the EU | Server-side speech-to-text now (more data and vendors for a demo) | `lib/voice.ts` |
+| D230 | For voice, the writer is told the message is spoken (no emojis or symbols, options in words, natural dates and times, at most two sentences, 20% shorter), and code turns any display text into speakable text ("21/10 a las 16:00" → "21 de octubre a las cuatro de la tarde") | One copy for both channels: templates (greeting, recap, interview times) are spoken without a second version. Code does the deterministic part, as with dates elsewhere | Voice-only templates (twice the copy); trusting the model with every format | `channels/voice.py`, `render_directive` |
+| D231 | ElevenLabs voices from its library, per locale for a native accent (Carolina for Spain, Ana María for Mexico, Sarah for English), with `eleven_flash_v2_5`, as configuration | The voice is the first thing a candidate hears; the accent should match the country, like the vocabulary (D192). Flash: low latency and half the credits | One voice for everyone; the browser voice only (robotic, varies by machine) | `client.yaml: voice` |
+| D232 | Never silent: no key or an ElevenLabs error → the browser's voice reads the same speakable text; a time limit based on the text's length ends a turn whose "end of speech" event never arrives. "La uno" / "la dos" pick an interview time in a short reply | A live demo can't freeze. Found while testing: Chrome sometimes never fires the end event, and loads its voices late | – | `ElevenLabsVoice.synthesize`, `speak()`, `match_choice` |

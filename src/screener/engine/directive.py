@@ -66,6 +66,7 @@ class Directive(BaseModel):
     outcome_place: str | None = None
     talent_pool_answer: bool | None = None
     interview_offer: bool = False  # the qualified outcome is followed by interview times
+    voice: bool = False  # the conversation is spoken (voice channel): no emojis, options said in words
 
 
 @dataclass

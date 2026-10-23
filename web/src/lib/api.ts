@@ -164,6 +164,7 @@ export interface TurnResult {
   analysis: Analysis | null;
   event_types: string[];
   faq_topics: string[];
+  locale: string;
 }
 
 export interface DemoClock {
@@ -217,7 +218,8 @@ export const api = {
   regenerateSummary: (id: string) => request<Summary>("POST", `/candidates/${id}/summary`),
   analytics: () => request<Analytics>("GET", "/analytics"),
   config: () => request<WorkspaceConfig>("GET", "/config"),
-  start: (language: "es" | "en") => request<TurnResult>("POST", "/conversations", { channel: "web", language }),
+  start: (language: "es" | "en", channel: "web" | "voice" = "web") => request<TurnResult>("POST", "/conversations", { channel, language }),
+  voice: () => request<{ provider: "elevenlabs" | "browser" }>("GET", "/voice"),
   send: (id: string, text: string) =>
     request<TurnResult>("POST", `/conversations/${id}/messages?debug=true`, { text }),
   demoClock: async (): Promise<DemoClock | null> => {

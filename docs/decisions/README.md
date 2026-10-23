@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Every decision, small ones included, is listed in the **[decision log](decision-log.md)** (227 entries). The records below are the deep-dives on the important ones.
+Every decision, small ones included, is listed in the **[decision log](decision-log.md)** (232 entries). The records below are the deep-dives on the important ones.
 
 Each record says what was decided, the alternatives considered, the trade-offs accepted and **when the decision should be revisited**.
 
@@ -16,3 +16,4 @@ Each record says what was decided, the alternatives considered, the trade-offs a
 | [0008](0008-api-first-recruiter-tool.md) | API-first, with a Streamlit recruiter tool as one of its clients |
 | [0009](0009-react-web-app.md) | Replace the Streamlit dashboard with a React web app |
 | [0010](0010-knowledge-base-retrieval.md) | Knowledge-base retrieval with local multilingual embeddings (the RAG bonus) |
+| [0011](0011-voice-channel.md) | Voice as one more channel on the same engine (the voice-agent bonus) |

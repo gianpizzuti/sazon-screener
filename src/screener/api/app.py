@@ -19,11 +19,12 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, FastAPI, HTTPException, Query, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from screener.analytics import Analytics, compute
+from screener.channels.voice import ElevenLabsVoice, speakable
 from screener.engine.engine import ScreeningEngine, TurnResult
 from screener.storage.repository import REVIEW_STATUSES, ConversationNotFound
 from screener.views import CandidateDetail, CandidateRow, build_detail, build_rows
@@ -40,6 +41,11 @@ class StartRequest(BaseModel):
 
 class MessageRequest(BaseModel):
     text: str = Field(min_length=1, max_length=4000)
+
+
+class SpeechRequest(BaseModel):
+    conversation_id: str
+    text: str = Field(min_length=1, max_length=2000)
 
 
 class AdvanceRequest(BaseModel):
@@ -81,6 +87,11 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
     def get_engine(request: Request) -> ScreeningEngine:
         return request.app.state.engine
 
+    def get_voice(request: Request) -> ElevenLabsVoice:
+        if not hasattr(request.app.state, "voice"):
+            request.app.state.voice = ElevenLabsVoice(get_engine(request).cfg.voice)
+        return request.app.state.voice
+
     api = APIRouter(prefix="/api")
 
     @api.get("/health")
@@ -115,8 +126,25 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
         if result.completed and (stale_summary or engine.repo.get_summary(conversation_id) is None):
             background.add_task(engine.summarize, conversation_id)  # off the hot path
         if not debug:
-            result.analysis = None
+            result.analysis, result.faq_topics = None, []
         return result
+
+    @api.get("/voice", tags=["channel"])
+    def voice_status(request: Request) -> dict:
+        """Which voice speaks: ElevenLabs when a key is configured, else the browser's own (ADR 0011)."""
+        return {"provider": "elevenlabs" if get_voice(request).available else "browser"}
+
+    @api.post("/voice/speech", tags=["channel"], responses={200: {"content": {"audio/mpeg": {}}}})
+    def speech(body: SpeechRequest, request: Request):
+        """One of Sofía's messages as speech: MP3 from ElevenLabs, or the speakable text for the browser's voice."""
+        try:
+            locale = get_engine(request).repo.get_state(body.conversation_id).locale
+        except ConversationNotFound:
+            raise HTTPException(404, "conversation not found")
+        spoken = speakable(body.text, locale)
+        if audio := get_voice(request).synthesize(spoken, locale):
+            return Response(content=audio, media_type="audio/mpeg", headers={"X-Voice-Provider": "elevenlabs"})
+        return {"provider": "browser", "speech": spoken, "locale": locale}
 
     # ------------------------------------------------------------------ recruiter side
     @api.get("/candidates", response_model=list[CandidateRow], tags=["recruiter"])

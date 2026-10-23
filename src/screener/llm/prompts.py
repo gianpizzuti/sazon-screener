@@ -252,6 +252,12 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
         lines.append(f"Candidate's first name: {d.candidate_name} (you may use it once in this message)")
     else:
         lines.append("Do not use the candidate's name in this message.")
+    if d.voice:
+        lines.append(
+            "Channel: VOICE. This message is spoken aloud, and the candidate may not see the screen. No emojis, "
+            "symbols or abbreviations; say any options in words (\"puedes decir sí o no\"); dates and times as "
+            "people say them (\"el lunes 26 de octubre\", \"a las cuatro de la tarde\"); at most two short sentences."
+        )
 
     steps: list[str] = []
     if "resume" in d.notes:
@@ -297,8 +303,11 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
                                           place=d.unlisted_zone or "", city=d.zone_city or "their city")
             steps.append(step)
             if d.ask_field == FieldName.ZONE and d.ask_options and not d.ask_issue:
-                steps.append(f"Buttons with these options are shown under your message: {', '.join(d.ask_options)}, and 'any area'. "
-                             "Say they can tap one or write their neighbourhood; don't list the options.")
+                if d.voice:
+                    steps.append(f"Say the options in words: {', '.join(d.ask_options)}, or any area.")
+                else:
+                    steps.append(f"Buttons with these options are shown under your message: {', '.join(d.ask_options)}, and 'any area'. "
+                                 "Say they can tap one or write their neighbourhood; don't list the options.")
             steps.append(f'Reference wording (adapt it, don\'t copy it): "{_reference(d, cfg)}"')
         case "outcome":
             key = "qualified_book" if d.outcome == "qualified" and d.interview_offer else d.outcome

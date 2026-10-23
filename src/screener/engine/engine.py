@@ -65,6 +65,7 @@ class TurnResult(BaseModel):
     data: ScreeningData
     analysis: TurnAnalysis | None = None  # exposed for debugging / the dashboard
     event_types: list[str] = Field(default_factory=list)
+    locale: str = "es"  # how Sofía is speaking now (es-ES, es-MX, es, en): a voice client picks its language from it
     faq_topics: list[str] = Field(default_factory=list)  # the knowledge-base shortlist the model chose from (ADR 0010)
 
 
@@ -119,7 +120,7 @@ class ScreeningEngine:
             [("agent", greeting.text, {"kind": "greeting", "source": "template"})],
             [Event("conversation_started", {"channel": channel})],
         )
-        return TurnResult(conversation_id=state.id, stage=state.stage, messages=[greeting], completed=False, data=state.data)
+        return TurnResult(conversation_id=state.id, locale=state.locale, stage=state.stage, messages=[greeting], completed=False, data=state.data)
 
     def handle(self, conversation_id: str, text: str) -> TurnResult:
         with self._lock_for(conversation_id):  # one turn at a time per conversation
@@ -192,7 +193,7 @@ class ScreeningEngine:
         state = self.repo.get_state(conversation_id)
         text = (text or "").strip()[:MAX_INBOUND_CHARS]
         if not text:
-            return TurnResult(conversation_id=state.id, stage=state.stage, messages=[], completed=state.is_terminal, data=state.data)
+            return TurnResult(conversation_id=state.id, locale=state.locale, stage=state.stage, messages=[], completed=state.is_terminal, data=state.data)
 
         history = self.repo.transcript(conversation_id)
         state.last_candidate_message_at = self.clock()
@@ -222,7 +223,7 @@ class ScreeningEngine:
                 [("candidate", text, {"error": "understand_failed"}), ("agent", reply.text, {"source": "template"})],
                 [Event("llm_error", {"step": "understand", "error": str(exc)[:300]})],
             )
-            return TurnResult(conversation_id=state.id, stage=state.stage, messages=[reply], completed=False, data=state.data)
+            return TurnResult(conversation_id=state.id, locale=state.locale, stage=state.stage, messages=[reply], completed=False, data=state.data)
 
         working = state.model_copy(deep=True)
         if working.followups_sent or working.abandoned_at:
@@ -250,6 +251,7 @@ class ScreeningEngine:
         self.repo.save_turn(working, rows, events, interview_changes)
         return TurnResult(
             conversation_id=working.id,
+            locale=working.locale,
             stage=working.stage,
             messages=outbound,
             completed=working.is_terminal,
@@ -336,6 +338,7 @@ class ScreeningEngine:
     def _render(self, state, directive: Directive, history, today, events):
         if directive.kind == "silent":
             return [], []
+        directive.voice = state.channel == "voice"  # same decisions, spoken wording (ADR 0011)
         if directive.kind in ("interview_offer", "interview_booked", "interview_handoff"):
             meta = {"kind": directive.kind, "source": "template", "directive": directive.model_dump(mode="json")}
             return [self._interview_message(state, directive)], [meta]
@@ -392,7 +395,8 @@ class ScreeningEngine:
 
     def _char_limit(self, directive: Directive) -> int:
         base = self.cfg.agent.max_message_chars
-        return int(base * 1.4) if directive.kind == "outcome" or directive.answer else base
+        limit = int(base * 1.4) if directive.kind == "outcome" or directive.answer else base
+        return int(limit * 0.8) if directive.voice else limit  # listening is slower than reading
 
     def _quick_replies(self, directive: Directive) -> list[str]:
         copy, loc = self.cfg.copy_, directive.locale

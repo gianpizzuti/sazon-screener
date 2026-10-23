@@ -31,6 +31,7 @@ ORDINALS = {
     "tercera": 2, "tercero": 2, "third": 2, "3a": 2, "3o": 2,
 }
 LAST_WORDS = {"ultima", "ultimo", "last"}
+SPOKEN_NUMBERS = {"uno": 1, "una": 1, "dos": 2, "tres": 3, "one": 1, "two": 2, "three": 3}
 
 
 def _utc(local: datetime) -> datetime:
@@ -152,8 +153,9 @@ def match_choice(message: str, slots_utc: list[datetime], tz: str, locale: str, 
         picks = {ORDINALS[t] for t in tokens if t in ORDINALS}
         if any(t in LAST_WORDS for t in tokens):
             picks.add(len(slots_utc) - 1)
-        if len(tokens) <= 4:  # a bare number only in a short reply ("2", "la 2"), not in a sentence
-            picks |= {int(t) - 1 for t in tokens if t.isdigit() and 1 <= int(t) <= len(slots_utc)}
+        if len(tokens) <= 4:  # a bare number only in a short reply ("2", "la 2", "la uno" said by voice), not in a sentence
+            numbers = [int(t) if t.isdigit() else SPOKEN_NUMBERS.get(t) for t in tokens]
+            picks |= {n - 1 for n in numbers if n and 1 <= n <= len(slots_utc)}
         if len(picks) == 1:
             return picks.pop()
 

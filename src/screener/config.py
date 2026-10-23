@@ -149,6 +149,13 @@ class ForeignLicenceRules(BaseModel):
         return "review"
 
 
+class VoiceSettings(BaseModel):
+    """The voice channel (ADR 0011): ElevenLabs voices per locale. Without ELEVENLABS_API_KEY the browser's voice is used."""
+
+    model: str = "eleven_flash_v2_5"                       # low latency, multilingual, half the credits per character
+    voices: dict[str, str] = Field(default_factory=dict)   # es-ES / es-MX / en / default -> ElevenLabs voice id
+
+
 class SchedulingSettings(BaseModel):
     """Interview booking in the chat, in each area's local time."""
 
@@ -231,6 +238,7 @@ class ClientConfig(BaseModel):
     license: LicenseSettings = Field(default_factory=LicenseSettings)
     retrieval: RetrievalSettings = Field(default_factory=RetrievalSettings)
     foreign_licences: dict[Country, ForeignLicenceRules] = Field(default_factory=dict)
+    voice: VoiceSettings = Field(default_factory=VoiceSettings)
     next_steps: dict[str, str]
     platforms: list[Platform]
     service_areas: list[ServiceArea]

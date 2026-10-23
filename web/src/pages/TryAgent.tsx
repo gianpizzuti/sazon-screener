@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { ArrowRight, Brain, Check, Hourglass, Languages, ListChecks, MessageCircle, Plus, Quote, Send } from "lucide-react";
+import { ArrowRight, AudioLines, Brain, Check, Hourglass, Languages, ListChecks, MessageCircle, Mic, Plus, Quote, Send, Square } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -9,8 +9,14 @@ import { Button, Card, CardTitle, Chip, PageHeader, RetrievedTopics, StatusBadge
 import { type Analysis, api, type CandidateDetail } from "../lib/api";
 import { AVAILABILITY, SCHEDULE, experience, interviewTime, shortDate, titleCase } from "../lib/format";
 import { useCandidate } from "../lib/hooks";
+import { listen, speak, stopSpeaking, voiceSupported } from "../lib/voice";
 
-type Session = { id: string; quick: string[]; analysis: Analysis | null; topics: string[]; silent: boolean };
+type Session = { id: string; quick: string[]; analysis: Analysis | null; topics: string[]; silent: boolean; voice?: boolean; locale?: string };
+type Phase = "idle" | "listening" | "thinking" | "speaking";
+type Reply = { text: string; quick_replies: string[] };
+const PHASE_LABEL: Record<Phase, string> = {
+  idle: "Tap the microphone to answer", listening: "Listening… pause to send", thinking: "Sofía is thinking…", speaking: "Sofía is speaking…",
+};
 const STORAGE_KEY = "try-agent-session";
 
 const CHECKLIST: { label: string; value: (detail: CandidateDetail) => string | null }[] = [
@@ -45,24 +51,65 @@ export function TryAgentPage() {
   const [language, setLanguage] = useState<"es" | "en">("es");
   const [text, setText] = useState("");
   const [pending, setPending] = useState<string | null>(null);
+  const [mode, setMode] = useState<"chat" | "voice">("chat");
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [heard, setHeard] = useState("");
+  const listener = useRef<{ stop: () => void } | null>(null);
   const { data: detail } = useCandidate(session?.id);
+  const { data: voiceInfo } = useQuery({ queryKey: ["voice"], queryFn: api.voice, staleTime: Infinity, enabled: mode === "voice" || !!session?.voice });
   const scroller = useRef<HTMLDivElement>(null);
+
+  useEffect(() => () => { stopSpeaking(); listener.current?.stop(); }, []);
 
   useEffect(() => { try { session ? sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session)) : sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ } }, [session]);
   useEffect(() => { scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }, [detail?.transcript.length, pending]);
 
+  // Voice (ADR 0011): Sofía speaks her messages, then listens if she asked something. Hands-free, like a call.
+  const startListening = (locale: string) => {
+    stopSpeaking();
+    setHeard("");
+    setPhase("listening");
+    const l = listen(locale, setHeard);
+    listener.current = l;
+    l.done.then((said) => {
+      listener.current = null;
+      setHeard("");
+      if (said) { setPhase("thinking"); send.mutate(said); } else setPhase("idle");
+    }).catch(() => setPhase("idle"));
+  };
+  const sayAndListen = async (id: string, replies: Reply[], locale: string) => {
+    setPhase("speaking");
+    try { for (const r of replies) await speak(id, r.text); } catch { /* the text is on screen anyway */ }
+    const last = replies.at(-1);
+    if (last && (last.text.includes("?") || last.quick_replies.length)) startListening(locale);
+    else setPhase("idle");
+  };
+  const micPressed = () => {
+    if (!session) return;
+    if (phase === "listening") listener.current?.stop();
+    else if (phase !== "thinking") startListening(session.locale ?? "es");
+  };
+
   const start = useMutation({
-    mutationFn: () => api.start(language),
-    onSuccess: (r) => { setSession({ id: r.conversation_id, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: null, topics: [], silent: false }); client.invalidateQueries({ queryKey: ["candidates"] }); },
+    mutationFn: () => { stopSpeaking(); listener.current?.stop(); return api.start(language, mode === "voice" ? "voice" : "web"); },
+    onSuccess: (r) => {
+      const voice = mode === "voice";
+      setSession({ id: r.conversation_id, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: null, topics: [], silent: false, voice, locale: r.locale });
+      client.invalidateQueries({ queryKey: ["candidates"] });
+      if (voice) void sayAndListen(r.conversation_id, r.messages, r.locale);
+    },
   });
   const send = useMutation({
     mutationFn: (message: string) => api.send(session!.id, message),
     onMutate: (message) => setPending(message),
     onSuccess: async (r) => {
-      setSession((s) => s && { ...s, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: r.analysis, topics: r.faq_topics ?? [], silent: !r.messages.length });
-      await client.invalidateQueries({ queryKey: ["candidate", session!.id] });
+      const id = session!.id;
+      setSession((s) => s && { ...s, quick: r.messages.at(-1)?.quick_replies ?? [], analysis: r.analysis, topics: r.faq_topics ?? [], silent: !r.messages.length, locale: r.locale });
+      await client.invalidateQueries({ queryKey: ["candidate", id] });
       client.invalidateQueries({ queryKey: ["candidates"] });
+      if (session?.voice) void sayAndListen(id, r.messages, r.locale);
     },
+    onError: () => setPhase("idle"),
     onSettled: () => setPending(null),
   });
 
@@ -85,6 +132,15 @@ export function TryAgentPage() {
         subtitle="You are the candidate. This web chat calls the same API a WhatsApp webhook or a voice agent would. Go silent and use the demo clock to see the reminders."
         aside={
           <div className="flex items-center gap-2">
+            <div role="radiogroup" aria-label="Channel" className="flex rounded-xl bg-surface p-1 ring-1 ring-line">
+              {(["chat", "voice"] as const).map((m) => (
+                <button key={m} role="radio" aria-checked={mode === m} onClick={() => setMode(m)} disabled={m === "voice" && !voiceSupported()}
+                  title={m === "voice" && !voiceSupported() ? "Voice needs Chrome or Edge" : undefined}
+                  className={clsx("inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40", mode === m ? "bg-ink text-surface" : "text-ink-2 hover:text-ink")}>
+                  {m === "voice" ? <Mic className="size-3.5" /> : <MessageCircle className="size-3.5" />}{m === "voice" ? "Voice" : "Chat"}
+                </button>
+              ))}
+            </div>
             <div role="radiogroup" aria-label="Opening language" className="flex rounded-xl bg-surface p-1 ring-1 ring-line">
               {(["es", "en"] as const).map((l) => (
                 <button key={l} role="radio" aria-checked={language === l} onClick={() => setLanguage(l)}
@@ -107,7 +163,9 @@ export function TryAgentPage() {
             </div>
             <div className="leading-tight">
               <div className="font-semibold text-ink">Sofía · Grupo Sazón</div>
-              <div className="text-xs text-ink-3">AI assistant · usually replies in a few seconds</div>
+              <div className="text-xs text-ink-3">{session?.voice
+                ? <>Voice call · {voiceInfo?.provider === "elevenlabs" ? "ElevenLabs voice" : "browser voice"}</>
+                : "AI assistant · usually replies in a few seconds"}</div>
             </div>
             {detail && <div className="ml-auto"><StatusBadge status={detail.row.status} size="sm" /></div>}
           </div>
@@ -142,6 +200,13 @@ export function TryAgentPage() {
                   <div className="max-w-[82%] rounded-2xl rounded-tr-md bg-brand-btn px-4 py-2.5 text-[15px] text-on-brand opacity-80">{pending}</div>
                 </motion.div>
               )}
+              {phase === "listening" && (
+                <motion.div key="heard" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
+                  <div className="inline-flex max-w-[82%] items-center gap-2 rounded-2xl rounded-tr-md border border-dashed border-brand-btn/40 px-4 py-2.5 text-[15px] text-ink-2">
+                    <AudioLines className="size-4 shrink-0 text-brand-ink" aria-hidden />{heard || "Listening…"}
+                  </div>
+                </motion.div>
+              )}
               {send.isPending && <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex"><TypingDots /></motion.div>}
             </AnimatePresence>
             {session?.silent && <p className="text-center text-xs text-ink-3">Sofía doesn't reply: the conversation is closed and there was nothing to answer.</p>}
@@ -165,6 +230,20 @@ export function TryAgentPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+              {session.voice && (
+                <div className="mb-2 flex items-center gap-3 rounded-2xl bg-surface-2 px-3 py-2">
+                  <button type="button" onClick={micPressed} disabled={phase === "thinking"} aria-label={phase === "listening" ? "Stop listening" : "Speak"}
+                    className={clsx("relative grid size-12 shrink-0 cursor-pointer place-items-center rounded-full text-on-brand transition active:scale-95 disabled:opacity-40",
+                      phase === "listening" ? "bg-rose-600" : "bg-brand-btn")}>
+                    {phase === "listening" && <motion.span className="absolute inset-0 rounded-full bg-rose-500/40" animate={{ scale: [1, 1.35], opacity: [0.7, 0] }} transition={{ duration: 1.1, repeat: Infinity }} aria-hidden />}
+                    {phase === "listening" ? <Square className="relative size-4" fill="currentColor" /> : <Mic className="relative size-5" />}
+                  </button>
+                  <div className="min-w-0 text-sm">
+                    <div className="font-medium text-ink">{PHASE_LABEL[phase]}</div>
+                    <div className="truncate text-xs text-ink-3">The same API as the chat: your voice is transcribed in the browser; you can also type or tap.</div>
+                  </div>
+                </div>
+              )}
               <form onSubmit={(e) => { e.preventDefault(); submit(text); }} className="flex items-center gap-2">
                 <label htmlFor="msg" className="sr-only">Your message</label>
                 <input id="msg" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write as the candidate…" autoComplete="off"
