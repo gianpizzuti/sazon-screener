@@ -1,6 +1,6 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (226 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+Every decision taken while building the agent, large or small (227 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
 
 ## Product and conversation design
 
@@ -352,3 +352,9 @@ Every decision taken while building the agent, large or small (226 so far), with
 | D224 | A question asked three times without an answer, while the candidate keeps answering other things, is marked unclear and a person decides; questions in between don't count | Found: the licence question was asked seven times in a row. The existing limit only counted replies that answered nothing | No limit (a loop); skipping the field silently (a knock-out can't be skipped) | `policy._account_attempt`, `agent.max_times_asked` |
 | D225 | Sofía never takes back or contradicts what she said earlier: earlier facts also came from approved instructions | Found: one turn after giving the approved answer about tips, she said "antes me he pasado de rápida: no tengo ningún dato sobre propinas". "State only facts the instructions give you" was read as "only this turn's". Measured on the same two turns: 0 retractions in 10 runs after the change (1 in 3 runs before) | Giving the writer the earlier answers again on every turn (longer prompt for a rare error) | speak prompt |
 | D226 | The extraction eval's "tengo uno de Venezuela, no sé si vale aquí" now expects a licence and the country, not "no answer"; 4 new cases (Morocco with a question, Italian, a UK licence in English, and a name that must not produce a country) | The rule changed on purpose (D222), so the label did. Measured: 20/20 licence cases, including the vague answers that must still be "no answer" | – | `extraction_cases.yaml` |
+
+## Deliverables
+
+| # | Decision | Why | Rejected alternative / trade-off | Where |
+|---|---|---|---|---|
+| D227 | The process design is two A4 pages covering the brief's six points in its order; the full tables, examples and open questions move to an appendix | The brief asks for 1–2 pages, and the document had grown to four as the product did. Nothing is lost: the appendix and the decision log keep the detail, and the two pages were rewritten to match the current product (foreign licences, unserved neighbourhoods, the knowledge base, the 3-ask limit) | Keeping four pages (ignores the brief); cutting content altogether (loses the edge-case examples reviewers look for) | `process-design.md`, `process-design-appendix.md` |

@@ -9,7 +9,7 @@ The client has two different problems, and the design addresses each one separat
 | 60% of candidates don't answer recruiter calls | Asynchronous chat, first message seconds after applying, candidate answers when it suits them |
 | 80% of recruiter time goes to unqualified candidates | Knock-out questions first; recruiters only receive qualified (or flagged) candidates with a summary |
 
-📄 **[Process design](docs/process-design.md)** (Phase 1) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 📊 **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · 💬 **[Sample conversations](samples/README.md)**
+📄 **[Process design](docs/process-design.md)** (Phase 1, two pages, with an [appendix](docs/process-design-appendix.md)) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 📊 **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · 💬 **[Sample conversations](samples/README.md)**
 
 🏗️ Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** with its **[API spec](docs/design/ats-api.yaml)** (OpenAPI 3.1) · **[Deployment and scaling](docs/design/deployment-and-scaling.md)** (from one process to 10,000 applications/week) · **[Licences issued abroad](docs/design/foreign-licences.md)** (research behind the rules, with sources)
 
