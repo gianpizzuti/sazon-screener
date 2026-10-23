@@ -11,7 +11,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Reveal } from "../components/charts";
 import { Button, Card, CardTitle, Chip, ErrorState, ReviewBadge, RetrievedTopics, Skeleton, StatusBadge } from "../components/ui";
 import { api, type CandidateDetail, type Message, type ReviewStatus } from "../lib/api";
-import { AVAILABILITY, FIELD_LABELS, FLAG_LABELS, REASONS, SCHEDULE, ago, experience, initials, interviewTime, parseUtc, shortDate, titleCase, until } from "../lib/format";
+import { AVAILABILITY, FIELD_LABELS, FLAG_LABELS, REASONS, SCHEDULE, ago, experience, initials, interviewTime, parseUtc, shortDate, titleCase, until, zoneText } from "../lib/format";
 import { useCandidate, useNow, useToast } from "../lib/hooks";
 
 const REVIEW: { key: ReviewStatus; label: string }[] = [
@@ -30,7 +30,7 @@ function fieldValue(field: string, d: CandidateDetail["data"]): string {
       return d.license_status === "yes" && d.license_type ? `${status} (${{ car: "car", motorbike: "motorbike", both: "car and motorbike" }[d.license_type]})` : status;
     }
     case "location": return d.in_service_area === false ? `${d.location_raw} (outside area)` : d.city ?? "–";
-    case "zone": return d.zone ?? "–";
+    case "zone": return zoneText(d.zone, d.unlisted_zone) ?? "–";
     case "availability": return d.availability.map((a) => AVAILABILITY[a] ?? a).join(", ") || "–";
     case "schedule": return d.preferred_schedule.map((s) => SCHEDULE[s] ?? s).join(", ") || "–";
     case "experience_years": return experience(d.experience_months);
@@ -334,7 +334,7 @@ export function CandidatePage() {
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-2">
             {row.applied_to && <span className="inline-flex items-center gap-1" title="The job ad applied to (from the application)"><Briefcase className="size-4 text-ink-3" />{row.applied_to}</span>}
-            {row.city && <span className="inline-flex items-center gap-1"><MapPin className="size-4 text-ink-3" />{row.city}{row.zone && ` · ${row.zone}`}</span>}
+            {row.city && <span className="inline-flex items-center gap-1"><MapPin className="size-4 text-ink-3" />{row.city}{zoneText(row.zone, row.unlisted_zone) && ` · ${zoneText(row.zone, row.unlisted_zone)}`}</span>}
             <span className="inline-flex items-center gap-1"><Languages className="size-4 text-ink-3" />{row.language.toUpperCase()}</span>
             <span className="inline-flex items-center gap-1"><MessageCircle className="size-4 text-ink-3" />via {row.channel} · started {ago(row.created_at, now)}</span>
             {row.disqualification_reason && <span className="inline-flex items-center gap-1 text-rose-700 dark:text-rose-300"><X className="size-4" />{REASONS[row.disqualification_reason]}{detail.talent_pool_opt_in !== null && ` · talent pool: ${detail.talent_pool_opt_in ? "yes" : "no"}`}</span>}

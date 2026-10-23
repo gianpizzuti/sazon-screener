@@ -427,3 +427,20 @@
     - "sí, todo bien"
     - "1"
   expect: {stage: qualified}
+
+- id: ex27_neighbourhood_without_a_zone
+  country: ES
+  messages:
+    - "sí"
+    - "Kevin Ramos"
+    - "sí, de moto"
+    - "Madrid"
+    - "yo vivo en Moratalaz"
+    - "Retiro"
+    - "media jornada"
+    - "noches"
+    - "nunca"
+    - "en una semana"
+    - "sí"
+    - "1"
+  expect: {stage: qualified, zone: Retiro}

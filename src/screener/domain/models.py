@@ -126,6 +126,7 @@ class ScreeningData(BaseModel):
     city: str | None = None
     country: str | None = None
     zone: str | None = None
+    unlisted_zone: str | None = None  # a neighbourhood they named that is not one of the city's delivery zones
     in_service_area: bool | None = None
     availability: list[Availability] = Field(default_factory=list)
     preferred_schedule: list[Schedule] = Field(default_factory=list)

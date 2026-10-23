@@ -77,3 +77,12 @@ def test_function_word_second_opinion(text, expected):
     from screener.domain.text import function_word_language
 
     assert function_word_language(text) == expected
+
+
+def test_closest_zones_must_be_real_zones():
+    """A typo in `nearby` would offer a button that matches nothing: the configuration refuses to load."""
+    from screener.config import ServiceArea, Zone
+
+    with pytest.raises(ValueError, match="don't exist"):
+        ServiceArea(id="x", name="X", country="ES", timezone="Europe/Madrid", restaurants=1, aliases=["x"],
+                    zones=[Zone(name="Centro")], nearby={"Usera": ["Carabanchell"]})

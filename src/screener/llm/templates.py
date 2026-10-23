@@ -57,7 +57,8 @@ class TemplateResponder:
         if not d.ask_issue:
             return question
         try:
-            return t(f"issue.{d.ask_issue}", loc, options=", ".join(d.ask_options), question=question)
+            return t(f"issue.{d.ask_issue}", loc, options=", ".join(d.ask_options), question=question,
+                     place=d.unlisted_zone or "", city=d.zone_city or "")
         except KeyError:
             return f"{t('misc.retry_prefix', loc)} {question}"
 

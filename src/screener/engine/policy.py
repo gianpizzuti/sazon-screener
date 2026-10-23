@@ -188,8 +188,13 @@ class ScreeningPolicy:
         directive.ask_field = nxt
         directive.ask_issue = fs.last_error if fs.status == FieldStatus.INVALID else None
         directive.ask_options = list(fs.hint_options)
-        if nxt == FieldName.ZONE and not directive.ask_options and (area := self.cfg.area(state.data.city_id)):
-            directive.ask_options = area.zone_choices()  # tappable: nobody has to know the district names
+        if nxt == FieldName.ZONE and (area := self.cfg.area(state.data.city_id)):
+            if state.data.unlisted_zone:
+                # "Usera" is not a delivery zone: say so, and offer the closest ones (D219, D220)
+                directive.ask_issue, directive.unlisted_zone = "zone_unlisted", state.data.unlisted_zone
+                directive.ask_options = area.closest_zones(state.data.unlisted_zone) or area.zone_choices()
+            elif not directive.ask_options:
+                directive.ask_options = area.zone_choices()  # tappable: nobody has to know the district names
         directive.zone_city = state.data.city
         state.current_field = nxt
         fs.times_asked += 1
@@ -233,6 +238,8 @@ class ScreeningPolicy:
         if intents and intents <= NON_ATTEMPT_INTENTS:
             return  # they asked something / greeted: not a failed answer
         if current in OPTIONAL_FIELDS:
+            if current == FieldName.ZONE and fs.times_asked < 2 and any(e.type == "zone_not_listed" for e in events):
+                return  # they named a neighbourhood we don't deliver to: the closest zones are offered once
             fs.status = FieldStatus.SKIPPED  # an optional question is never repeated
             events.append(Event("field_skipped", {"field": current}))
             return
@@ -587,6 +594,8 @@ class ScreeningPolicy:
                     data.zone = zone
                     self._mark_valid(state, FieldName.ZONE, quote, captured, events)
                     return
+                if self._note_unlisted_zone(state, x, raw, events):
+                    return
         if not solicited and state.field(FieldName.LOCATION).status == FieldStatus.VALID:
             # Another place mentioned in passing does not move a location the candidate already gave.
             events.append(Event("unsolicited_value_ignored", {"field": FieldName.LOCATION, "text": raw}))
@@ -604,12 +613,12 @@ class ScreeningPolicy:
             zone = (
                 self.matcher.zone_in_city(city_id, x.location_zone or raw)
                 or _zone_from_options(fs.hint_options, self.cfg.area(city_id).name)  # "centro" -> "Madrid"
-                or _clean_zone(x.location_zone)
+                or self.matcher.group_in_city(city_id, x.location_zone or raw)      # "Madrid, zona sur"
             )
         if city_id:
             area = self.cfg.area(city_id)
             if data.city_id and data.city_id != area.id:
-                data.zone = None  # new city: the old zone no longer applies
+                data.zone = data.unlisted_zone = None  # new city: the old zone no longer applies
                 state.field(FieldName.ZONE).status = FieldStatus.MISSING
             data.location_raw, data.city_id, data.city = raw, area.id, area.name
             data.country, data.in_service_area = area.country, True
@@ -618,6 +627,8 @@ class ScreeningPolicy:
             if zone:
                 data.zone = zone
                 self._mark_valid(state, FieldName.ZONE, quote, captured, events)
+            else:
+                self._note_unlisted_zone(state, x, raw, events)
             return
         if match.status == "no_match" and x.location_outside_service_area is True:
             if not solicited:
@@ -632,6 +643,22 @@ class ScreeningPolicy:
             fs.last_error = "location_ambiguous" if match.status == "ambiguous" else "location_unknown"
             fs.hint_options = match.options
         events.append(Event("field_invalid", {"field": FieldName.LOCATION, "error": fs.last_error, "text": raw}))
+
+    def _note_unlisted_zone(self, state, x: Extracted, raw: str, events) -> bool:
+        """A neighbourhood of their city that is not one of its delivery zones ("Madrid, Usera"). It is
+        kept for the recruiter and acknowledged when the zone is asked, but never stored as a zone:
+        the zone is where a restaurant can use them. Configured neighbourhoods are found by the rules,
+        others through the model's reading of the zone."""
+        area = self.cfg.area(state.data.city_id)
+        if not area or state.field(FieldName.ZONE).status == FieldStatus.VALID:
+            return False
+        place = area.unlisted_place(raw) or area.unlisted_place(x.location_zone) or _clean_zone(x.location_zone)
+        if not place or normalize(place) in {normalize(n) for n in [area.name, *area.aliases]}:
+            return False
+        if state.data.unlisted_zone != place:
+            state.data.unlisted_zone = place
+            events.append(Event("zone_not_listed", {"place": place, "closest": area.closest_zones(place)}))
+        return True
 
     def _reopen(self, state, group: str, captured, events) -> None:
         """The candidate says a detail is wrong without giving the new value: ask it again."""

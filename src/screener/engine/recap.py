@@ -45,8 +45,8 @@ def render_recap(state: ConversationState, copy: Copy, today: date, updated: boo
             license_value += f" ({copy.text(f'values.license_type.{d.license_type.value}', loc)})"
 
     place = d.city
-    if place and d.zone:
-        place = f"{d.city} ({d.zone})"
+    if place and (d.zone or d.unlisted_zone):
+        place = f"{d.city} ({d.zone or d.unlisted_zone})"  # what they said, even if it isn't a delivery zone
 
     availability = ", ".join(copy.text(f"values.availability.{a.value}", loc) for a in d.availability)
     schedule = ", ".join(copy.text(f"values.schedule.{s.value}", loc) for s in d.preferred_schedule)

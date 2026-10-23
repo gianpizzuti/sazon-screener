@@ -6,47 +6,47 @@
   `[¡Empezamos! | Tengo una pregunta]`
 - *Candidate:* antes de nada, ¿cuánto se paga?  
   <sub>question · faq=pay · events: question_answered, stage_changed</sub>
-- **Sofía:** Buena pregunta. Es un contrato laboral con Grupo Sazón, no como autónomo, con el salario del convenio de hostelería de tu provincia más propinas. El importe exacto según horas te lo confirma el equipo en la entrevista. ¿Cómo te llamas? Nombre y apellido, por favor.
+- **Sofía:** Claro: es un contrato laboral con Grupo Sazón, no como autónomo, con el salario del convenio de hostelería de tu provincia más propinas. El importe exacto según horas te lo confirma el equipo en la entrevista. ¿Cómo te llamas? Nombre y apellido, por favor.
 - *Candidate:* vale. Soy Elena Castro  
   <sub>provide_info · {"full_name": "Elena Castro"} · events: field_valid</sub>
-- **Sofía:** Encantada, Elena. ¿Tienes carnet de conducir en vigor (coche o moto)?  
+- **Sofía:** Encantada, Elena. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?  
   `[Sí | No]`
 - *Candidate:* sí tengo carnet. ¿Hace falta moto propia?  
-  <sub>provide_info, affirm, question · {"drivers_license": "yes"} · faq=vehicle · events: question_answered, field_valid</sub>
-- **Sofía:** Genial, con carnet ya tenemos buen punto de partida. Puedes repartir con tu propia moto o coche, y en algunos restaurantes hay motos de la empresa; el equipo te confirma según tu zona. Eso sí, hace falta vehículo a motor. ¿Tu carnet es de coche, de moto o de ambos?  
+  <sub>provide_info, question · {"drivers_license": "yes"} · faq=vehicle · events: question_answered, field_valid</sub>
+- **Sofía:** Perfecto, con carnet ya vamos bien. No hace falta que tengas moto propia: puedes repartir con tu moto o coche, y en algunos restaurantes hay motos de la empresa; el equipo te lo confirma según tu zona. Eso sí, tiene que ser vehículo a motor, no bici ni patinete. ¿Tu carnet es de coche, de moto o de ambos?  
   `[Coche | Moto | Los dos]`
 - *Candidate:* de coche  
   <sub>provide_info · {"license_type": "car"} · events: field_valid, field_refined</sub>
 - **Sofía:** Perfecto, carnet de coche anotado. ¿En qué ciudad y zona te gustaría repartir?
 - *Candidate:* Madrid  
   <sub>provide_info · {"location_text": "Madrid", "location_city_id": "madrid", "location_outside_service_area": false} · events: field_valid</sub>
-- **Sofía:** Madrid, genial. ¿Y en qué zona o barrio? Es opcional, pero nos ayuda a asignarte el restaurante más cercano. Puedes tocar una de las opciones o escribir tu barrio.  
+- **Sofía:** Genial, Madrid entonces. ¿Y en qué zona o barrio? Así podemos buscarte el restaurante más cercano. Puedes tocar una de las opciones de abajo o escribirme tu barrio.  
   `[Centro | Norte | Sur | Este | Cualquier zona]`
 - *Candidate:* ¿qué zonas hay?  
   <sub>question · faq=zones · events: question_answered</sub>
-- **Sofía:** En Madrid repartimos por el centro (Chamberí, Salamanca, Retiro...), el norte (Chamartín, Tetuán, Alcobendas), el sur (Carabanchel, Getafe, Leganés) y el este (Vallecas, Ciudad Lineal). ¿Cuál te viene mejor? Toca una opción o escribe tu barrio, así te asignamos el restaurante más cercano.  
+- **Sofía:** Repartimos por todo Madrid: centro, norte, sur y este, con barrios como Chamberí, Salamanca, Chamartín, Carabanchel o Ciudad Lineal, y también Alcobendas, Getafe y Leganés. ¿En qué zona o barrio te viene mejor? Puedes tocar una opción o escribirme tu barrio, y si te da igual, dime "cualquier zona".  
   `[Centro | Norte | Sur | Este | Cualquier zona]`
 - *Candidate:* Norte  
-  <sub>provide_info · {"location_text": "Norte", "location_city_id": "madrid"} · events: field_valid</sub>
-- **Sofía:** Norte, anotado. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?  
+  <sub>provide_info · {"location_text": "Norte", "location_city_id": "madrid", "location_zone": "Norte"} · events: field_valid</sub>
+- **Sofía:** Perfecto, zona norte. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?  
   `[Jornada completa | Media jornada | Fines de semana]`
 - *Candidate:* ¿es contrato o autónomo?  
   <sub>question · faq=contract · events: question_answered</sub>
-- **Sofía:** Trabajas como empleado/a de Grupo Sazón, con contrato laboral y alta en la Seguridad Social, sin necesidad de darte de alta como autónomo. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?  
+- **Sofía:** Eres empleado/a de Grupo Sazón, con contrato laboral y alta en la Seguridad Social. No necesitas darte de alta como autónomo. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?  
   `[Jornada completa | Media jornada | Fines de semana]`
 - *Candidate:* media jornada  
   <sub>provide_info · {"availability": ["part_time"]} · events: field_valid</sub>
-- **Sofía:** Media jornada, anotado. ¿Qué turno prefieres: mañana, tarde, noche o flexible?  
+- **Sofía:** Perfecto, media jornada anotada. ¿Qué turno prefieres: mañana, tarde, noche o flexible?  
   `[Mañana | Tarde | Noche | Flexible]`
 - *Candidate:* tarde  
   <sub>provide_info · {"schedule": ["afternoon"]} · events: field_valid</sub>
-- **Sofía:** Turno de tarde, anotado. ¿Tienes experiencia repartiendo? Si es así, cuéntame cuánto tiempo y en qué plataformas.
+- **Sofía:** Perfecto, turno de tarde. ¿Tienes experiencia repartiendo? Si es así, cuéntame cuánto tiempo y en qué plataformas.
 - *Candidate:* un año en Glovo  
   <sub>provide_info · {"experience_months": 12, "experience_platforms": ["Glovo"]} · events: field_valid, field_valid</sub>
-- **Sofía:** Un año en Glovo, estupendo. ¿Cuándo podrías empezar?
+- **Sofía:** Genial, un año repartiendo con Glovo es una buena base. ¿Cuándo podrías empezar?
 - *Candidate:* ¿cuándo se cobra, a final de mes?  
   <sub>question · faq=payday · events: question_answered</sub>
-- **Sofía:** Se cobra por nómina mensual, con transferencia a tu cuenta. Si tienes dudas sobre la fecha exacta del ingreso, el equipo de selección te la confirmará. ¿Cuándo podrías empezar?
+- **Sofía:** Se cobra por nómina mensual, mediante transferencia a tu cuenta. El día exacto de ingreso te lo confirma el equipo de selección. ¿Cuándo podrías empezar?
 - *Candidate:* el lunes que viene  
   <sub>provide_info · {"start_date": {"kind": "next_weekday", "amount": null, "weekday": 0, "exact_date": null}} · events: field_valid, stage_changed</sub>
 - **Sofía:** Antes de terminar, revisa tus datos:
@@ -76,7 +76,7 @@
   `[Sí, todo correcto | Quiero corregir algo]`
 - *Candidate:* vale, sí, todo correcto  
   <sub>affirm · events: stage_changed, completed, interview_offered</sub>
-- **Sofía:** Genial, Elena, tus datos cumplen los requisitos para pasar a la entrevista. Puedes elegir ahora mismo el horario que mejor te venga: te envío las opciones justo después de este mensaje. ¡Gracias por tu tiempo!
+- **Sofía:** Genial, Elena: cumples los requisitos para pasar a la entrevista. Ahora mismo puedes elegir el horario que mejor te venga entre las opciones que te envío justo después de este mensaje. ¡Gracias por tu tiempo y mucha suerte!
 - **Sofía:** Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):
 1) miércoles 21/10 a las 16:00
 2) jueves 22/10 a las 16:00

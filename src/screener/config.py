@@ -10,7 +10,9 @@ from pathlib import Path
 from typing import ClassVar, Literal
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+from screener.domain.text import contains_phrase, normalize
 
 Country = Literal["ES", "MX"]
 Language = Literal["es", "en"]
@@ -31,8 +33,26 @@ class ServiceArea(BaseModel):
     aliases: list[str]
     zones: list[Zone] = Field(default_factory=list)
     interview_place: str | None = None  # where qualified candidates are interviewed
+    # Neighbourhoods with no delivery zone of their own -> the closest zones, suggested instead
+    nearby: dict[str, list[str]] = Field(default_factory=dict)
 
     MAX_ZONE_BUTTONS: ClassVar[int] = 6  # beyond this, offer parts of the city instead of every zone
+
+    @model_validator(mode="after")
+    def _nearby_names_real_zones(self) -> ServiceArea:
+        names = {z.name for z in self.zones}
+        if unknown := {z for zones in self.nearby.values() for z in zones} - names:
+            raise ValueError(f"{self.id}: 'nearby' lists zones that don't exist: {sorted(unknown)}")
+        return self
+
+    def unlisted_place(self, text: str | None) -> str | None:
+        """A neighbourhood of `nearby` named in `text` ("Madrid, Usera" -> "Usera")."""
+        norm = normalize(text or "")
+        return next((place for place in self.nearby if contains_phrase(norm, place)), None)
+
+    def closest_zones(self, place: str | None) -> list[str]:
+        key = self.unlisted_place(place)
+        return list(self.nearby[key]) if key else []
 
     def zone_choices(self) -> list[str]:
         """What the candidate can tap when asked for the zone: the zones themselves, or for a

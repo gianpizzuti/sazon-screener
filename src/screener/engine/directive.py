@@ -57,6 +57,7 @@ class Directive(BaseModel):
     ask_issue: str | None = None
     ask_options: list[str] = Field(default_factory=list)
     zone_city: str | None = None
+    unlisted_zone: str | None = None  # the zone question follows a neighbourhood that isn't a delivery zone
     remaining_questions: int = 0
     unchanged: list[str] = Field(default_factory=list)  # restated values at the recap
     recap_updated: bool = False  # the recap follows a correction: its title says so

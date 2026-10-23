@@ -86,6 +86,30 @@ def test_recap_shows_months_exactly(make_engine, config):
     assert "8 meses (Glovo)" in render_recap(state, config.copy_, TODAY)
 
 
+def test_recap_keeps_a_neighbourhood_that_is_not_a_delivery_zone(config):
+    from screener.domain.models import ConversationState
+    from screener.engine.recap import render_recap
+    from conftest import TODAY
+
+    state = ConversationState(id="r", client_id="x", channel="t")
+    state.data.city, state.data.unlisted_zone = "Madrid", "Usera"
+    assert "Madrid (Usera)" in render_recap(state, config.copy_, TODAY)
+
+
+def test_the_closest_zones_are_the_buttons(make_engine):
+    from conftest import analysis
+
+    engine = make_engine([analysis("sí", intents=("affirm",)), analysis("Ana López", full_name="Ana López"),
+                          analysis("sí, de coche", drivers_license="yes", license_type="car"),
+                          analysis("Madrid, Usera", location_text="Madrid, Usera", location_city_id="madrid")])
+    cid = engine.start().conversation_id
+    for text in ("sí", "Ana López", "sí, de coche"):
+        engine.handle(cid, text)
+    result = engine.handle(cid, "Madrid, Usera")
+    assert result.messages[-1].quick_replies == ["Arganzuela", "Carabanchel", "Puente de Vallecas", "Cualquier zona"]
+    assert "Usera no está entre nuestras zonas" in result.messages[-1].text  # template wording in tests
+
+
 def test_recap_says_tomorrow_next_to_tomorrows_date(config):
     from datetime import timedelta
 

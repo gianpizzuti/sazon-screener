@@ -24,7 +24,7 @@ make install                 # Python package + builds the web app
 cp .env.example .env         # then set ANTHROPIC_API_KEY in .env
 make run                     # recruiter web app + API on http://localhost:8000 (API docs at /docs)
                              # the first start downloads the embedding model (≈ 240 MB, once) into data/models
-make test                    # offline, no API key: 184 tests of the product + 246 checks of the eval datasets
+make test                    # offline, no API key: 193 tests of the product + 246 checks of the eval datasets
 ```
 
 Optional:

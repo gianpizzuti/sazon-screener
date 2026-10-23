@@ -86,6 +86,9 @@ issue:
   location_unknown:
     es: "No he reconocido el lugar. ¿En qué ciudad sería?"
     en: "I didn't recognise that place. Which city would it be?"
+  zone_unlisted:
+    es: "{place} no está entre nuestras zonas de reparto en {city}. ¿Te viene bien alguna de estas: {options}?"
+    en: "{place} isn't one of our delivery areas in {city}. Would any of these work for you: {options}?"
   availability_contradiction:
     es: "¿Prefieres jornada completa o media jornada? Los fines de semana se pueden sumar a cualquiera de las dos."
     es-MX: "¿Prefieres tiempo completo o medio tiempo? Los fines de semana se pueden sumar a cualquiera de los dos."

@@ -150,6 +150,50 @@ class TestZoneChoice:
         assert "Chamberí" in d.answer.answer and "Norte:" in d.answer.answer and d.ask_field == FieldName.ZONE
 
 
+class TestNeighbourhoodWithoutAZone:
+    """Found in exploratory testing (ex26): "Madrid, Usera" lost Usera, and the recap said only "Madrid"."""
+
+    def test_it_is_kept_apart_and_the_closest_zones_are_offered(self, policy, state):
+        to_location(policy, state)
+        d, events = say(policy, state, "Madrid, Usera", location_text="Madrid, Usera", location_city_id="madrid")
+        assert (state.data.city_id, state.data.zone, state.data.unlisted_zone) == ("madrid", None, "Usera")
+        assert (d.ask_field, d.ask_issue, d.unlisted_zone) == (FieldName.ZONE, "zone_unlisted", "Usera")
+        assert d.ask_options == ["Arganzuela", "Carabanchel", "Puente de Vallecas"] and "zone_not_listed" in events
+        d, _ = say(policy, state, "Carabanchel", intents=("provide_info",))  # a tapped button
+        assert state.data.zone == "Carabanchel" and d.ask_field == FieldName.AVAILABILITY
+
+    def test_found_by_the_rules_even_if_the_model_reads_no_zone(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid, Usera", location_text="Madrid, Usera")  # no location_zone from the model
+        assert state.data.unlisted_zone == "Usera"
+
+    def test_given_as_the_answer_to_the_zone_question_it_earns_one_more_question(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid", location_text="Madrid")
+        d, _ = say(policy, state, "vivo en Usera", location_text="Usera", location_city_id="madrid", location_zone="Usera")
+        assert state.data.zone is None and (d.ask_field, d.ask_options[0]) == (FieldName.ZONE, "Arganzuela")
+        d, _ = say(policy, state, "media jornada", availability=["part_time"])  # not answered again: skipped, no loop
+        assert state.field(FieldName.ZONE).status == FieldStatus.SKIPPED and d.ask_field == FieldName.SCHEDULE
+        assert state.data.unlisted_zone == "Usera"  # still there for the recruiter
+
+    def test_one_not_in_the_configuration_gets_the_usual_buttons(self, policy, state):
+        to_location(policy, state)
+        d, _ = say(policy, state, "Madrid, Prosperidad", location_text="Madrid, Prosperidad", location_zone="Prosperidad")
+        assert (state.data.zone, state.data.unlisted_zone) == (None, "Prosperidad")
+        assert d.ask_issue == "zone_unlisted" and d.ask_options == ["Centro", "Norte", "Sur", "Este"]
+
+    def test_a_barrio_that_belongs_to_a_zone_is_still_that_zone(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid, La Latina", location_text="Madrid, La Latina", location_zone="La Latina")
+        assert (state.data.zone, state.data.unlisted_zone) == ("Centro", None)  # "La Latina" (barrio) is not "Latina" (district)
+
+    def test_a_new_city_forgets_the_old_neighbourhood(self, policy, state):
+        to_location(policy, state)
+        say(policy, state, "Madrid, Usera", location_text="Madrid, Usera")
+        say(policy, state, "perdona, mejor Valencia", intents=("correction",), location_text="Valencia")
+        assert (state.data.city_id, state.data.unlisted_zone) == ("valencia", None)
+
+
 class TestFoundInExploratoryTesting:
     """Each case comes from evals/exploratory.yaml (real models, scripted like a person testing)."""
 
@@ -255,7 +299,8 @@ class TestKnockouts:
     def test_place_the_rules_dont_know_is_accepted_if_the_model_maps_it_to_a_city(self, policy, state):
         to_screening(policy, state)
         say(policy, state, "Pueblo Nuevo", location_text="Pueblo Nuevo", location_city_id="madrid", location_zone="Pueblo Nuevo")
-        assert (state.data.city_id, state.data.zone) == ("madrid", "Pueblo Nuevo")
+        # the city is accepted; the neighbourhood is not one of Madrid's delivery zones, so it is kept apart (D219)
+        assert (state.data.city_id, state.data.zone, state.data.unlisted_zone) == ("madrid", None, "Pueblo Nuevo")
 
     def test_a_model_city_outside_the_config_is_ignored(self, policy, state):
         to_location(policy, state)

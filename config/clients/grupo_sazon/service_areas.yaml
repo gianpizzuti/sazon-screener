@@ -3,6 +3,9 @@
 # Values are illustrative: the real list comes from the client (see docs/process-design.md §8).
 # interview_place: where qualified candidates are interviewed (one restaurant per city, to confirm).
 # group: part of the city, offered as buttons when a city has many zones (to confirm with the client).
+# nearby: districts with no delivery zone of their own -> the closest zones, offered instead when a
+#   candidate names one ("Madrid, Usera"). Real adjacency, but which restaurant can take them is the
+#   client's call (to confirm). A district missing here still works: the usual zone buttons are shown.
 
 service_areas:
   # ---------------- Spain ----------------
@@ -27,6 +30,18 @@ service_areas:
       - {name: Getafe, aliases: [getafe], group: Sur}
       - {name: Leganés, aliases: [leganés, leganes], group: Sur}
       - {name: Alcobendas, aliases: [alcobendas], group: Norte}
+    nearby:
+      Usera: [Arganzuela, Carabanchel, Puente de Vallecas]
+      Latina: [Carabanchel, Arganzuela, Centro]   # the district; "La Latina" is a barrio of Centro
+      Villaverde: [Carabanchel, Getafe, Leganés]
+      Moncloa: [Chamberí, Centro, Tetuán]
+      Fuencarral: [Tetuán, Chamartín, Alcobendas]
+      Hortaleza: [Chamartín, Ciudad Lineal, Alcobendas]
+      Moratalaz: [Puente de Vallecas, Retiro, Ciudad Lineal]
+      San Blas: [Ciudad Lineal]
+      Villa de Vallecas: [Puente de Vallecas]
+      Vicálvaro: [Puente de Vallecas, Ciudad Lineal]
+      Barajas: [Ciudad Lineal, Alcobendas]
 
   - id: barcelona
     name: Barcelona
@@ -44,6 +59,13 @@ service_areas:
       - {name: Nou Barris, aliases: [nou barris], group: Norte}
       - {name: L'Hospitalet, aliases: [hospitalet, l'hospitalet], group: Oeste}
       - {name: Badalona, aliases: [badalona], group: Este}
+    nearby:
+      Les Corts: [Sants-Montjuïc, Eixample]
+      Sarrià: [Gràcia, Eixample]
+      Sant Gervasi: [Gràcia, Eixample]
+      Horta: [Gràcia, Nou Barris]
+      Guinardó: [Gràcia, Nou Barris]
+      Sant Andreu: [Nou Barris, Sant Martí]
 
   - id: valencia
     name: Valencia

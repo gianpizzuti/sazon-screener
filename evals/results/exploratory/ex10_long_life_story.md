@@ -6,7 +6,7 @@
   `[¡Empezamos! | Tengo una pregunta]`
 - *Candidate:* sí claro  
   <sub>affirm · events: stage_changed</sub>
-- **Sofía:** Genial, vamos allá. ¿Cómo te llamas? Nombre y apellido, por favor.
+- **Sofía:** Genial, vamos con la primera. ¿Cómo te llamas? Nombre y apellido, por favor.
 - *Candidate:* Hola Sofía, te cuento un poco: me llamo Beatriz Molina Ruiz, tengo 27 años y vivo en Madrid, en Lavapiés, desde hace tres años. Tengo el carnet de coche desde los 18 y también el de moto. Antes trabajé dos años de camarera y luego año y medio repartiendo con Glovo, que lo dejé porque me cambiaron las zonas. Ahora busco algo de media jornada, preferiblemente por las tardes, y podría empezar el lunes que viene.  
   <sub>provide_info · {"full_name": "Beatriz Molina Ruiz", "drivers_license": "yes", "license_type": "both", "location_text": "Madrid, en Lavapiés", "location_city_id": "madrid", "location_zone": "Lavapiés", "location_outside_service_area": false, "availability": ["part_time"], "schedule": ["afternoon"], "experience_months": 18, "experience_platforms": ["Glovo"], "start_date": {"kind": "next_weekday", "amount": null, "weekday": 0, "exact_date": null}} · events: field_valid, field_valid, field_valid, field_valid, field_valid, field_valid, field_valid, field_valid, field_valid, stage_changed</sub>
 - **Sofía:** Antes de terminar, revisa tus datos:
@@ -22,7 +22,7 @@
   `[Sí, todo correcto | Quiero corregir algo]`
 - *Candidate:* sí, todo correcto  
   <sub>affirm · events: stage_changed, completed, interview_offered</sub>
-- **Sofía:** ¡Perfecto, Beatriz! Con lo que me has contado, cumples los requisitos para pasar a la entrevista. Ahora mismo puedes elegir el horario que mejor te venga: te mando las opciones justo después de este mensaje.
+- **Sofía:** Perfecto, Beatriz, gracias por tus respuestas. Cumples los requisitos para pasar a la entrevista, y ahora mismo puedes elegir el horario que mejor te venga: te envío las opciones justo después de este mensaje. 😊
 - **Sofía:** Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):
 1) miércoles 21/10 a las 16:00
 2) jueves 22/10 a las 16:00

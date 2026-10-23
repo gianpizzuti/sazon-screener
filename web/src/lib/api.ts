@@ -21,6 +21,7 @@ export interface CandidateRow {
   name: string | null;
   city: string | null;
   zone: string | null;
+  unlisted_zone: string | null;
   country: string | null;
   availability: string[];
   schedule: string[];
@@ -54,6 +55,7 @@ export interface ScreeningData {
   city: string | null;
   country: string | null;
   zone: string | null;
+  unlisted_zone: string | null;
   in_service_area: boolean | null;
   availability: string[];
   preferred_schedule: string[];

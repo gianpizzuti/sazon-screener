@@ -39,6 +39,7 @@ class CandidateRow(BaseModel):
     name: str | None
     city: str | None
     zone: str | None
+    unlisted_zone: str | None  # a neighbourhood they named that is not a delivery zone
     country: str | None
     availability: list[str]
     schedule: list[str]
@@ -118,6 +119,7 @@ def build_row(state: ConversationState, summary: dict | None, review: dict, now:
         name=d.full_name,
         city=d.city or d.location_raw,
         zone=d.zone,
+        unlisted_zone=d.unlisted_zone,
         country=d.country,
         availability=[a.value for a in d.availability],
         schedule=[s.value for s in d.preferred_schedule],

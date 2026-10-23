@@ -29,6 +29,11 @@ export const FLAG_LABELS: Record<string, string> = {
   scheduling_needed: "Needs an interview time",
 };
 
+/** The delivery zone, or the neighbourhood they named when it isn't one (Sofía offered the closest zones). */
+export function zoneText(zone: string | null, unlisted: string | null): string | null {
+  return zone ?? (unlisted ? `${unlisted} (not a delivery zone)` : null);
+}
+
 export function initials(name: string | null): string {
   if (!name) return "?";
   return name.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");

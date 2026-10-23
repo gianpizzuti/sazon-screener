@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { CountUp } from "../components/charts";
 import { Chip, EmptyState, ErrorState, PageHeader, REVIEW_LABELS, ReviewBadge, Skeleton, StatusBadge, STATUS_ORDER, statusMeta } from "../components/ui";
 import type { CandidateRow, ReviewStatus, Status } from "../lib/api";
-import { AVAILABILITY, FLAG_LABELS, SCHEDULE, ago, experience, initials, interviewTime, shortDate, until } from "../lib/format";
+import { AVAILABILITY, FLAG_LABELS, SCHEDULE, ago, experience, initials, interviewTime, shortDate, until, zoneText } from "../lib/format";
 import { useCandidates, useNow } from "../lib/hooks";
 
 type Filter = "action" | "all" | Status | `review:${ReviewStatus}`;
@@ -78,7 +78,7 @@ function Row({ row, index, now, onOpen }: { row: CandidateRow; index: number; no
         {row.city ? (
           <div className="flex items-start gap-1.5">
             <MapPin className="mt-0.5 size-3.5 shrink-0 text-ink-3" aria-hidden />
-            <div className="leading-tight"><div className="whitespace-nowrap text-ink">{row.city}</div>{row.zone && <div className="text-xs text-ink-3">{row.zone}</div>}</div>
+            <div className="leading-tight"><div className="whitespace-nowrap text-ink">{row.city}</div>{zoneText(row.zone, row.unlisted_zone) && <div className="text-xs text-ink-3">{zoneText(row.zone, row.unlisted_zone)}</div>}</div>
           </div>
         ) : <span className="text-ink-3">–</span>}
       </td>

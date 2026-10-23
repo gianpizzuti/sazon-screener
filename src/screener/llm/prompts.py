@@ -34,6 +34,8 @@ ISSUE_HINTS: dict[str, str] = {
     "name_invalid": "That didn't look like a name. Ask again for their full name.",
     "location_ambiguous": "The place they gave is ambiguous. Ask which one they mean, offering these options: {options}.",
     "location_unknown": "We couldn't identify the place. Ask for the name of the city.",
+    "zone_unlisted": "They named \"{place}\", which is not one of our delivery zones in {city}. Say so in a few words"
+    " (no long apology), then ask which of these suits them instead: {options}. They are shown as buttons, with 'any area'.",
     "availability_contradiction": "They said both full-time and part-time. Ask which of the two (weekends can be added to either).",
     "availability_unclear": "Their availability wasn't clear. Offer the options: full-time, part-time, weekends.",
     "schedule_unclear": "Their preferred shift wasn't clear. Offer the options: morning, afternoon, evening, flexible.",
@@ -113,7 +115,8 @@ are not their location.
 - location_city_id: the id of the service city below if the place is that city or clearly inside it \
 (a district, neighbourhood or landmark of that city). Otherwise null. Nearby towns that are not \
 listed as zones are NOT inside.
-- location_zone: the zone or neighbourhood, if they name one.
+- location_zone: the zone or neighbourhood they name, as written, even if it is not one of the zones \
+listed for that city (the rules check it).
 - location_outside_service_area: true only if you are confident the place is not in any service \
 city (another city, region or country); false if it is in one; null if unsure.
 - availability: list of full_time ("jornada completa", "tiempo completo"), part_time ("media \
@@ -283,7 +286,8 @@ def render_directive(d: Directive, cfg: ClientConfig, feedback: str | None = Non
             step = f"Ask for {description}."
             if d.ask_issue:
                 hint = ISSUE_HINTS.get(d.ask_issue, ISSUE_HINTS["no_answer"])
-                step += " " + hint.format(options=" / ".join(d.ask_options) or "the possible places")
+                step += " " + hint.format(options=" / ".join(d.ask_options) or "the possible places",
+                                          place=d.unlisted_zone or "", city=d.zone_city or "their city")
             steps.append(step)
             if d.ask_field == FieldName.ZONE and d.ask_options and not d.ask_issue:
                 steps.append(f"Buttons with these options are shown under your message: {', '.join(d.ask_options)}, and 'any area'. "
