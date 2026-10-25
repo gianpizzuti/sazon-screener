@@ -1,6 +1,25 @@
 # Decision log
 
-Every decision taken while building the agent, large or small (238 so far), with the reason and the alternative that was rejected. The big ones have a full ADR (linked). This is a living document, updated with every decision.
+## Start here: the ten decisions that matter
+
+These are the decisions that shape the product, each with the trade-off it accepts. The full record below exists for traceability and does not need to be read.
+
+| # | Decision | Trade-off accepted | Record |
+|---|---|---|---|
+| 1 | **The code decides; the language model only reads and writes.** Eligibility, knock-outs and the order of questions are deterministic rules; no model output can approve a candidate | More code to write than a free-form agent, in exchange for decisions that are auditable, testable and immune to prompt injection, as required for high-risk recruitment AI | [ADR 0001](0001-code-decides-llm-understands.md) |
+| 2 | **Chat first, knock-outs first.** Candidates answer asynchronously when it suits them; licence and location are asked right after the name | The opening is more direct than a natural conversation; an ineligible candidate learns the outcome in one minute instead of five | D01, D02 |
+| 3 | **One model per task, chosen by measurement.** Haiku reads each message, Sonnet writes the reply, Opus writes the recruiter summary | Three models to operate instead of one. The extraction eval showed Haiku close to Opus at about 28× lower cost, with its remaining errors caught by code | [ADR 0002](0002-llm-per-task.md) |
+| 4 | **Every extracted value must quote the candidate's own words**, and code checks that the quote is in the message | A correct value the model cannot quote is discarded and asked again: an extra question rather than an invented value | [ADR 0005](0005-grounding-and-layered-validation.md) |
+| 5 | **A knock-out needs a direct answer** to its own question, the recap or an explicit correction; a place mentioned in passing cannot disqualify | Occasionally one more question, because a wrongful rejection is the most costly error the system can make | D142 |
+| 6 | **Templates where precision matters**: greeting, recap, reminders and interview times are fixed text; the model writes the rest | Less natural wording in those messages, in exchange for exact data and compliance with WhatsApp's template rules; templates are also the fallback when a model fails | [ADR 0006](0006-templates-where-precision-matters.md) |
+| 7 | **Client specifics are configuration**: service areas, knowledge base, licence rules, interview calendar, wording and voices | The screening schema stays in code; a new client is a new folder, and Grupo Sazón can change its rules without a deployment | [ADR 0003](0003-config-driven-client.md) |
+| 8 | **Answers come only from approved text**: local embeddings find the closest topics, the model picks one or none, code inserts the approved answer | Some answerable questions get "the team will confirm" (precision over recall); in exchange, pay and benefits are never invented | [ADR 0010](0010-knowledge-base-retrieval.md) |
+| 9 | **API first: every channel is a client of the same engine**, including the recruiter app and the voice channel | An API layer to maintain from day one, in exchange for one place for the logic and channels (WhatsApp, voice, an ATS) added without touching it | [ADR 0008](0008-api-first-recruiter-tool.md), [ADR 0011](0011-voice-channel.md) |
+| 10 | **Measure, then change**: labelled extraction cases, simulated candidates with a calibrated judge, exploratory conversations and a volume test at 10,000 screenings | Time and model cost spent on evaluation instead of features; in exchange, real problems were found and fixed (wrongful rejections, a recap loop, a double-booking race) and the scaling limit was measured, not assumed | [Evals](../../evals/README.md) |
+
+## The full record
+
+Every decision taken while building the agent, with the reason and the alternative that was rejected, grouped by topic and in the order they were made. The important ones have a full ADR (linked).
 
 ## Product and conversation design
 

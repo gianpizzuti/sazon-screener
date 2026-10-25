@@ -11,7 +11,7 @@ The client has two different problems, and the design addresses each one separat
 
 **Demo video (5 min):** _link added at submission_
 
-**[Process design](docs/process-design.md)** (Phase 1, two pages, with an [appendix](docs/process-design-appendix.md)) · **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · **[Sample conversations](samples/README.md)**
+**[Process design](docs/process-design.md)** (Phase 1, two pages, with an [appendix](docs/process-design-appendix.md)) · **[Decision log](docs/decisions/decision-log.md)** (the ten decisions that matter, then the full record) · **[ADRs](docs/decisions/README.md)** (deep-dives) · **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · **[Sample conversations](samples/README.md)**
 
 Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** with its **[API spec](docs/design/ats-api.yaml)** (OpenAPI 3.1) · **[Deployment and scaling](docs/design/deployment-and-scaling.md)** (from one process to 10,000 applications/week) · **[Licences issued abroad](docs/design/foreign-licences.md)** (research behind the rules, with sources)
 
