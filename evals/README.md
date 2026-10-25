@@ -34,7 +34,7 @@ python -m evals.conversations --only p08 --no-judge       # one persona, no judg
 | Latency p50 | 1.6 s |
 | Cost per 1,000 messages | ≈ $0.25 |
 
-Opus 5.5 scores higher on its own (111/112 cases against Haiku's 107/112 on the same dataset), but it costs about 40× more and every remaining Haiku error is caught by a code layer. That is why production keeps Haiku (D146).
+Opus 5.5 scores higher on its own (111/112 cases against Haiku's 107/112 on the same dataset), but it costs about 28× more ($7.05 vs $0.25 per 1,000 messages) and every remaining Haiku error is caught by a code layer. That is why production keeps Haiku (D146).
 
 **Knowledge-base retrieval (30 topics, 127 held-out questions, ADR 0010):**
 
