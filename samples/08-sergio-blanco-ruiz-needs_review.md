@@ -1,6 +1,6 @@
 # Sergio Blanco Ruiz · ⚠️ Needs review
 
-**Language:** ES · **Candidate messages:** 10 · **City:** Valencia
+**Channel:** web · **Language:** ES · **Candidate messages:** 10 · **City:** Valencia
 
 **What this conversation shows:** the candidate sends off-script messages (non-answers or attempts to steer the agent): no effect on the outcome; stays unclear after two attempts: flagged, the conversation moves on.
 
@@ -13,25 +13,25 @@
 > hola, sí
 
 🛵 **Sofía**
-> ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
+> Perfecto, empezamos. ¿Cómo te llamas? Nombre y apellido, por favor.
 
 🙂 **Candidate**
 > Sergio Blanco Ruiz
 
 🛵 **Sofía**
-> Gracias, Sergio. Siguiente pregunta: ¿tienes licencia de conducir en vigor, ya sea de auto o de moto?
+> Encantada, Sergio. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
 🙂 **Candidate**
 > más o menos
 
 🛵 **Sofía**
-> Para dejarlo claro: ¿tienes ahora mismo una licencia de conducir vigente, es decir, que no esté vencida? Puedes responder "sí, de auto", "sí, de moto", "sí, de las dos" o "no".
+> Sin problema. Para entenderlo mejor: ¿tienes un carnet de conducir que esté vigente hoy, de coche o de moto? Puedes decirme "sí, lo tengo", "no tengo" o contarme tu caso con tus palabras.
 
 🙂 **Candidate**
 > bueno, depende del día
 
 🛵 **Sofía**
-> Sin problema, lo anotamos así por ahora. Cambiemos de tema: ¿en qué ciudad y zona te gustaría repartir? Por ejemplo: "Madrid, zona centro" o "Guadalajara, zona sur".
+> Entendido, gracias por contarme. Pasemos a otra cosa: ¿en qué ciudad y zona te gustaría repartir?
 
 🙂 **Candidate**
 > Valencia, Ruzafa
@@ -43,19 +43,19 @@
 > media jornada
 
 🛵 **Sofía**
-> Media jornada, anotado. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
+> Perfecto, media jornada. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
 🙂 **Candidate**
 > mañanas
 
 🛵 **Sofía**
-> Mañanas, perfecto. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
+> Anotado, turno de mañanas. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
 🙂 **Candidate**
 > un año en Uber Eats
 
 🛵 **Sofía**
-> Un año en Uber Eats, estupendo. ¿Cuándo podrías empezar?
+> Genial, un año repartiendo con Uber Eats es una buena experiencia. ¿Cuándo podrías empezar?
 
 🙂 **Candidate**
 > el 2 de noviembre
@@ -76,7 +76,7 @@
 > sí
 
 🛵 **Sofía**
-> Gracias por tu tiempo, Sergio. Un reclutador revisará tus respuestas y se pondrá en contacto contigo pronto. ¡Que tengas un buen día! 😊
+> Gracias por tu tiempo, Sergio. Alguien del equipo de selección revisará tus respuestas y se pondrá en contacto contigo pronto. ¡Hasta pronto!
 
 ## Structured data
 
@@ -107,12 +107,12 @@
 
 ## Recruiter summary (generated after the conversation)
 
-**Sergio Blanco Ruiz · Valencia (Ruzafa) · Media jornada, turno de mañana · 1 año en Uber Eats · Inicio 02/11/2026**
+**Sergio Blanco Ruiz · Valencia (Ruzafa) · Media jornada, mañanas · 1 año de experiencia (Uber Eats) · Inicio 02/11/2026**
 
-Perfil dentro de zona de servicio, con media jornada de mañana y un año de experiencia en Uber Eats. La licencia de conducir quedó sin confirmar: respondió "más o menos" y "depende del día" incluso tras pedirle una respuesta concreta. El resto de datos es claro y fue confirmado al final de la conversación.
+Perfil con experiencia en reparto (1 año en Uber Eats), dentro de zona de servicio y disponible a media jornada en turno de mañana. El estado del carnet de conducir no quedó claro: respondió "más o menos" y "depende del día" sin concretar. Requiere confirmación del carnet antes de avanzar.
 
-**Strengths:** 1 año de experiencia en reparto (Uber Eats); Zona dentro del área de servicio (Valencia, Ruzafa); Disponibilidad y turno definidos: media jornada, mañanas; Fecha de inicio concreta (02/11/2026); Confirmó el resumen de datos
+**Strengths:** Experiencia previa en reparto: 1 año en Uber Eats; Zona dentro del área de servicio (Valencia, Ruzafa); Disponibilidad y turno definidos: media jornada, mañanas; Respuestas claras en el resto de preguntas y confirmó el resumen de datos
 
-**To check:** Licencia de conducir no confirmada: respuestas ambiguas ("más o menos", "depende del día"); verificar si tiene licencia vigente, tipo (auto/moto) y posible suspensión o vencimiento; Inicio el 2 de noviembre: comprobar que encaja con las necesidades de contratación
+**To check:** Carnet de conducir sin confirmar: respuestas ambiguas ("más o menos", "depende del día"); verificar si tiene carnet vigente, tipo (coche/moto) y país de expedición; Fecha de inicio lejana (2 de noviembre de 2026); confirmar que es correcta y no un error de año
 
-**Recommended action:** Contactar para aclarar el estado de la licencia de conducir y solicitar documento vigente; si está en regla, avanzar a la siguiente fase.
+**Recommended action:** Contactar para aclarar el estado del carnet de conducir (vigencia, tipo y país) y confirmar la fecha de inicio. Si el carnet está vigente, perfil apto para avanzar.

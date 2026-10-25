@@ -1,8 +1,8 @@
-# Nerea Iglesias · 💤 Abandoned
+# Nerea Iglesias · 💬 Awaiting reply
 
-**Language:** ES · **Candidate messages:** 4 · **City:** Barcelona
+**Channel:** web · **Language:** ES · **Candidate messages:** 4 · **City:** Barcelona
 
-**What this conversation shows:** the candidate stops replying at availability: recorded as drop-off.
+**What this conversation shows:** the candidate stops replying at availability: reminders are scheduled (the demo clock shows them).
 
 ## Conversation
 
@@ -13,27 +13,25 @@
 > hola, sí
 
 🛵 **Sofía**
-> ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
+> Genial, empezamos. ¿Cómo te llamas? Nombre y apellido, por favor.
 
 🙂 **Candidate**
 > Nerea Iglesias
 
 🛵 **Sofía**
-> Mucho gusto, Nerea. ¿Tienes licencia de conducir en vigor, ya sea de auto o de moto?
+> Encantada, Nerea. ¿Tienes carnet de conducir en vigor (coche o moto)?
 
 🙂 **Candidate**
 > sí tengo
 
 🛵 **Sofía**
-> Perfecto, con la licencia en vigor vamos bien. ¿En qué ciudad y zona te gustaría repartir?
+> Perfecto, gracias por confirmarlo. ¿Es carnet de coche, de moto o de ambos?
 
 🙂 **Candidate**
 > Barcelona, Eixample
 
 🛵 **Sofía**
 > Genial, Barcelona y la zona del Eixample, tomo nota. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
-
-_The candidate stopped replying here._
 
 ## Structured data
 

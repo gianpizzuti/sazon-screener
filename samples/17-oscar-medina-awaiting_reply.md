@@ -1,8 +1,8 @@
-# Óscar Medina · 💤 Abandoned
+# Óscar Medina · 💬 Awaiting reply
 
-**Language:** ES · **Candidate messages:** 6 · **City:** Monterrey
+**Channel:** web · **Language:** ES · **Candidate messages:** 6 · **City:** Monterrey
 
-**What this conversation shows:** the candidate stops replying at experience years: recorded as drop-off; Mexican Spanish vocabulary.
+**What this conversation shows:** the candidate stops replying at experience years: reminders are scheduled (the demo clock shows them); Mexican Spanish vocabulary.
 
 ## Conversation
 
@@ -13,25 +13,25 @@
 > sí
 
 🛵 **Sofía**
-> ¡Genial, vamos allá! Para empezar, ¿cómo te llamas? Nombre y apellido, por favor.
+> ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
 🙂 **Candidate**
 > Óscar Medina
 
 🛵 **Sofía**
-> Mucho gusto, Óscar. ¿Tienes licencia de conducir en vigor, ya sea para auto o para moto?
+> Encantada, Óscar. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
 🙂 **Candidate**
 > sí, licencia vigente
 
 🛵 **Sofía**
-> Perfecto, gracias por confirmarlo. ¿En qué ciudad y zona te gustaría repartir?
+> Perfecto, licencia vigente. ¿Es de coche, de moto o de ambos?
 
 🙂 **Candidate**
 > Monterrey, en San Pedro
 
 🛵 **Sofía**
-> Perfecto, Monterrey, zona San Pedro Garza García. ¿Qué disponibilidad tienes: tiempo completo, medio tiempo o fines de semana?
+> Perfecto, entonces sería en Monterrey, en la zona de San Pedro Garza García. ¿Qué disponibilidad tienes: tiempo completo, medio tiempo o fines de semana?
 
 🙂 **Candidate**
 > tiempo completo
@@ -44,8 +44,6 @@
 
 🛵 **Sofía**
 > Perfecto, turno de tarde. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
-
-_The candidate stopped replying here._
 
 ## Structured data
 

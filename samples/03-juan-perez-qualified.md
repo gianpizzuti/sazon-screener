@@ -1,8 +1,8 @@
 # Juan Pérez · ✅ Qualified
 
-**Language:** ES · **Candidate messages:** 6 · **City:** Guadalajara
+**Channel:** web · **Language:** ES · **Candidate messages:** 7 · **City:** Guadalajara
 
-**What this conversation shows:** the candidate gives several answers in one message: those questions are skipped; Mexican Spanish vocabulary.
+**What this conversation shows:** the candidate gives several answers in one message: those questions are skipped; books the interview in the chat; Mexican Spanish vocabulary.
 
 ## Conversation
 
@@ -13,25 +13,25 @@
 > Qué onda, sí le entro. Soy Juan Pérez, tengo licencia y vivo en Guadalajara por Providencia
 
 🛵 **Sofía**
-> ¡Qué bueno, Juan! Anotado lo de tu licencia y que vives en Providencia, Guadalajara. ¿Qué disponibilidad tienes: tiempo completo, medio tiempo o fines de semana?
+> Perfecto, Juan, anotado: Guadalajara, zona Providencia. Y qué bueno que ya cuentas con licencia de manejo. ¿Me dices si es para carro, para moto o para ambos? Es para que el equipo pueda planear los vehículos.
 
 🙂 **Candidate**
 > tiempo completo
 
 🛵 **Sofía**
-> Perfecto, tiempo completo. ¿Qué turno prefieres: mañana, tarde, noche o con flexibilidad?
+> Perfecto, tiempo completo anotado. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
 🙂 **Candidate**
 > en la noche
 
 🛵 **Sofía**
-> Va, turno de noche anotado. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
+> Perfecto, turno de noche anotado. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
 🙂 **Candidate**
 > 3 años en Rappi y Uber
 
 🛵 **Sofía**
-> Qué buena experiencia, 3 años en Rappi y Uber Eats. ¿Cuándo podrías empezar?
+> Qué bien, 3 años repartiendo con Rappi y Uber Eats es muy buena experiencia. ¿Cuándo podrías empezar?
 
 🙂 **Candidate**
 > ahorita mismo
@@ -44,7 +44,7 @@
 > • Disponibilidad: tiempo completo  
 > • Turno: noche  
 > • Experiencia: 3 años (Rappi, Uber Eats)  
-> • Inicio: lo antes posible (martes 20/10)  
+> • Inicio: lo antes posible (sábado 24/10)  
 >   
 > ¿Está todo correcto?
 
@@ -52,7 +52,19 @@
 > sí, todo bien
 
 🛵 **Sofía**
-> Gracias, Juan, ya quedó todo. Cumples con los requisitos para pasar a entrevista. Un/a recruiter de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano. ¡Mucho éxito! 🙌
+> ¡Excelente, Juan! Cumples con los requisitos para pasar a la entrevista, y ya puedes elegir el horario que mejor te acomode: te mando las opciones justo después de este mensaje. ¡Gracias por tu tiempo!
+
+🛵 **Sofía** _(template)_
+> Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Providencia (Guadalajara):  
+> 1) lunes 26/10 a las 17:00  
+> 2) martes 27/10 a las 17:00  
+> 3) miércoles 28/10 a las 17:00
+
+🙂 **Candidate**
+> la primera porfa
+
+🛵 **Sofía** _(template)_
+> ¡Listo! Tu entrevista es el lunes 26/10 a las 17:00 en Grupo Sazón Providencia (Guadalajara). Trae tu licencia de manejo. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data
 
@@ -79,19 +91,19 @@
     "Rappi",
     "Uber Eats"
   ],
-  "start_date": "2026-10-20",
+  "start_date": "2026-10-24",
   "start_date_raw": "ahorita mismo"
 }
 ```
 
 ## Recruiter summary (generated after the conversation)
 
-**Juan Pérez · Guadalajara (Providencia) · Tiempo completo, turno noche · 3 años de experiencia (Rappi, Uber Eats) · Inicio inmediato (20/10/2026)**
+**Juan Pérez · Guadalajara (Providencia) · Tiempo completo, turno noche · 3 años (Rappi, Uber Eats) · Inicio inmediato (24/10)**
 
-Perfil apto: cuenta con licencia de manejo, está dentro de la zona de servicio y tiene disponibilidad de tiempo completo con preferencia por el turno de noche. Tiene 3 años de experiencia en reparto en Rappi y Uber y puede empezar de inmediato. Confirmó todos sus datos al final de la conversación.
+Perfil apto: cuenta con licencia de manejo, vive en zona de servicio y tiene 3 años de experiencia en reparto con Rappi y Uber Eats. Busca tiempo completo en turno de noche y puede empezar de inmediato. Entrevista agendada el lunes 26/10 a las 17:00 en Grupo Sazón Providencia.
 
-**Strengths:** Licencia de manejo confirmada; Dentro del área de servicio (Providencia, Guadalajara); Disponibilidad de tiempo completo; 3 años de experiencia en reparto con plataformas (Rappi, Uber); Inicio inmediato ("ahorita mismo"), registrado como martes 20/10/2026; Respuestas claras y directas; confirmó el resumen de datos
+**Strengths:** 3 años de experiencia en reparto (Rappi, Uber Eats); Disponibilidad de tiempo completo; Inicio inmediato; Zona Providencia, dentro del área de servicio; Respuestas rápidas; confirmó sus datos y eligió horario de entrevista sin demora
 
-**To check:** Solo prefiere turno de noche: verificar que haya vacantes en ese turno en Providencia; Mencionó "Uber" y el registro asume Uber Eats: confirmar en entrevista (aunque validó el resumen)
+**To check:** Tipo de licencia sin confirmar: se le preguntó si es para carro, moto o ambos y respondió con su disponibilidad; el dato quedó vacío; Confirmar en entrevista que el turno de noche cubre las necesidades de la sucursal
 
-**Recommended action:** Contactar en menos de 48 horas para agendar entrevista en el restaurante más cercano a Providencia, priorizando vacantes de turno nocturno.
+**Recommended action:** Mantener la entrevista del lunes 26/10 a las 17:00; antes o durante la entrevista, confirmar el tipo de licencia (carro/moto) y verificarla físicamente.

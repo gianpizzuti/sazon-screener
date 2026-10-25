@@ -1,8 +1,8 @@
 # Lucía Fernández · ✅ Qualified
 
-**Language:** ES · **Candidate messages:** 9 · **City:** Madrid
+**Channel:** web · **Language:** ES · **Candidate messages:** 10 · **City:** Madrid
 
-**What this conversation shows:** the candidate completes the screening without issues.
+**What this conversation shows:** the candidate books the interview in the chat.
 
 ## Conversation
 
@@ -13,37 +13,37 @@
 > Hola! sí, vamos
 
 🛵 **Sofía**
-> Perfecto, empecemos. ¿Cómo te llamas? Nombre y apellido, por favor.
+> ¡Genial, vamos allá! ¿Cómo te llamas? Nombre y apellido, por favor.
 
 🙂 **Candidate**
 > Lucía Fernández
 
 🛵 **Sofía**
-> Gracias, Lucía, encantada de conocerte. ¿Tienes licencia de conducir en vigor para auto o moto?
+> Encantada, Lucía. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
 🙂 **Candidate**
 > sí, de coche
 
 🛵 **Sofía**
-> Perfecto, con eso podemos seguir. ¿En qué ciudad y zona te gustaría repartir?
+> Perfecto, gracias. ¿En qué ciudad y zona te gustaría repartir?
 
 🙂 **Candidate**
 > en Madrid, por Lavapiés
 
 🛵 **Sofía**
-> Genial, Madrid y la zona Centro, anotado. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
+> Genial, repartirías en Madrid, en la zona Centro. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
 🙂 **Candidate**
 > media jornada y fines de semana
 
 🛵 **Sofía**
-> Perfecto, media jornada y fines de semana. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
+> Perfecto, media jornada y fines de semana, anotado. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
 🙂 **Candidate**
 > por la tarde-noche
 
 🛵 **Sofía**
-> Perfecto, tarde y noche. ¿Tienes experiencia repartiendo? Si es así, cuéntame cuánto tiempo y en qué plataformas.
+> Vale, tarde y noche. ¿Tienes experiencia repartiendo? Si es así, cuéntame cuánto tiempo y en qué plataformas.
 
 🙂 **Candidate**
 > he estado 8 meses con Glovo
@@ -57,7 +57,7 @@
 🛵 **Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Lucía Fernández  
-> • Carnet de conducir: Sí  
+> • Carnet de conducir: Sí (coche)  
 > • Zona: Madrid (Centro)  
 > • Disponibilidad: media jornada, fines de semana  
 > • Turno: tarde, noche  
@@ -70,7 +70,19 @@
 > sí, todo bien
 
 🛵 **Sofía**
-> ¡Genial, Lucía! Con lo que me has contado cumples los requisitos para pasar a la entrevista. Un/a recruiter de Grupo Sazón te escribirá en menos de 48 horas para concertar una breve entrevista en el restaurante más cercano. ¡Gracias por tu tiempo!
+> ¡Genial, Lucía! Cumples los requisitos para pasar a la entrevista, y ya puedes elegir el horario que mejor te venga: te mando las opciones justo después de este mensaje. ¡Gracias por tu tiempo!
+
+🛵 **Sofía** _(template)_
+> Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):  
+> 1) lunes 26/10 a las 16:00  
+> 2) martes 27/10 a las 16:00  
+> 3) miércoles 28/10 a las 16:00
+
+🙂 **Candidate**
+> 1
+
+🛵 **Sofía** _(template)_
+> ¡Listo! Tu entrevista es el lunes 26/10 a las 16:00 en Grupo Sazón Malasaña (Madrid). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data
 
@@ -79,6 +91,7 @@
   "full_name": "Lucía Fernández",
   "has_drivers_license": true,
   "license_status": "yes",
+  "license_type": "car",
   "location_raw": "en Madrid, por Lavapiés",
   "city_id": "madrid",
   "city": "Madrid",
@@ -105,12 +118,12 @@
 
 ## Recruiter summary (generated after the conversation)
 
-**Lucía Fernández · Madrid (Centro, Lavapiés) · Media jornada + fines de semana, tarde/noche · 8 meses en Glovo · Inicio lunes 26/10/2026**
+**Lucía Fernández · Madrid (Centro, Lavapiés) · Media jornada + fines de semana, tarde/noche · 8 meses en Glovo · Inicio 26/10/2026**
 
-Perfil apto: carnet de conducir en vigor (coche), zona Centro de Madrid dentro del área de servicio, disponibilidad de media jornada y fines de semana en turno de tarde-noche. Tiene 8 meses de experiencia en reparto con Glovo y puede empezar el lunes 26/10. Confirmó todos los datos en el resumen final.
+Perfil apto: tiene carnet de coche en vigor, está en zona de servicio (Madrid Centro) y cuenta con 8 meses de experiencia en reparto con Glovo. Disponible a media jornada y fines de semana, en turno de tarde y noche. Tiene entrevista agendada el lunes 26/10 a las 16:00 en Grupo Sazón Malasaña.
 
-**Strengths:** Experiencia previa en reparto: 8 meses con Glovo; Disponibilidad inmediata (lunes 26/10); Disponible en fines de semana y en turnos de tarde-noche; Respuestas claras y completas; datos confirmados sin correcciones
+**Strengths:** Experiencia previa en reparto: 8 meses con Glovo; Zona Centro (Lavapiés), cercana al local de Malasaña; Disponibilidad inmediata (próximo lunes); Respuestas claras y datos confirmados sin correcciones; Entrevista ya reservada en la primera opción ofrecida
 
-**To check:** El carnet indicado es de coche: confirmar con qué vehículo repartiría (coche propio, moto, bici) y si encaja con las necesidades del puesto; Media jornada: concretar horas semanales y días disponibles entre semana
+**To check:** La fecha de inicio indicada (26/10) coincide con el día de la entrevista; confirmar fecha real de incorporación; Carnet solo de coche: verificar el tipo de vehículo con el que repartiría y si dispone de él; Disponibilidad limitada a media jornada, fines de semana y tarde/noche; confirmar que encaja con los turnos del local
 
-**Recommended action:** Contactar en menos de 48 h para agendar entrevista en un restaurante de la zona Centro de Madrid; durante la entrevista, verificar el tipo de vehículo y concretar las horas disponibles.
+**Recommended action:** Mantener la entrevista del lunes 26/10 a las 16:00 en Malasaña; en ella confirmar vehículo disponible, turnos concretos y fecha efectiva de incorporación.

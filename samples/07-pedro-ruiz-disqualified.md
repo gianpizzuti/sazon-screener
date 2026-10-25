@@ -1,6 +1,6 @@
 # Pedro Ruiz · ⛔ Disqualified
 
-**Language:** ES · **Candidate messages:** 5 · **City:** Toledo
+**Channel:** web · **Language:** ES · **Candidate messages:** 5 · **City:** Toledo
 
 **What this conversation shows:** the candidate is knocked out (out of area); answers the talent-pool opt-in.
 
@@ -13,31 +13,31 @@
 > sí
 
 🛵 **Sofía**
-> Genial, empecemos. ¿Cómo te llamas? Nombre y apellido, por favor.
+> ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
 🙂 **Candidate**
 > Pedro Ruiz
 
 🛵 **Sofía**
-> Mucho gusto, Pedro. ¿Tienes licencia de conducir en vigor para auto o moto?
+> Encantada, Pedro. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
 🙂 **Candidate**
-> sí tengo
+> sí, de coche
 
 🛵 **Sofía**
-> Perfecto, con la licencia en regla vamos bien. ¿En qué ciudad y zona te gustaría repartir?
+> Perfecto, carnet de coche en vigor. ¿En qué ciudad y zona te gustaría repartir?
 
 🙂 **Candidate**
 > vivo en Toledo
 
 🛵 **Sofía**
-> Gracias por responder, Pedro. Por ahora no tenemos reparto en Toledo, así que no podemos avanzar con tu solicitud en esa zona. ¿Quieres que guardemos tus datos para avisarte si abrimos allí más adelante?
+> Gracias por contármelo, Pedro. Ahora mismo no tenemos reparto en Toledo, así que no podemos seguir con tu solicitud por ahora. ¿Quieres que guardemos tus datos y te avisemos si abrimos en tu zona?
 
 🙂 **Candidate**
 > no gracias
 
 🛵 **Sofía**
-> Sin problema, Pedro. No guardaremos tus datos. Gracias por tu tiempo y por el interés en Grupo Sazón. ¡Mucha suerte en tu búsqueda!
+> Entendido, Pedro, no guardaremos tus datos. Gracias por tu tiempo y por tu interés en Grupo Sazón. ¡Mucha suerte en tu búsqueda!
 
 ## Structured data
 
@@ -46,6 +46,7 @@
   "full_name": "Pedro Ruiz",
   "has_drivers_license": true,
   "license_status": "yes",
+  "license_type": "car",
   "location_raw": "Toledo",
   "city": "Toledo",
   "in_service_area": false
@@ -54,12 +55,12 @@
 
 ## Recruiter summary (generated after the conversation)
 
-**Pedro Ruiz · Toledo (fuera de zona) · Disponibilidad no consultada · Experiencia no consultada · Inicio no consultado**
+**Pedro Ruiz · Toledo (fuera de zona) · Disponibilidad: no consultada · Experiencia: no consultada · Inicio: no consultado**
 
-Persona candidata descalificada por estar fuera del área de servicio: reside en Toledo, donde Grupo Sazón no opera. Confirmó licencia de conducir en vigor. Rechazó que se guarden sus datos para futuras aperturas.
+Persona candidata descartada por estar fuera del área de servicio: reside en Toledo, donde Grupo Sazón no tiene reparto. Tiene carnet de coche en vigor. Rechazó que se guardaran sus datos para futuras aperturas, por lo que la conversación terminó tras la pregunta de ubicación.
 
-**Strengths:** Licencia de conducir en vigor confirmada; Respuestas claras y conversación cordial
+**Strengths:** Carnet de conducir de coche en vigor; Respuestas claras y directas durante la conversación
 
-**To check:** Fuera del área de servicio (Toledo); Screening interrumpido: no se recogieron disponibilidad, horario, experiencia ni fecha de inicio; No autorizó conservar sus datos; no contactar para futuras aperturas en Toledo
+**To check:** Fuera del área de servicio (Toledo); No dio consentimiento para conservar sus datos: no debe contactarse para futuras aperturas; Disponibilidad, horario, experiencia y fecha de inicio no recogidos al cerrarse la evaluación
 
-**Recommended action:** Cerrar la solicitud por fuera de zona y no conservar sus datos, según lo solicitado por la persona candidata.
+**Recommended action:** Descartar. No archivar para futuras aperturas en Toledo, ya que la persona candidata rechazó que se guardaran sus datos; eliminar sus datos conforme a su decisión.

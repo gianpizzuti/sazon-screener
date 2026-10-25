@@ -1,6 +1,6 @@
 # Marta Gil · ⛔ Disqualified
 
-**Language:** ES · **Candidate messages:** 4
+**Channel:** web · **Language:** ES · **Candidate messages:** 4
 
 **What this conversation shows:** the candidate is knocked out (no license); answers the talent-pool opt-in.
 
@@ -13,25 +13,25 @@
 > sí
 
 🛵 **Sofía**
-> ¡Genial, gracias por confirmar! Para empezar, ¿cómo te llamas? Nombre y apellido, por favor.
+> ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
 🙂 **Candidate**
 > Marta Gil
 
 🛵 **Sofía**
-> Mucho gusto, Marta. ¿Tienes licencia de conducir en vigor, ya sea para auto o para moto?
+> Encantada, Marta. ¿Tienes carnet de conducir en vigor (coche o moto)?
 
 🙂 **Candidate**
 > no tengo carnet
 
 🛵 **Sofía**
-> Gracias por contarme, Marta. Para este puesto necesitamos una licencia de conducir en vigor, así que por ahora no podemos continuar con tu solicitud. ¿Quieres que guardemos tus datos para avisarte si surge una oportunidad en el futuro?
+> Gracias por contármelo, Marta. Por ahora no podemos seguir con tu solicitud, porque para este puesto es necesario tener carnet de conducir en vigor. ¿Quieres que guardemos tus datos para avisarte si surge alguna oferta más adelante?
 
 🙂 **Candidate**
 > vale, sí
 
 🛵 **Sofía**
-> Perfecto, Marta. Guardamos tus datos y te avisaremos si surge alguna oportunidad en el futuro. Gracias por tu interés en Grupo Sazón y por haber dedicado este rato. ¡Que te vaya muy bien! 😊
+> Hecho, Marta: guardamos tus datos y te avisaremos si surge alguna oferta que encaje. Muchas gracias por tu interés en Grupo Sazón, y mucho ánimo. 😊
 
 ## Structured data
 
@@ -45,12 +45,12 @@
 
 ## Recruiter summary (generated after the conversation)
 
-**Marta Gil · Ubicación no indicada · Disponibilidad no indicada · Experiencia no indicada · Inicio no indicado**
+**Marta Gil · Zona no indicada · Disponibilidad no indicada · Experiencia no indicada · Inicio no indicado**
 
-Descartada en la segunda pregunta por no tener licencia de conducir en vigor ("no tengo carnet"). No se recogieron ubicación, disponibilidad, experiencia ni fecha de inicio. Aceptó que se guarden sus datos para futuras oportunidades.
+Descartada en el cribado por no tener carnet de conducir en vigor (requisito obligatorio). La conversación terminó en la segunda pregunta, así que no hay datos de zona, disponibilidad, experiencia ni fecha de inicio. Aceptó que se guarden sus datos para futuras ofertas.
 
-**Strengths:** Respuestas claras y directas durante la conversación; Aceptó que se guarden sus datos para futuras vacantes
+**Strengths:** Respuesta clara y directa sobre el carnet; Interés en futuras ofertas: aceptó que se guarden sus datos
 
-**To check:** No tiene licencia de conducir en vigor (requisito obligatorio); Faltan datos de zona, disponibilidad, experiencia y fecha de inicio
+**To check:** No tiene carnet de conducir, requisito obligatorio del puesto; Sin datos de zona, disponibilidad, experiencia ni fecha de inicio por fin anticipado del cribado
 
-**Recommended action:** No avanzar en este proceso. Mantener en base de datos según su consentimiento y recontactar solo si obtiene licencia o surge un puesto que no la requiera.
+**Recommended action:** No avanzar. Mantener en la base de datos (con consentimiento) y volver a contactar solo si surge un puesto sin requisito de carnet o si obtiene uno en el futuro.
