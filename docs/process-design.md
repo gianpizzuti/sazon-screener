@@ -73,7 +73,7 @@ A person can review every outcome: recruitment AI is high-risk under the EU AI A
 
 ## 7. Tone and length (this is chat, not email)
 
-1–3 short sentences, **≤ 350 characters**, **one question at the end**, a brief acknowledgement first. Plain text, ≤ 1 emoji, quick-reply buttons for closed questions. Never promise a job, invent pay, ask about age, nationality, health or family, or guilt-trip someone who leaves.
+1–3 short sentences, **≤ 350 characters**, **one question at the end**, a brief acknowledgement first. Plain text, ≤ 1 emoji, quick-reply buttons for closed questions; by voice, the same messages said aloud (no emojis, options in words). Never promise a job, invent pay, ask about age, nationality, health or family, or guilt-trip someone who leaves.
 
 ✅ "Perfecto, Ana. ¿Tienes carnet de conducir en vigor?"  
 ❌ "¡Muchas gracias por tu respuesta, Ana! Ahora, para poder continuar con el proceso de selección, necesitaría saber si dispones de…"

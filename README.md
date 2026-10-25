@@ -9,6 +9,8 @@ The client has two different problems, and the design addresses each one separat
 | 60% of candidates don't answer recruiter calls | Asynchronous chat, first message seconds after applying, candidate answers when it suits them |
 | 80% of recruiter time goes to unqualified candidates | Knock-out questions first; recruiters only receive qualified (or flagged) candidates with a summary |
 
+🎬 **Demo video (5 min):** _link added at submission_
+
 📄 **[Process design](docs/process-design.md)** (Phase 1, two pages, with an [appendix](docs/process-design-appendix.md)) · 🧭 **[Decision log](docs/decisions/decision-log.md)** (every choice and its trade-off) · **[ADRs](docs/decisions/README.md)** (deep-dives) · 🔬 **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · 📊 **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · 💬 **[Sample conversations](samples/README.md)**
 
 🏗️ Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** with its **[API spec](docs/design/ats-api.yaml)** (OpenAPI 3.1) · **[Deployment and scaling](docs/design/deployment-and-scaling.md)** (from one process to 10,000 applications/week) · **[Licences issued abroad](docs/design/foreign-licences.md)** (research behind the rules, with sources)
@@ -30,7 +32,7 @@ make test                    # offline, no API key: 222 tests of the product + 2
 Optional:
 
 ```bash
-make seed                    # fill the app with 15 demo candidates (real models, ~1.5 USD in total)
+make seed                    # fill the app with 20 demo candidates (real models, ~2 USD in total)
 make chat                    # talk to the agent in the terminal (/data shows what was collected)
 make samples                 # export finished conversations to samples/*.md
 make reset-demo              # wipe the local database and re-seed (deletes your local test conversations)
@@ -129,6 +131,7 @@ docs/          process design, decision log, ADRs, live testing log, design docs
 | RAG: local embeddings, the model chooses, code inserts | Embeddings find the closest topics (meaning beat hybrid search when measured); the model picks by the approved answer, or none; the writer phrases only that answer. No vector database at 205 vectors, pgvector when it grows | [0010](docs/decisions/0010-knowledge-base-retrieval.md) (was [0007](docs/decisions/0007-faq-without-vector-db.md)) |
 | API-first, the UI is a client | Logic in one place, ready for WhatsApp/voice/ATS; the UI was replaced (Streamlit → React) without touching the core | [0008](docs/decisions/0008-api-first-recruiter-tool.md) |
 | React web app with a design system | Orbio's visual language with the client as workspace; motion that explains, accessible charts, light/dark tokens checked for contrast; one process in production | [0009](docs/decisions/0009-react-web-app.md) |
+| Voice: one more channel on the same engine | The browser transcribes, our rules decide, ElevenLabs only speaks (a native voice per country); never silent if it fails. ElevenLabs' own agent platform would let its model drive the conversation | [0011](docs/decisions/0011-voice-channel.md) |
 
 ## Potential improvements
 
