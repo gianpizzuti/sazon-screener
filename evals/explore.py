@@ -111,7 +111,7 @@ def main() -> None:
     for r in results:
         problems = triage(r["scenario"], r["state"])
         (OUT / f"{r['scenario']['id']}.md").write_text(transcript_md(r, problems))
-        rows.append(f"| [`{r['scenario']['id']}`]({r['scenario']['id']}.md) | {r['state']['stage']} | {'; '.join(problems) or '✓'} |")
+        rows.append(f"| [`{r['scenario']['id']}`]({r['scenario']['id']}.md) | {r['state']['stage']} | {'; '.join(problems) or 'as expected'} |")
         print(f"{r['scenario']['id']}: {r['state']['stage']} {'; '.join(problems) or 'ok'}")
     if not args.only:
         index = ["# Exploratory conversations", "",

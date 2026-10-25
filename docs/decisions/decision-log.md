@@ -125,7 +125,7 @@ Every decision taken while building the agent, large or small (238 so far), with
 
 | # | Decision | Why | Rejected alternative / trade-off | Where |
 |---|---|---|---|---|
-| D80 | After the end: questions always answered; small talk gets at most one courtesy reply, then silence | Without it, "bye" / "ok" / "👍" got a reply each, forever (found in manual testing): annoying and a paid call per message | Replying to everything, or never replying (questions would go unanswered) | `policy._after_end` |
+| D80 | After the end: questions always answered; small talk gets at most one courtesy reply, then silence | Without it, "bye", "ok" or a thumbs-up got a reply each, forever (found in manual testing): annoying and a paid call per message | Replying to everything, or never replying (questions would go unanswered) | `policy._after_end` |
 | D81 | New information after the end (e.g. "I just got my licence") is acknowledged and flagged for a recruiter, not re-evaluated by the bot | Reopening a closed decision is a human call; the candidate still gets a response | Automatically re-running the screening. Trade-off: the summary generated at the end becomes stale (to regenerate on this flag) | `policy._after_end`, flag `update_after_close` |
 
 ## Recruiter tool, API and data (see [ADR 0008](0008-api-first-recruiter-tool.md))

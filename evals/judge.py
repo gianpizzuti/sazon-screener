@@ -121,6 +121,6 @@ def calibrate() -> list[str]:
         scores = {k: v["score"] for k, v in j["scores"].items()}
         want = control["expect"]
         ok = all(scores[k] <= v for k, v in want.get("at_most", {}).items()) and all(scores[k] >= v for k, v in want.get("at_least", {}).items())
-        lines.append(f"{control['id']}: " + ", ".join(f"{k} {v}" for k, v in scores.items()) + (" ✓" if ok else " ✗ (outside the expected range)"))
+        lines.append(f"{control['id']}: " + ", ".join(f"{k} {v}" for k, v in scores.items()) + (" (as expected)" if ok else " (outside the expected range)"))
     lines.append(f"calibration cost ${meter.total_usd():.3f}")
     return lines
