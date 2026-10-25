@@ -151,7 +151,7 @@ The engine depends on `Understander`, `Responder` and `Summarizer` interfaces, n
 |---|---|---|
 | Recruiter summary on Sonnet instead of Opus | The summary is ≈ 40% of the cost per screening | Check `summary_faithful` with the judge before switching |
 | Summaries through the Message Batches API | Half price for batch requests | The summary may take up to hours instead of seconds. Recruiters read it later anyway |
-| Keep Haiku for understanding | Measured: ≈ 40× cheaper than Opus for errors the code absorbs (D146) | – |
+| Keep Haiku for understanding | Measured: ≈ 28× cheaper than Opus for errors the code absorbs (D146) | – |
 | Reuse a recent screening for a duplicate application | No second screening (ATS doc §3) | A rule to agree with the client |
 
 Infrastructure at this size is small next to the model cost: a few containers, a small managed database and a queue. In the order of a few hundred dollars a month, to be confirmed with the chosen cloud's pricing.
