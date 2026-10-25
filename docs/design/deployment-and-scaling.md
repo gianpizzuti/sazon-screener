@@ -36,7 +36,7 @@ Before trusting the sizing above, I ran it.
 | One candidate, `GET /api/candidates/{id}` | 2 ms | 2 ms | Constant |
 | Follow-up scheduler, one pass over all conversations | 0.13 s | 1.9 s | Fine every minute; at 10× only the due ones |
 | Database | 20 MB | 196 MB | Small for Postgres |
-| **Interview capacity** | 414 booked, 47 to a recruiter (the 10% who refused every time) | **986 booked, 3,777 found no free time** | **The real limit at 10×** |
+| **Interview capacity** | 414 booked, 47 to a recruiter (the 10% who refused every time); in steady state the 3 biggest cities overflow (see 3.) | **986 booked, 3,777 found no free time** | **The real limit, already in the big cities** |
 
 **What the test found and changed:**
 1. **A concurrency bug.**
