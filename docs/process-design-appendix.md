@@ -1,4 +1,4 @@
-# Process design: details
+# Process Design: Appendix
 
 The appendix to the two-page [process design](process-design.md): the full tables, examples and open questions. Every decision, with its trade-off, is in the [decision log](decisions/decision-log.md).
 
@@ -124,8 +124,8 @@ Knock-outs are objective rules set by the client, explained to the candidate and
 
 | | Example |
 |---|---|
-| ✅ | "Perfecto, Ana. ¿Tienes carnet de conducir en vigor?" |
-| ❌ | "¡Muchas gracias por tu respuesta, Ana! Ahora, para poder continuar con el proceso de selección, necesitaría saber si dispones de un permiso de conducción válido y, en caso afirmativo, de qué tipo…" |
+| Correct | "Perfecto, Ana. ¿Tienes carnet de conducir en vigor?" |
+| Incorrect | "¡Muchas gracias por tu respuesta, Ana! Ahora, para poder continuar con el proceso de selección, necesitaría saber si dispones de un permiso de conducción válido y, en caso afirmativo, de qué tipo…" |
 
 ## 8. Assumptions and open questions for Grupo Sazón
 
