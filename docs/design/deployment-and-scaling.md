@@ -45,12 +45,24 @@ Before trusting the sizing above, I ran it.
    - Now the refusal is caught: the turn is rolled back and the candidate is offered the next free times, exactly as when a time was taken earlier.
    - The unique index is what makes this safe with several workers, and it has a regression test (D237).
 2. **Analytics loaded every message and event to count them**: 7.8 s at 10,000. The counting moved into SQL, with identical results on both databases: 4.5× faster at 1,000 and 4.8× at 10,000 (D238).
-3. **At ten times the volume, the bottleneck is not software, it is interview capacity.** One interview restaurant per city, half-hour slots in two daily windows, is about 60 interviews a week per city. That is enough at 1,000 applications a week, and runs out at 10,000. The options are business decisions, for the client:
-   - interviews at more restaurants (the configuration already allows one place per area);
-   - shorter or group sessions;
-   - a video first interview.
+3. **The bottleneck is not software, it is interview capacity, and in the big cities it binds already at today's volume.**
+   - **Supply.** The configuration gives one interview place per city, Monday to Friday, 10–13 and 16–19, in 30-minute slots: **60 interviews a week per city**, 540 in total.
+   - **Demand.** Interviews needed = applications × qualified rate × the city's share.
+     - With the test's illustrative mix (about half qualify), 1,000 applications a week mean about 110 qualified a week in Mexico City, 84 in Barcelona and 83 in Madrid: **all three above 60**. The other six cities are below.
+     - The first test week did not show it, because it started from an empty calendar with two weeks of free slots; in steady state those three cities overflow.
+     - At 10,000 a week, every city is 3–17 times over.
+   - **The system already sees it.** When no time is free, the candidate is handed to a recruiter, flagged `scheduling_needed`, and analytics counts the hand-offs: an early warning that needs no new code.
+   - **The options are the client's:**
 
-   This is the number to bring to the client before scaling.
+     | Option | Capacity, 9 cities | Trade-off |
+     |---|---|---|
+     | Interviews at every restaurant, not one per city | ≈ 2,700 / week (45 × 60) | Each restaurant manager's time |
+     | Group sessions, e.g. 4 candidates per slot | ≈ 2,160 / week | Less personal; fine for a first meeting |
+     | A first interview by video, run by the recruiters | ≈ 1,300 / week (13 recruiters × 20 a day) | No-show rates differ; the hours come from the 80% of call time the agent frees |
+     | Prioritise when slots are scarce (soonest start, experience first) | Same capacity, better used | Someone waits longer |
+
+     All four are configuration or process changes, not a rewrite: places are per area, and windows and slot length are settings.
+   - **Measure in the pilot:** the real qualified rate, booking rate, no-show rate and days to interview, per city.
 4. **What to change at 10×, now measured rather than assumed:**
    - page and filter the recruiter pipeline on the server;
    - precompute analytics (an aggregate table refreshed by the event log, or a short cache);
