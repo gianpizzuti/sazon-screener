@@ -66,14 +66,14 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
     rows = repo.conversations()
     states = [ConversationState.model_validate(r.state) for r in rows]
     statuses = {s.id: display_status(s, now) for s in states}
-    events = repo.events()
-    messages = repo.all_messages()
+    by_type = Counter(repo.event_counts())
+    events = repo.events_of({"followup_sent", "resumed", "sentiment", "question_answered"})  # the ones whose details count
+    candidate_msgs = Counter(repo.candidate_message_counts())
 
     totals = Counter(statuses.values())
     totals["started"] = len(states)
     finished = sum(totals[s] for s in FINISHED)
 
-    candidate_msgs = Counter(m.conversation_id for m in messages if m.role == "candidate")
     funnel = [FunnelStep(step="Started", count=len(states)),
               FunnelStep(step="Replied", count=sum(1 for s in states if candidate_msgs[s.id] > 0))]
     for name in FUNNEL_FIELDS:
@@ -96,8 +96,11 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
         if s.completed_at and statuses[s.id] in FINISHED
     ]
 
-    agent_sources = [m.meta.get("source") for m in messages if m.role == "agent" and m.meta.get("kind") not in TEMPLATE_KINDS]  # templates by design are not fallbacks
-    by_type = Counter(e.type for e in events)
+    # templates by design (greeting, recap, interview times) are not fallbacks
+    agent_sources = Counter()
+    for source, kind, n in repo.agent_message_sources():
+        if kind not in TEMPLATE_KINDS:
+            agent_sources[source] += n
     nudged = {e.conversation_id for e in events if e.type == "followup_sent"}
     recovered = [e for e in events if e.type == "resumed" and e.payload.get("after_followups", 0) > 0]
     unanswered = [q for s in sorted(states, key=lambda s: s.updated_at, reverse=True) for q in s.pending_questions]
@@ -119,7 +122,7 @@ def compute(repo: Repository, now: datetime | None = None) -> Analytics:
         ).most_common()),
         faq_usage=dict(Counter(e.payload.get("faq_id") for e in events if e.type == "question_answered").most_common()),
         unanswered_questions=unanswered[:20],
-        template_fallback_rate=_ratio(sum(1 for s in agent_sources if s == "template"), len(agent_sources)),
+        template_fallback_rate=_ratio(agent_sources["template"], sum(agent_sources.values())),
         llm_errors=by_type["llm_error"],
         guard_rejections=by_type["guard_rejected"],
         human_overrides=by_type["human_override"],

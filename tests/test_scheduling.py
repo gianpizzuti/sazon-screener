@@ -159,6 +159,22 @@ class TestBookingFlow:
         assert utc(2026, 10, 22, 14) not in state.interview.offered
         assert engine.repo.taken_interview_slots("madrid") == {utc(2026, 10, 22, 14)}  # never double-booked
 
+    def test_two_candidates_picking_the_same_time_at_once_never_crash(self, make_engine, monkeypatch):
+        # found by the volume test: concurrent turns both passed the "is it free?" check, and the
+        # database's unique index refused the second booking with an error instead of a new offer
+        script = full_screening() + full_screening() + [analysis("2"), analysis("2")]
+        engine = make_engine(script)
+        first, _ = qualify(engine)
+        second, _ = qualify(engine)
+        engine.handle(first, "2")
+        monkeypatch.setattr(engine.repo, "taken_interview_slots", lambda area_id: set())  # the race: the check sees nothing
+        result = engine.handle(second, "2")
+        state = engine.repo.get_state(second)
+        assert "interview_slot_taken" in result.event_types and state.interview.status == InterviewStatus.OFFERED
+        assert "acaba de ocupar" in result.messages[0].text
+        monkeypatch.undo()
+        assert engine.repo.taken_interview_slots("madrid") == {utc(2026, 10, 22, 14)}  # one booking, kept
+
     def test_an_unclear_reply_shows_the_same_times_once(self, make_engine):
         engine = make_engine(full_screening() + [analysis("ok", intents=("affirm",))] * 2)
         cid, first = qualify(engine)

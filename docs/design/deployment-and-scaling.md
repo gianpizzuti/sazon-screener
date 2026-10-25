@@ -1,6 +1,6 @@
 # Design: deployment and scaling
 
-**Status:** design, not built. Today the system runs as one process: FastAPI serves the API, the web app and an in-process follow-up loop, on SQLite. That is right for a demo and a small pilot. This document is the path to production at Grupo Sazón's volume (1,000 applications/week) and to ten times that.
+**Status:** design, not built; the volume figures in §1b are measured. Today the system runs as one process: FastAPI serves the API, the web app and an in-process follow-up loop, on SQLite. That is right for a demo and a small pilot. This document is the path to production at Grupo Sazón's volume (1,000 applications/week) and to ten times that.
 
 ## 1. The numbers that size everything
 
@@ -18,6 +18,44 @@ From the conversation eval: median **8 candidate messages** per screening, **$0.
 1. **The model provider's rate limits.** At 10×, the peak is around 120 requests per minute and a few hundred thousand input tokens per minute, mostly cached. The account tier has to cover that.
 2. **Correctness with several workers**: ordering, no double sends, no lost events.
 3. **WhatsApp's rules**: approved templates, the 24-hour window, and quality ratings that drop if people block the number.
+
+## 1b. Measured: the system at 1,000 and 10,000 screenings a week
+
+Before trusting the sizing above, I ran it.
+- **What ran:** [`scripts/volume_test.py`](../../scripts/volume_test.py) put 1,000 and then 10,000 synthetic screenings through the production engine, storage, interview booking, follow-up scheduler and API. Only the two language models were replaced, by a scripted reader and the fixed templates. So it costs $0 and measures our own code.
+- **The mix:** half qualified, the rest disqualified, unclear, withdrawn, silent and in progress, spread over one week.
+- **The setup:** one process, SQLite, a laptop. Full results: [`evals/results/volume.md`](../../evals/results/volume.md).
+
+| Measured | 1,000 / week | 10,000 / week | Verdict |
+|---|---|---|---|
+| Our code per candidate message (no models), p50 / p95 | 1.8 / 49 ms | 1.9 / 49 ms | Negligible next to the ≈ 3 s of the models |
+| Throughput, 8 threads | ≈ 540 messages/s | ≈ 510 messages/s | About 500× the peak need (≈ 1/s at 10×) |
+| Recruiter pipeline, `GET /api/candidates` | 56 ms · 0.7 MB | 818 ms · 7 MB | Fine at 1,000; at 10,000 it needs paging |
+| Pipeline in the browser (all rows drawn) | 0.5 s to first rows; 1,000 rows in 0.33 s; 45 MB | not tested | Fine at today's volume |
+| Analytics, `GET /api/analytics` | 95 ms (was 431) | 1.6 s (was 7.8 s) | Fixed during the test; precomputed at 10× |
+| One candidate, `GET /api/candidates/{id}` | 2 ms | 2 ms | Constant |
+| Follow-up scheduler, one pass over all conversations | 0.13 s | 1.9 s | Fine every minute; at 10× only the due ones |
+| Database | 20 MB | 196 MB | Small for Postgres |
+| **Interview capacity** | 414 booked, 47 to a recruiter (the 10% who refused every time) | **986 booked, 3,777 found no free time** | **The real limit at 10×** |
+
+**What the test found and changed:**
+1. **A concurrency bug.**
+   - Two candidates picking the same interview time at the same moment both passed the "is it free?" check.
+   - The database's unique index correctly refused the second booking, but the engine turned that into an error.
+   - Now the refusal is caught: the turn is rolled back and the candidate is offered the next free times, exactly as when a time was taken earlier.
+   - The unique index is what makes this safe with several workers, and it has a regression test (D237).
+2. **Analytics loaded every message and event to count them**: 7.8 s at 10,000. The counting moved into SQL, with identical results on both databases: 4.5× faster at 1,000 and 4.8× at 10,000 (D238).
+3. **At ten times the volume, the bottleneck is not software, it is interview capacity.** One interview restaurant per city, half-hour slots in two daily windows, is about 60 interviews a week per city. That is enough at 1,000 applications a week, and runs out at 10,000. The options are business decisions, for the client:
+   - interviews at more restaurants (the configuration already allows one place per area);
+   - shorter or group sessions;
+   - a video first interview.
+
+   This is the number to bring to the client before scaling.
+4. **What to change at 10×, now measured rather than assumed:**
+   - page and filter the recruiter pipeline on the server;
+   - precompute analytics (an aggregate table refreshed by the event log, or a short cache);
+   - have the scheduler query only conversations that are due (an indexed `next_followup_at`, with `SKIP LOCKED` as in §2);
+   - use Postgres for concurrent writes: with SQLite and 8 threads, the slowest message waited 3 s for the write lock.
 
 ## 2. Target architecture
 

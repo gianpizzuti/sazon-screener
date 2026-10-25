@@ -39,7 +39,7 @@ from screener.llm.interfaces import (
 )
 from screener.llm.schemas import TurnAnalysis
 from screener.llm.templates import TemplateResponder
-from screener.storage.repository import Repository
+from screener.storage.repository import Repository, SlotTaken
 
 log = logging.getLogger(__name__)
 
@@ -248,7 +248,16 @@ class ScreeningEngine:
             read["faq_topics"] = [t.id for t in topics]  # what retrieval offered, to audit misses
         rows = [("candidate", text, read)]
         rows += [("agent", m.text, meta) for m, meta in zip(outbound, metas)]
-        self.repo.save_turn(working, rows, events, interview_changes)
+        try:
+            self.repo.save_turn(working, rows, events, interview_changes)
+        except SlotTaken:
+            # Two candidates picked the same time at once (found by the volume test): the database kept
+            # one booking; the other candidate is offered the next free times, as when it was taken earlier.
+            self._slot_taken(working, decision.directive, events)
+            interview_changes = self._interview_changes(state.interview, working.interview)
+            outbound, metas = self._render(working, decision.directive, history, today, events)
+            rows = rows[:1] + [("agent", m.text, meta) for m, meta in zip(outbound, metas)]
+            self.repo.save_turn(working, rows, events, interview_changes)
         return TurnResult(
             conversation_id=working.id,
             locale=working.locale,
@@ -275,14 +284,21 @@ class ScreeningEngine:
         elif directive.kind == "interview_booked":
             iv = state.interview
             if iv.slot in self.repo.taken_interview_slots(iv.area_id):  # taken by someone else meanwhile
-                events.append(Event("interview_slot_taken", {"slot": iv.slot.isoformat()}))
-                iv.status, iv.slot = InterviewStatus.OFFERED, None
-                directive.kind = "interview_offer"
-                directive.notes.append("taken")
-                self._offer_interview(state, directive, events, count_round=False)
+                self._slot_taken(state, directive, events)
+        return self._interview_changes(before.interview, state.interview)
 
+    def _slot_taken(self, state: ConversationState, directive: Directive, events) -> None:
+        iv = state.interview
+        events.append(Event("interview_slot_taken", {"slot": iv.slot.isoformat()}))
+        iv.status, iv.slot = InterviewStatus.OFFERED, None
+        directive.kind = "interview_offer"
+        directive.notes.append("taken")
+        self._offer_interview(state, directive, events, count_round=False)
+
+    @staticmethod
+    def _interview_changes(old: InterviewState | None, new: InterviewState | None) -> list:
+        """The bookings to store: cancel the old time, book the new one."""
         changes = []
-        old, new = before.interview, state.interview
         old_slot = old.slot if old and old.status == InterviewStatus.BOOKED else None
         new_slot = new.slot if new and new.status == InterviewStatus.BOOKED else None
         if old_slot and old_slot != new_slot:

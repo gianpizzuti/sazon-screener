@@ -1,0 +1,95 @@
+[
+ {
+  "n": 1000,
+  "workers": 8,
+  "seconds": 14.2,
+  "turns": 7646,
+  "turn_p50_ms": 1.8,
+  "turn_p95_ms": 49.1,
+  "turn_max_ms": 1660.7,
+  "turns_per_s": 539.0,
+  "followups_pass_ms": 134.0,
+  "followup_actions": 72,
+  "db_mb": 19.9,
+  "rows": {
+   "messages": 16832,
+   "events": 11865
+  },
+  "statuses": {
+   "qualified": 474,
+   "awaiting_reply": 230,
+   "disqualified": 184,
+   "needs_review": 63,
+   "withdrawn": 49
+  },
+  "interviews": {
+   "booked": 414,
+   "handed_off": 47,
+   "offered": 13
+  },
+  "api": {
+   "GET /api/candidates (the pipeline)": {
+    "p50_ms": 55.7,
+    "max_ms": 102.9,
+    "kb": 720.1
+   },
+   "GET /api/analytics": {
+    "p50_ms": 95.0,
+    "max_ms": 143.5,
+    "kb": 1.1
+   },
+   "GET /api/candidates/{id} (one candidate)": {
+    "p50_ms": 1.9,
+    "max_ms": 3.2,
+    "kb": 17.2
+   }
+  }
+ },
+ {
+  "n": 10000,
+  "workers": 8,
+  "seconds": 150.5,
+  "turns": 77094,
+  "turn_p50_ms": 1.9,
+  "turn_p95_ms": 48.9,
+  "turn_max_ms": 3029.6,
+  "turns_per_s": 512.3,
+  "followups_pass_ms": 1910.6,
+  "followup_actions": 743,
+  "db_mb": 196.1,
+  "rows": {
+   "messages": 165867,
+   "events": 116065
+  },
+  "statuses": {
+   "qualified": 5016,
+   "awaiting_reply": 2251,
+   "disqualified": 1738,
+   "withdrawn": 501,
+   "needs_review": 492,
+   "in_progress": 2
+  },
+  "interviews": {
+   "handed_off": 3777,
+   "booked": 986,
+   "offered": 253
+  },
+  "api": {
+   "GET /api/candidates (the pipeline)": {
+    "p50_ms": 817.8,
+    "max_ms": 1141.6,
+    "kb": 7235.3
+   },
+   "GET /api/analytics": {
+    "p50_ms": 1620.9,
+    "max_ms": 1922.2,
+    "kb": 1.2
+   },
+   "GET /api/candidates/{id} (one candidate)": {
+    "p50_ms": 1.9,
+    "max_ms": 3.7,
+    "kb": 6.2
+   }
+  }
+ }
+]

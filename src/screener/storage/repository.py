@@ -18,13 +18,18 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, create_engine, select, text
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, create_engine, func, select, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from screener.domain.models import ConversationState, utcnow
 from screener.engine.directive import Event
 from screener.llm.interfaces import ChatMessage
+
+
+class SlotTaken(Exception):
+    """Another candidate booked the same interview time first: the database refused the double booking."""
 
 
 class Base(DeclarativeBase):
@@ -139,6 +144,14 @@ class Repository:
         """Persist a whole turn atomically: state, new messages, events and interview changes
         (("book" | "cancel", area_id, starts_at))."""
         state.updated_at = utcnow()
+        try:
+            self._write_turn(state, messages, events, interviews)
+        except IntegrityError as exc:  # the whole turn was rolled back
+            if "interviews" in str(exc.orig) or "uq_interview_slot" in str(exc.orig):
+                raise SlotTaken(str(exc.orig)) from exc
+            raise
+
+    def _write_turn(self, state, messages, events, interviews) -> None:
         with self._session.begin() as s:
             row = s.get(ConversationRow, state.id) or ConversationRow(id=state.id, client_id=state.client_id)
             row.channel = state.channel
@@ -255,6 +268,29 @@ class Repository:
             if conversation_id:
                 query = query.where(EventRow.conversation_id == conversation_id)
             return list(s.scalars(query))
+
+    # Aggregates for analytics: counted by the database, so they don't load every message and event
+    # (measured: 7.8 s for /api/analytics at 10,000 conversations when everything was loaded).
+    def candidate_message_counts(self) -> dict[str, int]:
+        with self._session() as s:
+            query = (select(MessageRow.conversation_id, func.count()).where(MessageRow.role == "candidate")
+                     .group_by(MessageRow.conversation_id))
+            return {cid: n for cid, n in s.execute(query)}
+
+    def agent_message_sources(self) -> list[tuple[str | None, str | None, int]]:
+        """(source, kind, count) of the agent's messages."""
+        with self._session() as s:
+            source, kind = MessageRow.meta["source"].as_string(), MessageRow.meta["kind"].as_string()
+            query = select(source, kind, func.count()).where(MessageRow.role == "agent").group_by(source, kind)
+            return [tuple(r) for r in s.execute(query)]
+
+    def event_counts(self) -> dict[str, int]:
+        with self._session() as s:
+            return {t: n for t, n in s.execute(select(EventRow.type, func.count()).group_by(EventRow.type))}
+
+    def events_of(self, types: set[str]) -> list[EventRow]:
+        with self._session() as s:
+            return list(s.scalars(select(EventRow).where(EventRow.type.in_(types)).order_by(EventRow.id)))
 
     def conversations(self) -> list[ConversationRow]:
         with self._session() as s:

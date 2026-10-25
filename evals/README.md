@@ -1,12 +1,13 @@
 # Evals
 
-The unit tests (`tests/`: 221 on the product, offline and free) prove the rules do the right thing **given** a model's reading. These evals measure the models themselves, on real API calls, and every result is committed so it can be read without running anything.
+The unit tests (`tests/`: 222 on the product, offline and free) prove the rules do the right thing **given** a model's reading. These evals measure the models themselves, on real API calls, and every result is committed so it can be read without running anything.
 
 | Eval | Question it answers | Latest results |
 |---|---|---|
 | **Extraction** (`extraction.py`, 126 hand-labelled messages) | Does the understanding model read each message correctly, and does it never invent a value? | [`results/extraction.md`](results/extraction.md) |
 | **Exploratory** (`explore.py`, 29 scripted conversations) | Does the agent cope when a candidate changes their mind, talks about something else, asks mid-flow or answers oddly? Read turn by turn by a person | [`results/exploratory/`](results/exploratory/README.md) |
 | **Retrieval** (`retrieval.py`, 127 questions held out from the knowledge base) | Does the right topic reach the understanding model, and does the model pick it, or none when nothing answers? | [`results/retrieval.md`](results/retrieval.md) |
+| **Volume** (`scripts/volume_test.py`, 1,000 and 10,000 synthetic screenings, $0) | Does our own code (engine, storage, scheduler, API) hold at today's volume and at 10×? The models are replaced; their latency is measured above | [`results/volume.md`](results/volume.md), read in [deployment §1b](../docs/design/deployment-and-scaling.md#1b-measured-the-system-at-1000-and-10000-screenings-a-week) |
 | **Conversations** (`conversations.py`, 13 simulated candidates + `judge.py`) | Does a whole screening end where it should, with the right data, in a way a candidate would find clear and respectful? | [`results/conversations.md`](results/conversations.md), [transcripts](results/conversations/) |
 
 ```bash
