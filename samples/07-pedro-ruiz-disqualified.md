@@ -1,4 +1,4 @@
-# Pedro Ruiz · ⛔ Disqualified
+# Pedro Ruiz · Disqualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 5 · **City:** Toledo
 
@@ -6,37 +6,37 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Pedro Ruiz
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Pedro. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > sí, de coche
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, carnet de coche en vigor. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > vivo en Toledo
 
-🛵 **Sofía**
+**Sofía**
 > Gracias por contármelo, Pedro. Ahora mismo no tenemos reparto en Toledo, así que no podemos seguir con tu solicitud por ahora. ¿Quieres que guardemos tus datos y te avisemos si abrimos en tu zona?
 
-🙂 **Candidate**
+**Candidate**
 > no gracias
 
-🛵 **Sofía**
+**Sofía**
 > Entendido, Pedro, no guardaremos tus datos. Gracias por tu tiempo y por tu interés en Grupo Sazón. ¡Mucha suerte en tu búsqueda!
 
 ## Structured data

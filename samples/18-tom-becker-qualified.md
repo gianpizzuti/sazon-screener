@@ -1,4 +1,4 @@
-# Tom Becker · ✅ Qualified
+# Tom Becker · Qualified
 
 **Channel:** web · **Language:** EN · **Candidate messages:** 11 · **City:** Valencia
 
@@ -6,61 +6,61 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Hi! 👋 I'm Sofía, Grupo Sazón's virtual (AI) assistant. I'm writing about your delivery driver application: 7 quick questions, about 3 minutes. Your data is only used for this hiring process. Shall we start?
 
-🙂 **Candidate**
+**Candidate**
 > yes
 
-🛵 **Sofía**
+**Sofía**
 > Great, let's get started. What's your full name (first name and surname)?
 
-🙂 **Candidate**
+**Candidate**
 > Tom Becker
 
-🛵 **Sofía**
+**Sofía**
 > Nice to meet you, Tom! Do you have a valid driver's license for a car or a motorbike?
 
-🙂 **Candidate**
+**Candidate**
 > yes I have a motorbike license
 
-🛵 **Sofía**
+**Sofía**
 > Perfect, thanks for letting me know. Which city and area would you like to deliver in?
 
-🙂 **Candidate**
+**Candidate**
 > do I need my own motorbike?
 
-🛵 **Sofía**
+**Sofía**
 > You can deliver with your own motorbike or car. Some restaurants also have company motorbikes, and the recruiting team will confirm what's available in your area. It does need to be a motor vehicle, so not a bike or scooter. Which city and area would you like to deliver in?
 
-🙂 **Candidate**
+**Candidate**
 > Valencia, El Cabanyal
 
-🛵 **Sofía**
+**Sofía**
 > Great, Valencia and El Cabanyal noted. What's your availability: full-time, part-time or weekends?
 
-🙂 **Candidate**
+**Candidate**
 > part time and weekends
 
-🛵 **Sofía**
+**Sofía**
 > Part-time plus weekends, got it. Which shift do you prefer: morning, afternoon, evening or flexible?
 
-🙂 **Candidate**
+**Candidate**
 > afternoon
 
-🛵 **Sofía**
+**Sofía**
 > Afternoon works, thanks. Do you have any delivery experience? If so, how long and on which platforms?
 
-🙂 **Candidate**
+**Candidate**
 > 6 months with Deliveroo in Berlin
 
-🛵 **Sofía**
+**Sofía**
 > Nice, 6 months with Deliveroo is solid experience. When could you start?
 
-🙂 **Candidate**
+**Candidate**
 > in two weeks
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Before we finish, please check your details:  
 > • Name: Tom Becker  
 > • Driver's license: Yes (motorbike)  
@@ -72,22 +72,22 @@
 >   
 > Is everything correct?
 
-🙂 **Candidate**
+**Candidate**
 > yes
 
-🛵 **Sofía**
+**Sofía**
 > Thanks for confirming, Tom! You meet the requirements to move on to an interview, and you can pick a time that suits you right now: the options are coming in the next message. Looking forward to it! 🙂
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Pick a day and time for your interview (about 20 minutes) at Grupo Sazón Ruzafa (Valencia):  
 > 1) Monday 26 Oct at 16:00  
 > 2) Tuesday 27 Oct at 16:00  
 > 3) Wednesday 28 Oct at 16:00
 
-🙂 **Candidate**
+**Candidate**
 > 1
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Done! Your interview is on Monday 26 Oct at 16:00 at Grupo Sazón Ruzafa (Valencia). Please bring your driving licence. If you can't make it, message me and we'll find another time.
 
 ## Structured data

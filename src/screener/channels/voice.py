@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 TTS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice}"
 MAX_CHARS = 2000
 
-_EMOJI = re.compile("[\U0001F000-\U0001FAFF☀-➿️‍]")
+_EMOJI = re.compile("[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F\u200D]")
 _DATE = re.compile(r"\b(\d{1,2})/(\d{1,2})\b")
 _TIME = re.compile(r"\b(?:(las|la)\s+)?(\d{1,2}):(\d{2})\b", re.IGNORECASE)
 _OPTION = re.compile(r"^\s*(\d)\)\s*", re.MULTILINE)

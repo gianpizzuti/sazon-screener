@@ -1,4 +1,4 @@
-# Ana Torres · ✅ Qualified
+# Ana Torres · Qualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 16 · **City:** Málaga
 
@@ -6,79 +6,79 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Ana
 
-🛵 **Sofía**
+**Sofía**
 > Gracias. ¿Me dices también tu apellido, por favor? Así completo tu nombre y apellido.
 
-🙂 **Candidate**
+**Candidate**
 > Torres
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Ana Torres. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, gracias por confirmarlo. ¿Ese carnet es de coche, de moto o de los dos?
 
-🙂 **Candidate**
+**Candidate**
 > en el centro
 
-🛵 **Sofía**
+**Sofía**
 > Gracias. Para ubicarte bien, ¿en qué ciudad y zona te gustaría repartir? Hay Centro en Madrid, Málaga, Guadalajara y Monterrey, ¿cuál de esos es el tuyo?
 
-🙂 **Candidate**
+**Candidate**
 > Málaga
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, repartirías en el Centro de Málaga. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > full time y part time
 
-🛵 **Sofía**
+**Sofía**
 > Vale, gracias. Para dejarlo claro, ¿prefieres jornada completa o media jornada? Los fines de semana se pueden añadir a cualquiera de las dos.
 
-🙂 **Candidate**
+**Candidate**
 > full time
 
-🛵 **Sofía**
+**Sofía**
 > Anotado, jornada completa. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > mañanas
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno de mañana. ¿Tienes experiencia repartiendo? Si es así, cuéntame cuánto tiempo y en qué plataformas.
 
-🙂 **Candidate**
+**Candidate**
 > año y medio en Just Eat
 
-🛵 **Sofía**
+**Sofía**
 > Genial, año y medio repartiendo con Just Eat es una buena experiencia. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el 1 de octubre
 
-🛵 **Sofía**
+**Sofía**
 > Gracias. Esa fecha ya ha pasado, así que necesito una a partir de hoy. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el 3 de noviembre
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Ana Torres  
 > • Carnet de conducir: Sí  
@@ -90,16 +90,16 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > no, la fecha está mal
 
-🛵 **Sofía**
+**Sofía**
 > Sin problema, vamos a corregirlo. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > mejor el lunes 9 de noviembre
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Ana Torres  
 > • Carnet de conducir: Sí  
@@ -111,22 +111,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Perfecto, Ana! Cumples los requisitos para pasar a la entrevista, y ya puedes elegir el horario que mejor te venga: te mando las opciones justo después de este mensaje. Gracias por tu tiempo y por tu paciencia.
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Centro (Málaga):  
 > 1) lunes 26/10 a las 10:00  
 > 2) martes 27/10 a las 10:00  
 > 3) miércoles 28/10 a las 10:00
 
-🙂 **Candidate**
+**Candidate**
 > 2
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el martes 27/10 a las 10:00 en Grupo Sazón Centro (Málaga). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

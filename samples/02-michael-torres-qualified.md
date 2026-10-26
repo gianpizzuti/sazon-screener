@@ -1,4 +1,4 @@
-# Michael Torres · ✅ Qualified
+# Michael Torres · Qualified
 
 **Channel:** web · **Language:** EN · **Candidate messages:** 10 · **City:** Ciudad de México
 
@@ -6,55 +6,55 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Hi! 👋 I'm Sofía, Grupo Sazón's virtual (AI) assistant. I'm writing about your delivery driver application: 7 quick questions, about 3 minutes. Your data is only used for this hiring process. Shall we start?
 
-🙂 **Candidate**
+**Candidate**
 > Hi! yes let's do it
 
-🛵 **Sofía**
+**Sofía**
 > Great, let's get started! What's your full name (first name and surname)?
 
-🙂 **Candidate**
+**Candidate**
 > I'm Michael Torres
 
-🛵 **Sofía**
+**Sofía**
 > Thanks, Michael, nice to meet you. Do you have a valid driver's license (car or motorbike)?
 
-🙂 **Candidate**
+**Candidate**
 > yes, car license
 
-🛵 **Sofía**
+**Sofía**
 > Perfect, a car license works. Which city and area would you like to deliver in?
 
-🙂 **Candidate**
+**Candidate**
 > CDMX, Roma Norte
 
-🛵 **Sofía**
+**Sofía**
 > Got it, Mexico City, in the Cuauhtémoc area. What's your availability: full-time, part-time or weekends?
 
-🙂 **Candidate**
+**Candidate**
 > full time
 
-🛵 **Sofía**
+**Sofía**
 > Full-time, perfect. Which shift do you prefer: morning, afternoon, evening or flexible?
 
-🙂 **Candidate**
+**Candidate**
 > evenings mostly
 
-🛵 **Sofía**
+**Sofía**
 > Evenings, noted. Do you have any delivery experience? If so, for how long and on which platforms?
 
-🙂 **Candidate**
+**Candidate**
 > two years in total, with Rappi and DiDi
 
-🛵 **Sofía**
+**Sofía**
 > Two years with Rappi and DiDi Food, great experience to have. When could you start?
 
-🙂 **Candidate**
+**Candidate**
 > asap
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Before we finish, please check your details:  
 > • Name: Michael Torres  
 > • Driver's license: Yes (car)  
@@ -66,22 +66,22 @@
 >   
 > Is everything correct?
 
-🙂 **Candidate**
+**Candidate**
 > yes, all correct
 
-🛵 **Sofía**
+**Sofía**
 > Thanks, Michael, everything is confirmed. You meet the requirements to move on to an interview, and you can choose your time right now: the options are coming in the next message.
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Pick a day and time for your interview (about 20 minutes) at Grupo Sazón Roma Norte (Ciudad de México):  
 > 1) Monday 26 Oct at 17:00  
 > 2) Tuesday 27 Oct at 17:00  
 > 3) Wednesday 28 Oct at 17:00
 
-🙂 **Candidate**
+**Candidate**
 > the first one works for me
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Done! Your interview is on Monday 26 Oct at 17:00 at Grupo Sazón Roma Norte (Ciudad de México). Please bring your driving licence. If you can't make it, message me and we'll find another time.
 
 ## Structured data

@@ -1,4 +1,4 @@
-# Sergio Blanco Ruiz · ⚠️ Needs review
+# Sergio Blanco Ruiz · Needs review
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 10 · **City:** Valencia
 
@@ -6,61 +6,61 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > hola, sí
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, empezamos. ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Sergio Blanco Ruiz
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Sergio. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > más o menos
 
-🛵 **Sofía**
+**Sofía**
 > Sin problema. Para entenderlo mejor: ¿tienes un carnet de conducir que esté vigente hoy, de coche o de moto? Puedes decirme "sí, lo tengo", "no tengo" o contarme tu caso con tus palabras.
 
-🙂 **Candidate**
+**Candidate**
 > bueno, depende del día
 
-🛵 **Sofía**
+**Sofía**
 > Entendido, gracias por contarme. Pasemos a otra cosa: ¿en qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > Valencia, Ruzafa
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Valencia y la zona de Ruzafa. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > media jornada
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, media jornada. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > mañanas
 
-🛵 **Sofía**
+**Sofía**
 > Anotado, turno de mañanas. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > un año en Uber Eats
 
-🛵 **Sofía**
+**Sofía**
 > Genial, un año repartiendo con Uber Eats es una buena experiencia. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el 2 de noviembre
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Sergio Blanco Ruiz  
 > • Carnet de conducir: (por confirmar)  
@@ -72,10 +72,10 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > Gracias por tu tiempo, Sergio. Alguien del equipo de selección revisará tus respuestas y se pondrá en contacto contigo pronto. ¡Hasta pronto!
 
 ## Structured data

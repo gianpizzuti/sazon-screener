@@ -25,8 +25,8 @@ class TestSpeakable:
         assert speakable("Wednesday 21/10 at 16:00", "en") == "Wednesday 21 October at 4 pm"
 
     def test_no_emojis_bullets_or_slashes(self):
-        spoken = speakable("¡Hola! 👋 Soy Sofía, para repartidor/a.\n• Nombre: Ana\n• Inicio: lunes 26/10", "es")
-        assert "👋" not in spoken and "•" not in spoken and "/" not in spoken
+        spoken = speakable("¡Hola! \U0001F44B Soy Sofía, para repartidor/a.\n• Nombre: Ana\n• Inicio: lunes 26/10", "es")
+        assert "\U0001F44B" not in spoken and "•" not in spoken and "/" not in spoken
         assert "repartidor o repartidora" in spoken and "Nombre: Ana. Inicio: lunes 26 de octubre" in spoken
 
     def test_quarter_to(self):
@@ -80,6 +80,6 @@ def test_the_speech_endpoint_falls_back_to_the_browser_voice(make_engine, monkey
     with TestClient(create_app(engine=engine, scheduler=False)) as client:
         cid = client.post("/api/conversations", json={"channel": "voice"}).json()["conversation_id"]
         assert client.get("/api/voice").json() == {"provider": "browser"}
-        body = client.post("/api/voice/speech", json={"conversation_id": cid, "text": "¡Hola! 👋 el 21/10"}).json()
+        body = client.post("/api/voice/speech", json={"conversation_id": cid, "text": "¡Hola! \U0001F44B el 21/10"}).json()
         assert body == {"provider": "browser", "speech": "¡Hola! el 21 de octubre", "locale": "es"}
         assert client.post("/api/voice/speech", json={"conversation_id": "nope", "text": "hola"}).status_code == 404

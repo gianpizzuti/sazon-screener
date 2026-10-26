@@ -1,4 +1,4 @@
-# Marta Gil · ⛔ Disqualified
+# Marta Gil · Disqualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 4
 
@@ -6,31 +6,31 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Marta Gil
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Marta. ¿Tienes carnet de conducir en vigor (coche o moto)?
 
-🙂 **Candidate**
+**Candidate**
 > no tengo carnet
 
-🛵 **Sofía**
+**Sofía**
 > Gracias por contármelo, Marta. Por ahora no podemos seguir con tu solicitud, porque para este puesto es necesario tener carnet de conducir en vigor. ¿Quieres que guardemos tus datos para avisarte si surge alguna oferta más adelante?
 
-🙂 **Candidate**
+**Candidate**
 > vale, sí
 
-🛵 **Sofía**
+**Sofía**
 > Hecho, Marta: guardamos tus datos y te avisaremos si surge alguna oferta que encaje. Muchas gracias por tu interés en Grupo Sazón, y mucho ánimo. 😊
 
 ## Structured data

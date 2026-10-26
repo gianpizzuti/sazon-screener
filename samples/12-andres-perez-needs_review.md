@@ -1,4 +1,4 @@
-# Andrés Pérez · ⚠️ Needs review
+# Andrés Pérez · Needs review
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 9 · **City:** Madrid
 
@@ -6,55 +6,55 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Andrés Pérez
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Andrés. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > tengo licencia venezolana de carro, ¿vale en España?
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, tienes licencia de carro en vigor. Un carnet de Venezuela vale en España solo durante los 6 primeros meses desde que resides aquí; después hace falta sacarse el carnet español, y alguien del equipo lo revisará contigo. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > Madrid, Retiro
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Madrid, zona Retiro. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > jornada completa
 
-🛵 **Sofía**
+**Sofía**
 > Genial, jornada completa. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > mañanas
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno de mañana. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > dos años en Rappi en Caracas
 
-🛵 **Sofía**
+**Sofía**
 > Dos años con Rappi, buena experiencia. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > ya
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Andrés Pérez  
 > • Carnet de conducir: Sí (coche, Venezuela)  
@@ -66,10 +66,10 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > Gracias por tu tiempo, Andrés. Alguien del equipo de selección revisará tus respuestas y se pondrá en contacto contigo pronto. ¡Mucha suerte! 🙂
 
 ## Structured data

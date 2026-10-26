@@ -1,4 +1,4 @@
-# Laura Gómez · ✅ Qualified
+# Laura Gómez · Qualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 11 · **City:** Sevilla
 
@@ -6,61 +6,61 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Laura Gómez
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Laura. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > sí, de moto
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, con carnet de moto en vigor. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > quiero hablar con una persona, no con un bot
 
-🛵 **Sofía**
+**Sofía**
 > Soy una asistente de IA, pero una persona del equipo revisa cada solicitud y puede ponerse en contacto contigo. Si me cuentas las respuestas que faltan ahora, todo irá más rápido. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > vale... vivo en Sevilla, en Triana
 
-🛵 **Sofía**
+**Sofía**
 > Genial, Sevilla y la zona de Triana, apuntado. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > fines de semana
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, fines de semana. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > noche
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno de noche. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > dos años en Glovo
 
-🛵 **Sofía**
+**Sofía**
 > Genial, dos años repartiendo con Glovo es una buena experiencia. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el lunes
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Laura Gómez  
 > • Carnet de conducir: Sí (moto)  
@@ -72,22 +72,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí, correcto
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, Laura! Con lo que me has contado cumples los requisitos para pasar a la entrevista. Ahora mismo puedes elegir el horario que mejor te venga: te mando las opciones justo después de este mensaje.
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Triana (Sevilla):  
 > 1) lunes 26/10 a las 17:00  
 > 2) martes 27/10 a las 17:00  
 > 3) miércoles 28/10 a las 17:00
 
-🙂 **Candidate**
+**Candidate**
 > 1
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el lunes 26/10 a las 17:00 en Grupo Sazón Triana (Sevilla). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

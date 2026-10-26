@@ -1,4 +1,4 @@
-# Andrés Gil · ✅ Qualified
+# Andrés Gil · Qualified
 
 **Channel:** voice · **Language:** ES · **Candidate messages:** 10 · **City:** Valencia
 
@@ -6,55 +6,55 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí claro
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, empezamos. ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > me llamo andrés gil
 
-🛵 **Sofía**
+**Sofía**
 > Mucho gusto, Andrés Gil. ¿Tienes carnet de conducir en vigor, de coche o de moto? Puedes decir sí o no.
 
-🙂 **Candidate**
+**Candidate**
 > sí tengo carnet de coche
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, con carnet de coche en vigor. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > valencia en benimaclet
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Valencia, en la zona de Benimaclet. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > jornada completa
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, jornada completa. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > por las mañanas
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno de mañana. ¿Tienes experiencia como repartidor o repartidora? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > dos años en just eat
 
-🛵 **Sofía**
+**Sofía**
 > Genial, dos años repartiendo con Just Eat es una buena experiencia. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > la semana que viene el lunes
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Andrés Gil  
 > • Carnet de conducir: Sí (coche)  
@@ -66,22 +66,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí está todo bien
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Andrés, cumples los requisitos para pasar a la entrevista. Ahora mismo puedes elegir el día y la hora que mejor te vengan, te las envío justo después de este mensaje.
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Ruzafa (Valencia):  
 > 1) lunes 26/10 a las 12:00  
 > 2) martes 27/10 a las 10:00  
 > 3) miércoles 28/10 a las 10:00
 
-🙂 **Candidate**
+**Candidate**
 > la uno
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el lunes 26/10 a las 12:00 en Grupo Sazón Ruzafa (Valencia). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

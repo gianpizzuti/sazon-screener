@@ -1,4 +1,4 @@
-# Raúl Ortega · ↩️ Withdrawn
+# Raúl Ortega · Withdrawn
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 5 · **City:** Madrid
 
@@ -6,37 +6,37 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, vamos allá! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Raúl Ortega
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Raúl, ya tengo tu nombre. ¿Tienes carnet de conducir en vigor (coche o moto)?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, carnet en vigor anotado. ¿Es de coche, de moto o de ambos?
 
-🙂 **Candidate**
+**Candidate**
 > Madrid, Chamberí
 
-🛵 **Sofía**
+**Sofía**
 > Genial, entonces repartirías en Madrid, por la zona de Chamberí. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > uy, perdona, ya he encontrado otro trabajo. no me interesa
 
-🛵 **Sofía**
+**Sofía**
 > No pasa nada, Raúl, gracias por avisarme y por tu tiempo. Enhorabuena por el nuevo trabajo y mucha suerte. Si más adelante te interesa, puedes escribirnos cuando quieras. ¡Un saludo!
 
 ## Structured data

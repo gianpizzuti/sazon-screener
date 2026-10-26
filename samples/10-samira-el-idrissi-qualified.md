@@ -1,4 +1,4 @@
-# Samira El Idrissi · ✅ Qualified
+# Samira El Idrissi · Qualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 11 · **City:** Madrid
 
@@ -6,61 +6,61 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí, pero antes una cosa: ¿las propinas son para mí?
 
-🛵 **Sofía**
+**Sofía**
 > Claro: las propinas que te dejan los clientes en tus entregas son para ti y van aparte del sueldo. ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Samira El Idrissi
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Samira. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > tengo carnet de coche, pero es de Marruecos, ¿vale aquí?
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, con carnet de coche vas bien. Sobre si vale aquí: sí, un carnet de Marruecos es válido en España durante los 6 primeros meses desde que resides aquí. Después hay que canjearlo por el español en la DGT, sin examen para coche o moto, y el equipo lo revisa contigo en la entrevista. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > Madrid, Tetuán
 
-🛵 **Sofía**
+**Sofía**
 > Genial, Madrid y Tetuán, apuntado. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > jornada completa
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, jornada completa. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > tardes
 
-🛵 **Sofía**
+**Sofía**
 > Apuntado, turno de tardes. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > un año en Glovo
 
-🛵 **Sofía**
+**Sofía**
 > Un año en Glovo, genial, es una buena experiencia para este puesto. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > oye, ¿la gasolina la pagáis vosotros?
 
-🛵 **Sofía**
+**Sofía**
 > Si repartes con tu propio vehículo, compensamos el combustible por kilómetro recorrido en las entregas. El importe exacto por kilómetro te lo confirma el equipo en la entrevista. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el lunes
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Samira El Idrissi  
 > • Carnet de conducir: Sí (coche, Marruecos)  
@@ -72,22 +72,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, Samira! Cumples los requisitos para pasar a la entrevista. Ahora mismo te envío las opciones para que elijas el horario que mejor te venga. ¡Gracias por tu tiempo!
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):  
 > 1) lunes 26/10 a las 16:30  
 > 2) martes 27/10 a las 16:00  
 > 3) miércoles 28/10 a las 16:00
 
-🙂 **Candidate**
+**Candidate**
 > 2
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el martes 27/10 a las 16:00 en Grupo Sazón Malasaña (Madrid). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

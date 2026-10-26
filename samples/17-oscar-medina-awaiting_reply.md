@@ -1,4 +1,4 @@
-# Óscar Medina · 💬 Awaiting reply
+# Óscar Medina · Awaiting reply
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 6 · **City:** Monterrey
 
@@ -6,43 +6,43 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Óscar Medina
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Óscar. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > sí, licencia vigente
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, licencia vigente. ¿Es de coche, de moto o de ambos?
 
-🙂 **Candidate**
+**Candidate**
 > Monterrey, en San Pedro
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, entonces sería en Monterrey, en la zona de San Pedro Garza García. ¿Qué disponibilidad tienes: tiempo completo, medio tiempo o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > tiempo completo
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, tiempo completo. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > tarde
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno de tarde. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
 ## Structured data

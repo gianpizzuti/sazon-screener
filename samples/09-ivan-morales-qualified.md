@@ -1,4 +1,4 @@
-# Iván Morales · ✅ Qualified
+# Iván Morales · Qualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 11 · **City:** Madrid
 
@@ -6,61 +6,61 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, empezamos! ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Iván Morales
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Iván. ¿Tienes carnet de conducir en vigor, de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > sí, de moto
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, carnet de moto en vigor. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > Madrid, Usera
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, en Madrid. Usera no está entre nuestras zonas de reparto, pero sí Arganzuela, Carabanchel y Puente de Vallecas. ¿Cuál te viene mejor? Si te da igual, también puedes elegir cualquier zona.
 
-🙂 **Candidate**
+**Candidate**
 > Carabanchel
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Carabanchel. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > media jornada
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, media jornada. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > noches
 
-🛵 **Sofía**
+**Sofía**
 > Anotado, turno de noche. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > un año en Glovo
 
-🛵 **Sofía**
+**Sofía**
 > Genial, un año repartiendo con Glovo es una buena base. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el lunes
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Iván Morales  
 > • Carnet de conducir: Sí (moto)  
@@ -72,22 +72,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > ¡Genial, Iván! Con lo que me has contado cumples los requisitos para pasar a la entrevista. Puedes elegir ya mismo el horario que mejor te venga: te envío las opciones justo después de este mensaje. Gracias por tu tiempo 🙂
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Malasaña (Madrid):  
 > 1) lunes 26/10 a las 17:00  
 > 2) martes 27/10 a las 17:00  
 > 3) miércoles 28/10 a las 17:00
 
-🙂 **Candidate**
+**Candidate**
 > 1
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el lunes 26/10 a las 17:00 en Grupo Sazón Malasaña (Madrid). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

@@ -1,4 +1,4 @@
-# Diego Navarro · ✅ Qualified
+# Diego Navarro · Qualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 10 · **City:** Bilbao
 
@@ -6,55 +6,55 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > sí claro
 
-🛵 **Sofía**
+**Sofía**
 > Genial, vamos allá. ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Diego Navarro
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Diego. ¿Tienes carnet de conducir en vigor, ya sea de coche o de moto?
 
-🙂 **Candidate**
+**Candidate**
 > tengo carnet de coche
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, con carnet de coche sirve. ¿En qué ciudad y zona te gustaría repartir?
 
-🙂 **Candidate**
+**Candidate**
 > Bilbao, Deusto
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Bilbao y la zona de Deusto, anotado. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
-🙂 **Candidate**
+**Candidate**
 > jornada completa
 
-🛵 **Sofía**
+**Sofía**
 > Genial, jornada completa. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > me da igual el turno
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno flexible. ¿Tienes experiencia repartiendo? Si es así, cuéntame cuánto tiempo y en qué plataformas.
 
-🙂 **Candidate**
+**Candidate**
 > sin experiencia
 
-🛵 **Sofía**
+**Sofía**
 > No pasa nada, aquí también se da la bienvenida a gente sin experiencia repartiendo. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > el 1 de abril del año que viene, cuando acabe el máster
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Diego Navarro  
 > • Carnet de conducir: Sí (coche)  
@@ -66,22 +66,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí
 
-🛵 **Sofía**
+**Sofía**
 > Gracias por confirmarlo, Diego. Cumples los requisitos para pasar a la entrevista, y puedes elegir el horario ahora mismo: te envío las opciones justo después de este mensaje.
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Abando (Bilbao):  
 > 1) lunes 26/10 a las 10:00  
 > 2) martes 27/10 a las 10:00  
 > 3) miércoles 28/10 a las 10:00
 
-🙂 **Candidate**
+**Candidate**
 > 1
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el lunes 26/10 a las 10:00 en Grupo Sazón Abando (Bilbao). Trae tu carnet de conducir. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

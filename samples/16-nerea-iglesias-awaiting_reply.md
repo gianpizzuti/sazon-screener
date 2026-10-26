@@ -1,4 +1,4 @@
-# Nerea Iglesias · 💬 Awaiting reply
+# Nerea Iglesias · Awaiting reply
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 4 · **City:** Barcelona
 
@@ -6,31 +6,31 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > hola, sí
 
-🛵 **Sofía**
+**Sofía**
 > Genial, empezamos. ¿Cómo te llamas? Nombre y apellido, por favor.
 
-🙂 **Candidate**
+**Candidate**
 > Nerea Iglesias
 
-🛵 **Sofía**
+**Sofía**
 > Encantada, Nerea. ¿Tienes carnet de conducir en vigor (coche o moto)?
 
-🙂 **Candidate**
+**Candidate**
 > sí tengo
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, gracias por confirmarlo. ¿Es carnet de coche, de moto o de ambos?
 
-🙂 **Candidate**
+**Candidate**
 > Barcelona, Eixample
 
-🛵 **Sofía**
+**Sofía**
 > Genial, Barcelona y la zona del Eixample, tomo nota. ¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?
 
 ## Structured data

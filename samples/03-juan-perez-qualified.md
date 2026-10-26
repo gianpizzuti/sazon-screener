@@ -1,4 +1,4 @@
-# Juan Pérez · ✅ Qualified
+# Juan Pérez · Qualified
 
 **Channel:** web · **Language:** ES · **Candidate messages:** 7 · **City:** Guadalajara
 
@@ -6,37 +6,37 @@
 
 ## Conversation
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Hola! 👋 Soy Sofía, la asistente virtual (IA) de Grupo Sazón. Te escribo por tu solicitud como repartidor/a: son 7 preguntas rápidas, unos 3 minutos. Tus datos solo se usan para este proceso de selección. ¿Empezamos?
 
-🙂 **Candidate**
+**Candidate**
 > Qué onda, sí le entro. Soy Juan Pérez, tengo licencia y vivo en Guadalajara por Providencia
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, Juan, anotado: Guadalajara, zona Providencia. Y qué bueno que ya cuentas con licencia de manejo. ¿Me dices si es para carro, para moto o para ambos? Es para que el equipo pueda planear los vehículos.
 
-🙂 **Candidate**
+**Candidate**
 > tiempo completo
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, tiempo completo anotado. ¿Qué turno prefieres: mañana, tarde, noche o flexible?
 
-🙂 **Candidate**
+**Candidate**
 > en la noche
 
-🛵 **Sofía**
+**Sofía**
 > Perfecto, turno de noche anotado. ¿Tienes experiencia como repartidor/a? Si es así, ¿cuánto tiempo y en qué plataformas?
 
-🙂 **Candidate**
+**Candidate**
 > 3 años en Rappi y Uber
 
-🛵 **Sofía**
+**Sofía**
 > Qué bien, 3 años repartiendo con Rappi y Uber Eats es muy buena experiencia. ¿Cuándo podrías empezar?
 
-🙂 **Candidate**
+**Candidate**
 > ahorita mismo
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Antes de terminar, revisa tus datos:  
 > • Nombre: Juan Pérez  
 > • Licencia de manejo: Sí  
@@ -48,22 +48,22 @@
 >   
 > ¿Está todo correcto?
 
-🙂 **Candidate**
+**Candidate**
 > sí, todo bien
 
-🛵 **Sofía**
+**Sofía**
 > ¡Excelente, Juan! Cumples con los requisitos para pasar a la entrevista, y ya puedes elegir el horario que mejor te acomode: te mando las opciones justo después de este mensaje. ¡Gracias por tu tiempo!
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > Elige día y hora para tu entrevista (unos 20 minutos) en Grupo Sazón Providencia (Guadalajara):  
 > 1) lunes 26/10 a las 17:00  
 > 2) martes 27/10 a las 17:00  
 > 3) miércoles 28/10 a las 17:00
 
-🙂 **Candidate**
+**Candidate**
 > la primera porfa
 
-🛵 **Sofía** _(template)_
+**Sofía** _(template)_
 > ¡Listo! Tu entrevista es el lunes 26/10 a las 17:00 en Grupo Sazón Providencia (Guadalajara). Trae tu licencia de manejo. Si no puedes ir, escríbeme y buscamos otro horario.
 
 ## Structured data

@@ -22,8 +22,8 @@ from screener.views import display_status
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "samples"
 STATUS = {
-    "qualified": "✅ Qualified", "needs_review": "⚠️ Needs review", "disqualified": "⛔ Disqualified",
-    "withdrawn": "↩️ Withdrawn", "abandoned": "💤 Abandoned", "terminated": "🚫 Closed", "awaiting_reply": "💬 Awaiting reply",
+    "qualified": "Qualified", "needs_review": "Needs review", "disqualified": "Disqualified",
+    "withdrawn": "Withdrawn", "abandoned": "Abandoned", "terminated": "Closed", "awaiting_reply": "Awaiting reply",
 }
 HIGHLIGHTS = {
     "language_switched": "switches language",
@@ -111,7 +111,7 @@ def render(state: ConversationState, status: str, messages, events, summary: dic
         "",
     ]
     for m in messages:
-        who = "🛵 **Sofía**" if m.role == "agent" else "🙂 **Candidate**"
+        who = "**Sofía**" if m.role == "agent" else "**Candidate**"
         text = m.text.replace("\n", "  \n> ")
         source = " _(template)_" if m.role == "agent" and m.meta.get("source") == "template" else ""
         lines += [f"{who}{source}", f"> {text}", ""]
