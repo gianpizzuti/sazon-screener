@@ -207,7 +207,9 @@ export function HowItWorksPage() {
 
   useEffect(() => {
     if (!scenario || step >= path.length - 1) return;
-    const timer = setTimeout(() => setStep((s) => s + 1), 650);
+    // Slow enough to read the side panel as it changes; decisions (the knock-outs) hold a little longer.
+    const isDecision = NODES.find((n) => n.id === path[step])?.kind === "decision";
+    const timer = setTimeout(() => setStep((s) => s + 1), isDecision ? 2200 : 1400);
     return () => clearTimeout(timer);
   }, [scenario, step, path.length]);
   useEffect(() => { if (scenario) setSelected(path[step]); }, [scenario, step, path]);
