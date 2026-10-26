@@ -1,4 +1,4 @@
-"""The voice channel (ADR 0011): the same engine and API, spoken."""
+"""The voice channel (ADR 0010): the same engine and API, spoken."""
 
 from __future__ import annotations
 

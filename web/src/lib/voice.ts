@@ -1,5 +1,5 @@
 /**
- * Voice for "Try the agent" (ADR 0011). The browser listens (Web Speech API, so the candidate's
+ * Voice for "Try the agent" (ADR 0010). The browser listens (Web Speech API, so the candidate's
  * audio never reaches our server); the server says what to speak: ElevenLabs audio when a key is
  * configured, otherwise speakable text for the browser's own voice.
  */

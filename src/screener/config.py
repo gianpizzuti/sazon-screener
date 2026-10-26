@@ -150,7 +150,7 @@ class ForeignLicenceRules(BaseModel):
 
 
 class VoiceSettings(BaseModel):
-    """The voice channel (ADR 0011): ElevenLabs voices per locale. Without ELEVENLABS_API_KEY the browser's voice is used."""
+    """The voice channel (ADR 0010): ElevenLabs voices per locale. Without ELEVENLABS_API_KEY the browser's voice is used."""
 
     model: str = "eleven_flash_v2_5"                       # low latency, multilingual, half the credits per character
     voices: dict[str, str] = Field(default_factory=dict)   # es-ES / es-MX / en / default -> ElevenLabs voice id
@@ -176,7 +176,7 @@ class ModelSettings(BaseModel):
 
 
 class RetrievalSettings(BaseModel):
-    """Which knowledge-base topics the understanding model chooses from (ADR 0010)."""
+    """Which knowledge-base topics the understanding model chooses from (ADR 0007)."""
 
     embedding_model: str | None = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     method: Literal["semantic", "hybrid"] = "semantic"  # hybrid adds keyword search (BM25)

@@ -72,7 +72,7 @@ export function TryAgentPage() {
   useEffect(() => { try { session ? sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session)) : sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ } }, [session]);
   useEffect(() => { scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }, [detail?.transcript.length, pending]);
 
-  // Voice (ADR 0011): Sofía speaks her messages, then listens if she asked something. Hands-free, like a call.
+  // Voice (ADR 0010): Sofía speaks her messages, then listens if she asked something. Hands-free, like a call.
   const startListening = (locale: string) => {
     interrupt();
     const mine = turn.current;

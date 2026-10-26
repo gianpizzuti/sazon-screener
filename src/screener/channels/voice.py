@@ -1,4 +1,4 @@
-"""The voice channel: Sofía's messages made speakable, and the voice that says them (ADR 0011).
+"""The voice channel: Sofía's messages made speakable, and the voice that says them (ADR 0010).
 
 Voice is one more channel on the same API (ADR 0008). The engine decides and writes as it does for
 chat, told only that the conversation is spoken (no emojis, options said in words). This module turns

@@ -1,4 +1,4 @@
-"""Knowledge-base retrieval (ADR 0010): the shortlist shown to the understanding model."""
+"""Knowledge-base retrieval (ADR 0007): the shortlist shown to the understanding model."""
 
 from __future__ import annotations
 

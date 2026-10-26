@@ -1,4 +1,4 @@
-# Knowledge base used to answer candidate questions (ADR 0010).
+# Knowledge base used to answer candidate questions (ADR 0007).
 # The response model only ever sees the ONE answer selected for the question, so it cannot
 # improvise on pay or benefits. Answers are written in Spanish; the model adapts language
 # and regional variant. `ES` / `MX` override `default` per country.

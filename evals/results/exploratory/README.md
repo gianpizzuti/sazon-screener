@@ -34,7 +34,7 @@ Run 2026-10-23 00:30 · 25 scenarios · $0.47. Triage compares the end state wit
 | [`ex28_italian_licence_just_moved`](ex28_italian_licence_just_moved.md) | qualified | as expected |
 | [`ex29_venezuelan_licence`](ex29_venezuelan_licence.md) | needs_review | as expected |
 
-Added with the 30-topic knowledge base (ADR 0010): ex26, plus the four scenarios full of questions (ex03, ex08, ex18, ex23), were run again on 2026-10-23 with embedding retrieval ($0.13), all as expected.
+Added with the 30-topic knowledge base (ADR 0007): ex26, plus the four scenarios full of questions (ex03, ex08, ex18, ex23), were run again on 2026-10-23 with embedding retrieval ($0.13), all as expected.
 
 Re-run on 2026-10-23 after D219–D221 (neighbourhoods without a delivery zone): ex26, ex27 and the Madrid scenarios ex01, ex08, ex09, ex10, ex22 ($0.18). "Madrid, Usera" is now kept and answered with the closest zones; ex27 as expected. ex26 ended at the recap for two reasons unrelated to zones (both **fixed** since, see below):
 - The model read "tengo carnet de coche, pero es de Marruecos, ¿vale aquí?" as a licence of unknown validity (the earlier run read it as "yes"). The script never answers the licence question again, so Sofía asked it seven times while the candidate answered other things: a re-ask has no limit when the candidate keeps giving other data.

@@ -37,9 +37,9 @@ EMBEDDING_MODELS = {
 # Topics shown to the understanding model: (retrieval shortlist?, with each topic's approved answer?)
 SETUPS = {
     "shortlist + answers": (True, True),   # production (D213)
-    "shortlist": (True, False),            # first version of ADR 0010
+    "shortlist": (True, False),            # first version of the shortlist
     "every topic + answers": (False, True),  # control: the answers without retrieval
-    "every topic": (False, False),         # ADR 0007: classification over every title
+    "every topic": (False, False),         # first version: classification over every title
 }
 
 

@@ -36,7 +36,7 @@ class UnderstandRequest:
     known: dict[str, str]
     today: date
     language: str
-    faq_topics: list[FaqEntry] = field(default_factory=list)  # the retrieval shortlist (ADR 0010)
+    faq_topics: list[FaqEntry] = field(default_factory=list)  # the retrieval shortlist (ADR 0007)
 
 
 @dataclass

@@ -1,11 +1,11 @@
-# ADR 0010: Knowledge-base retrieval with local multilingual embeddings
+# ADR 0007: Knowledge-base retrieval with local multilingual embeddings
 
-> The assessment's **RAG** bonus in its standard form. **Retrieval**: an embedding model finds the knowledge-base topics closest to the candidate's question. **Augmentation**: code inserts the one approved answer. **Generation**: Sofía phrases only that. This replaces the retrieval step of [ADR 0007](0007-faq-without-vector-db.md); its augmentation and generation rules stand.
+> The assessment's **RAG** bonus in its standard form. **Retrieval**: an embedding model finds the knowledge-base topics closest to the candidate's question. **Augmentation**: code inserts the one approved answer. **Generation**: Sofía phrases only that.
 
 **Status:** accepted
 
 ## Context
-- ADR 0007 had the understanding model classify each question over the titles of all 16 topics, kept in its cached system prompt. That works at 16 topics, but the prompt grows with every topic, and the model judged a topic by its title alone.
+- The first version had the understanding model classify each question over the titles of all 16 topics, kept in its cached system prompt. That works at 16 topics, but the prompt grows with every topic, and the model judged a topic by its title alone.
 - The knowledge base grew to 30 topics (D211). Some are close neighbours, as a real one would be:
   - money: pay, tips, payday, fuel and vehicle costs;
   - accidents: insurance cover vs what to do after an accident;
@@ -26,7 +26,7 @@
    - code inserts the single approved answer, or one built from configuration (zones, interview times);
    - the writer phrases only that and checks that it fits (D145);
    - unanswered questions are logged for recruiters and become the backlog for the knowledge base.
-5. **Degraded mode.** Without the embedding model (not installed, or not downloaded yet), the model sees every topic: the ADR 0007 behaviour, correct at this size.
+5. **Degraded mode.** Without the embedding model (not installed, or not downloaded yet), the model sees every topic: the first version's behaviour, correct at this size.
 6. **Audit.** The shortlist is stored with each candidate message and shown in the app ("Closest FAQ topics", the chosen one highlighted), so a retrieval miss can be seen.
 
 ## Measurements ([`evals/results/retrieval.md`](../../evals/results/retrieval.md))
@@ -51,7 +51,7 @@ The eval has 127 questions that are not in the index (a test checks it).
 | **Shortlist of 5 with answers (production)** | **93%** | **0** | **48/48** | $0.26 |
 | Shortlist of 5, titles only | 91% | 4 (+2 topics where none applies) | 42/48 | $0.21 |
 | Every topic with answers | 94% | 4 | 46/48 | $0.49 |
-| Every topic, titles only (ADR 0007) | 91% | 4 | 42/48 | $0.30 |
+| Every topic, titles only (first version) | 91% | 4 | 42/48 | $0.30 |
 
 A **wrong topic** is the error that matters, because the writer receives an approved answer to another question. A **missed** topic is safe: "the team will confirm", logged. Production misses 7% of answerable questions in exchange for zero wrong topics. Two of those misses are retrieval misses ("¿necesito el número de la seguridad social?", "¿vais a pasar mi teléfono a otras empresas?"). In both cases the model said none rather than pick a wrong topic from the shortlist.
 

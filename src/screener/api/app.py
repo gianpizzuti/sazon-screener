@@ -131,7 +131,7 @@ def create_app(engine: ScreeningEngine | None = None, scheduler: bool = True) ->
 
     @api.get("/voice", tags=["channel"])
     def voice_status(request: Request) -> dict:
-        """Which voice speaks: ElevenLabs when a key is configured, else the browser's own (ADR 0011)."""
+        """Which voice speaks: ElevenLabs when a key is configured, else the browser's own (ADR 0010)."""
         return {"provider": "elevenlabs" if get_voice(request).available else "browser"}
 
     @api.post("/voice/speech", tags=["channel"], responses={200: {"content": {"audio/mpeg": {}}}})

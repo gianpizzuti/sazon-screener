@@ -129,7 +129,7 @@ export function Chip({ children, className }: { children: ReactNode; className?:
   );
 }
 
-/** The knowledge-base topics retrieval offered for a question (ADR 0010); the one the model chose is highlighted. */
+/** The knowledge-base topics retrieval offered for a question (ADR 0007); the one the model chose is highlighted. */
 export function RetrievedTopics({ topics, chosen }: { topics: string[]; chosen: string | null }) {
   return (
     <div className="flex flex-wrap items-center gap-1.5">

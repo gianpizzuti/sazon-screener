@@ -1,4 +1,4 @@
-"""Knowledge-base retrieval: which approved answers might answer a candidate's question (ADR 0010).
+"""Knowledge-base retrieval: which approved answers might answer a candidate's question (ADR 0007).
 
 A multilingual embedding model ranks the topics of faq.yaml by meaning, so paraphrases and other
 languages match ("¿me sale a cuenta con la gasolina?", "how much does it pay?"). A topic is indexed
@@ -12,7 +12,7 @@ retrieval.md: generic words such as "hace falta" lift wrong topics), so it is of
 here for knowledge bases full of exact names and codes, where keywords usually help.
 
 Without the embedding model (not installed, or not downloaded yet) the shortlist is every topic:
-the understanding model classifies over the whole list, as before ADR 0010. Correct at this size;
+the understanding model classifies over the whole list, as before ADR 0007. Correct at this size;
 it only stops scaling at a few hundred entries.
 """
 

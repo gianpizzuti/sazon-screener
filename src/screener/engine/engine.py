@@ -66,7 +66,7 @@ class TurnResult(BaseModel):
     analysis: TurnAnalysis | None = None  # exposed for debugging / the dashboard
     event_types: list[str] = Field(default_factory=list)
     locale: str = "es"  # how Sofía is speaking now (es-ES, es-MX, es, en): a voice client picks its language from it
-    faq_topics: list[str] = Field(default_factory=list)  # the knowledge-base shortlist the model chose from (ADR 0010)
+    faq_topics: list[str] = Field(default_factory=list)  # the knowledge-base shortlist the model chose from (ADR 0007)
 
 
 class ScreeningEngine:
@@ -354,7 +354,7 @@ class ScreeningEngine:
     def _render(self, state, directive: Directive, history, today, events):
         if directive.kind == "silent":
             return [], []
-        directive.voice = state.channel == "voice"  # same decisions, spoken wording (ADR 0011)
+        directive.voice = state.channel == "voice"  # same decisions, spoken wording (ADR 0010)
         if directive.kind in ("interview_offer", "interview_booked", "interview_handoff"):
             meta = {"kind": directive.kind, "source": "template", "directive": directive.model_dump(mode="json")}
             return [self._interview_message(state, directive)], [meta]

@@ -16,7 +16,7 @@ dependencies = [
     "rich>=13.0",
     "fastapi>=0.110",
     "uvicorn>=0.29",
-    "fastembed>=0.9",  # local multilingual embeddings for knowledge-base retrieval (ADR 0010)
+    "fastembed>=0.9",  # local multilingual embeddings for knowledge-base retrieval (ADR 0007)
     "numpy>=1.26",
 ]
 

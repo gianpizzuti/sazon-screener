@@ -97,7 +97,7 @@ NAME ─► DRIVER'S LICENCE ──no / in progress──► DISQUALIFIED (no li
 
 **Other cases handled**
 - Several messages in a row: the channel waits a few seconds before processing them together.
-- Questions about pay, contract, vehicle and 27 other topics: answered only from the client's approved knowledge base (retrieval, then the one approved answer, [ADR 0010](decisions/0010-knowledge-base-retrieval.md)). Unknown questions get "the team will confirm" and are logged for the recruiter. Pay is never invented.
+- Questions about pay, contract, vehicle and 27 other topics: answered only from the client's approved knowledge base (retrieval, then the one approved answer, [ADR 0007](decisions/0007-knowledge-base-retrieval.md)). Unknown questions get "the team will confirm" and are logged for the recruiter. Pay is never invented.
 - "¿Eres un bot?": honest answer.
 - LLM or API failure: retry, then a template message. The conversation never crashes and the candidate's attempt is not counted.
 
