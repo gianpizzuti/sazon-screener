@@ -167,11 +167,6 @@ In the order I would do them with more time. Most come from what testing and the
 | Evals in CI on prompt or model changes, plus canary rollouts | Catches regressions before they reach candidates |
 | Recruiter summary on Sonnet, or through the Batch API | The Opus summary is ≈ 40% of the cost per screening. Switch only after checking `summary_faithful` with the judge |
 
-### What I'd do differently
-- **Start the evals on day one.** The most serious problems were found by the evals, late in the week: two paths to a wrong knock-out and a loop in the recap. Unit tests can't find them, because they script the model's answers.
-- **Give eval cases production context from the start.** The first version had none and overstated one risk by 19/20 vs 0/20 (D141).
-- **Skip the throwaway UI.** The first recruiter tool was Streamlit, later replaced by React. API-first made the switch cheap, but going straight to the final interface would have saved time.
-
 ## Structured output
 
 Every conversation produces a `ScreeningData` record (plus per-field status, flags and the full audit trail):
