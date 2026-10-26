@@ -87,17 +87,21 @@ export function BarList({ rows, unit, total, keepOrder = false, emptyText = "No 
             className="group relative grid grid-cols-[minmax(84px,30%)_1fr] items-center gap-3 rounded-lg outline-offset-4"
           >
             <span className="truncate text-[13px] text-ink-2" title={row.label}>{row.label}</span>
-            <div className="relative flex h-6 items-center">
-              <div className="absolute inset-y-0 left-0 w-full rounded-r-[4px] bg-grid/60" aria-hidden />
-              <motion.div
-                className="relative h-[18px] origin-left rounded-r-[4px] bg-series transition-[filter] group-hover:brightness-110"
-                style={{ width: `${Math.max(width, 1.5)}%` }}
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: inView ? 1 : 0 }}
-                transition={{ duration: 0.7, ease: EASE, delay: 0.06 * i }}
-              />
+            <div className="relative flex h-6 items-center gap-2">
+              {/* The bar has its own track and the number a fixed column: if they shared the row, a longer
+                  label ("20 100%") would squeeze its bar shorter than a smaller value's ("19 95%"). */}
+              <div className="relative flex h-full min-w-0 flex-1 items-center">
+                <div className="absolute inset-0 rounded-r-[4px] bg-grid/60" aria-hidden />
+                <motion.div
+                  className="relative h-[18px] shrink-0 origin-left rounded-r-[4px] bg-series transition-[filter] group-hover:brightness-110"
+                  style={{ width: `${Math.max(width, 1.5)}%` }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: inView ? 1 : 0 }}
+                  transition={{ duration: 0.7, ease: EASE, delay: 0.06 * i }}
+                />
+              </div>
               <motion.span
-                className="num relative ml-2 text-[13px] font-semibold text-ink"
+                className="num relative w-24 shrink-0 text-[13px] font-semibold whitespace-nowrap text-ink"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: inView ? 1 : 0 }}
                 transition={{ duration: 0.3, delay: 0.06 * i + 0.45 }}
