@@ -87,9 +87,8 @@ export function statusMeta(status: Status) {
 }
 
 /** Status is always icon + label: colour never carries meaning alone. */
-export function StatusBadge({ status, size = "md", label: labelOverride }: { status: Status; size?: "sm" | "md"; label?: string }) {
-  const { label: defaultLabel, icon: Icon, tone } = statusMeta(status);
-  const label = labelOverride ?? defaultLabel;
+export function StatusBadge({ status, size = "md" }: { status: Status; size?: "sm" | "md" }) {
+  const { label, icon: Icon, tone } = statusMeta(status);
   return (
     <span className={clsx("inline-flex shrink-0 items-center gap-1.5 rounded-full font-medium ring-1 ring-inset", tone,
       size === "sm" ? "px-2 py-0.5 text-xs" : "px-2.5 py-1 text-[13px]")}>
