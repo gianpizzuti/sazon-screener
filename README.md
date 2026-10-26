@@ -17,7 +17,7 @@ Design (not built yet): **[ATS integration](docs/design/ats-integration.md)** wi
 
 ---
 
-## Quick start
+## Setup
 
 Requirements: Python 3.11+, Node 18+ (for the web app), an Anthropic API key.
 
@@ -54,7 +54,7 @@ make eval-retrieval          # knowledge-base retrieval: local models ($0) + Hai
 | **Evals** | **Extraction**: 126 hand-labelled messages scored field by field, Haiku vs Sonnet vs Opus (Haiku: 124/126 messages and 158/158 values right, 1 invented value, location 22/22 after the rules, ≈ $0.25 per 1,000 messages). **Conversations**: 13 simulated candidates screened end to end, deterministic checks plus an Opus judge calibrated on hand-written controls (data right 13/13, judge 4.2–4.8/5, $0.043 per screening). **Retrieval**: 127 held-out questions, keyword vs meaning vs hybrid and two embedding models, then the topic Haiku picks in four setups. **Volume**: 1,000 and 10,000 synthetic screenings through the real engine and API at $0: 2 ms of our code per message, the pipeline in 56 ms at today's volume, and interview capacity, not software, as the limit: already in the three biggest cities at today's volume ([results](docs/design/deployment-and-scaling.md#1b-measured-the-system-at-1000-and-10000-screenings-a-week)). Results are committed, with what each finding changed: two paths to a false knock-out and a recap loop were found and closed |
 | **API** | `/api/conversations` for channels (web, WhatsApp, voice), `/api/candidates` + `/api/analytics` for recruiters and an ATS, `/api/config` for the read-only workspace rules. OpenAPI docs at `/docs` |
 
-## How it works
+## Architecture overview
 
 ```
 candidate message
