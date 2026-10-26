@@ -258,7 +258,7 @@ export function TryAgentPage() {
                   </button>
                   <div className="min-w-0 text-sm">
                     <div className="font-medium text-ink">{PHASE_LABEL[phase]}</div>
-                    <div className="truncate text-xs text-ink-3">The same API as the chat: your voice is transcribed in the browser; you can also type or tap.</div>
+                    <div className="truncate text-xs text-ink-3">Same API as the chat · you can also type or tap</div>
                   </div>
                 </div>
               )}
