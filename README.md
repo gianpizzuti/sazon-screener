@@ -109,9 +109,10 @@ src/screener/
   api/         FastAPI app: channel and recruiter endpoints
   views.py     read models for recruiters (queue row, candidate detail)
   analytics.py funnel, drop-off, knock-outs, frustration, FAQ gaps, AI health
-  channels/    terminal chat
+  knowledge.py knowledge-base retrieval (local embeddings)
+  channels/    terminal chat, voice (speakable text, ElevenLabs)
 web/           React + TypeScript recruiter web app (an API client, built into web/dist)
-scripts/       run, seed demo data, export samples
+scripts/       run, seed demo data, export samples, volume test
 samples/       real conversations with highlights, transcript, data and summary
 tests/         policy, engine, API, validators, locations, eval datasets (offline, deterministic)
 evals/         extraction and conversation evals against the real models, with committed results
