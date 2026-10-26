@@ -55,7 +55,7 @@ NAME → LICENCE ──no / in progress / type not accepted──► DISQUALIFIE
 
 - **The candidate stops responding.** Reminders after 2, 24 and 72 hours, never between 21:00 and 09:00 in the candidate's time zone, as fixed templates (WhatsApp's 24-hour rule) that repeat the pending question. The conversation is then marked as abandoned, with the drop-off stage recorded; any later reply resumes it.
 - **Invalid or ambiguous answers.** Repeated with the reason and options ("¿Centro de qué ciudad?"), never guessed. Manipulation attempts have no effect, as rules decide eligibility.
-- **Language switching.** Replies follow the latest message's language, with hysteresis: "ok", "sí", names and numbers do not switch it. Before the city is known, neutral Spanish is used.
+- **Language switching.** Replies follow the latest message's language, with hysteresis: "ok", "sí", names and numbers do not switch it. An explicit request ("¿podemos seguir en inglés?") switches at once, also by voice. Before the city is known, neutral Spanish is used.
 - **Candidate questions.** Answered only from the client's approved knowledge base; otherwise the team will confirm, and the question is logged.
 - **Technical failures.** Retried, then replaced by a template: the conversation is never interrupted.
 
