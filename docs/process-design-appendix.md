@@ -131,11 +131,13 @@ Knock-outs are objective rules set by the client, explained to the candidate and
 
 | Question for the client | Assumption made |
 |---|---|
+| Which cities, zones and restaurants are served? The brief gives 45 locations in Spain and Mexico but no list. | Illustrative, as configuration (`service_areas.yaml`): 27 restaurants in Madrid, Barcelona, Valencia, Sevilla, Málaga and Bilbao; 18 in Mexico City, Guadalajara and Monterrey |
 | Are bicycles / e-bikes accepted? No licence is needed for them, so this knock-out could reject valid candidates. | No: licence required, as specified |
 | Which licence types count (car, motorbike, moped)? Is an own vehicle required? | Configurable per client (`license.accepted_types`); for Grupo Sazón both, and the type is asked once if the candidate only says "sí". Vehicle not asked |
 | Do foreign licences count (e.g. Venezuelan, Colombian)? Spain recognises some only for six months of residency. Found by the conversation eval. | From the law of the hiring country, as configuration ([foreign licences](design/foreign-licences.md)): EU licences count; the 33 countries with an exchange agreement qualify with a note to exchange it; others, and every foreign licence in Mexico, go to a person. Sofía never asks where a licence is from. To confirm with the client's legal team |
 | Is "zone" where the candidate lives or where they can work? | Where they can work |
 | Who contacts qualified candidates, and how fast? | They book the interview in the chat; a recruiter only steps in if no offered time fits |
+| How many interviews can each city hold? One place per city gives about 60 a week; at 1,000 applications a week the three largest cities need about 83–110 (measured by the volume test, [deployment §1b](design/deployment-and-scaling.md#1b-measured-the-system-at-1000-and-10000-screenings-a-week)) | The agent hands candidates it cannot book to a recruiter and reports how many; adding places, group sessions or a first video interview is the client's decision |
 | Where and when are interviews held (one restaurant per city, or each restaurant)? Is there a calendar we can read? | One restaurant per city, weekdays 10–13 and 16–19 (configuration); a calendar integration in production |
 | Pay, contract and benefits per country | FAQ uses placeholder answers to be confirmed |
 | Right to work, minimum age | Not screened, stated in the FAQ |
