@@ -37,7 +37,7 @@ ISSUE_HINTS: dict[str, str] = {
     "zone_unlisted": "They named \"{place}\", which is not one of our delivery zones in {city}. Say so in a few words"
     " (no long apology), then ask which of these suits them instead: {options}. They are shown as buttons, with 'any area'.",
     "availability_contradiction": "They said both full-time and part-time. Ask which of the two (weekends can be added to either).",
-    "availability_unclear": "Their availability wasn't clear. Offer the options: full-time, part-time, weekends.",
+    "availability_unclear": "Their availability wasn't clear. Offer the options: full-time, part-time, weekends only.",
     "schedule_unclear": "Their preferred shift wasn't clear. Offer the options: morning, afternoon, evening, flexible.",
     "experience_unclear": "It's not clear how long they have been delivering. Ask for an approximate duration.",
     "experience_invalid": "The duration they gave doesn't look right. Ask again for an approximate number of years or months.",

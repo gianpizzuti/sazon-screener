@@ -23,10 +23,10 @@ options:
     es: ["Coche", "Moto", "Los dos"]
     en: ["Car", "Motorbike", "Both"]
   availability:
-    es-ES: ["Jornada completa", "Media jornada", "Fines de semana"]
-    es-MX: ["Tiempo completo", "Medio tiempo", "Fines de semana"]
-    es: ["Jornada completa", "Media jornada", "Fines de semana"]
-    en: ["Full-time", "Part-time", "Weekends"]
+    es-ES: ["Jornada completa", "Media jornada", "Solo fines de semana"]
+    es-MX: ["Tiempo completo", "Medio tiempo", "Solo fines de semana"]
+    es: ["Jornada completa", "Media jornada", "Solo fines de semana"]
+    en: ["Full-time", "Part-time", "Weekends only"]
   schedule:
     es: ["Mañana", "Tarde", "Noche", "Flexible"]
     en: ["Morning", "Afternoon", "Evening", "Flexible"]
@@ -54,10 +54,10 @@ ask:
     es: "¿Y en qué zona o barrio de {city}? Así te asignamos el restaurante más cercano."
     en: "And which area or neighbourhood of {city}? That way we match you with the nearest restaurant."
   availability:
-    es-ES: "¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?"
-    es-MX: "¿Qué disponibilidad tienes: tiempo completo, medio tiempo o fines de semana?"
-    es: "¿Qué disponibilidad tienes: jornada completa, media jornada o fines de semana?"
-    en: "What's your availability: full-time, part-time or weekends?"
+    es-ES: "¿Qué disponibilidad tienes: jornada completa, media jornada o solo fines de semana?"
+    es-MX: "¿Qué disponibilidad tienes: tiempo completo, medio tiempo o solo fines de semana?"
+    es: "¿Qué disponibilidad tienes: jornada completa, media jornada o solo fines de semana?"
+    en: "What's your availability: full-time, part-time or weekends only?"
   schedule:
     es: "¿Qué turno prefieres: mañana, tarde, noche o flexible?"
     en: "Which shift do you prefer: morning, afternoon, evening or flexible?"
