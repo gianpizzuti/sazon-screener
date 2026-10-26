@@ -38,7 +38,7 @@ const NODES: Node[] = [
   { id: "recap", kind: "decision", x: SPINE, y: 1010, title: "Recap confirmed?" },
   { id: "qualified", kind: "step", x: SPINE, y: 1115, title: "Qualified", sub: "interview times offered" },
   { id: "interview", kind: "end", x: SPINE, y: 1215, title: "Interview booked", sub: "picked in the chat" },
-  { id: "handoff", kind: "review", x: SIDE, y: 1215, title: "Recruiter finds a time", sub: "no time fitted, 2 rounds" },
+  { id: "handoff", kind: "review", x: SIDE, y: 1215, title: "Handed to a recruiter", sub: "no time fitted or free" },
   { id: "review", kind: "review", x: SIDE, y: 1115, title: "Needs review", sub: "a knock-out stayed unclear" },
 ];
 const EDGES: Edge[] = [

@@ -132,12 +132,13 @@ export function AnalyticsPage() {
             </div>
             <dl className="grid grid-cols-2 gap-4">
               {[
-                ["Booked in the chat", String(a.interviews_booked), "Candidates who picked one of the offered times"],
-                ["Recruiter finds a time", String(a.scheduling_handoffs), "No offered time fitted after two rounds of options"],
+                ["Booked in the chat", String(a.interviews_booked), "Picked one of the offered times"],
+                ["Handed to a recruiter", String(a.scheduling_handoffs), "No offered time fitted, or none was free: a recruiter arranges it"],
               ].map(([label, value, hint]) => (
-                <div key={label} className="rounded-xl bg-surface-2 p-3" title={hint}>
+                <div key={label} className="rounded-xl bg-surface-2 p-3">
                   <dt className="text-xs text-ink-3">{label}</dt>
                   <dd className="num mt-0.5 text-xl font-semibold text-ink">{value}</dd>
+                  <dd className="mt-1 text-xs text-ink-3">{hint}</dd>
                 </div>
               ))}
             </dl>
@@ -167,9 +168,10 @@ export function AnalyticsPage() {
                 ["Guard rejections", String(a.guard_rejections), "Drafts rejected for length, markdown or leaked instructions"],
                 ["Spain / Mexico", `${a.countries.ES ?? 0} / ${a.countries.MX ?? 0}`, "Candidates by country of their city"],
               ].map(([label, value, hint]) => (
-                <div key={label} className="rounded-xl bg-surface-2 p-3" title={hint}>
+                <div key={label} className="rounded-xl bg-surface-2 p-3">
                   <dt className="text-xs text-ink-3">{label}</dt>
                   <dd className="num mt-0.5 text-xl font-semibold text-ink">{value}</dd>
+                  <dd className="mt-1 text-xs text-ink-3">{hint}</dd>
                 </div>
               ))}
             </dl>
