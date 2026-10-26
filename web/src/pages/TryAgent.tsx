@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Button, Card, CardTitle, Chip, PageHeader, RetrievedTopics, StatusBadge } from "../components/ui";
-import { type Analysis, api, type CandidateDetail } from "../lib/api";
+import { type Analysis, api, type CandidateDetail, type Status } from "../lib/api";
 import { AVAILABILITY, SCHEDULE, experience, interviewTime, shortDate, titleCase } from "../lib/format";
 import { useCandidate } from "../lib/hooks";
 import { listen, speak, stopSpeaking, voiceSupported } from "../lib/voice";
@@ -14,8 +14,38 @@ import { listen, speak, stopSpeaking, voiceSupported } from "../lib/voice";
 type Session = { id: string; quick: string[]; analysis: Analysis | null; topics: string[]; silent: boolean; voice?: boolean; locale?: string };
 type Phase = "idle" | "listening" | "thinking" | "speaking";
 type Reply = { text: string; quick_replies: string[] };
-const PHASE_LABEL: Record<Phase, string> = {
-  idle: "Tap the microphone to answer", listening: "Listening… pause to send", thinking: "Sofía is thinking…", speaking: "Sofía is speaking…",
+// The chat panel is what the candidate sees, so it speaks the conversation's language (and follows a switch);
+// the rest of the page is the recruiter's view and stays in English.
+type ChatLang = "es" | "en";
+const CHAT_COPY: Record<ChatLang, {
+  subtitle: string; voiceCall: string; elevenlabs: string; browserVoice: string; placeholder: string; send: string;
+  listening: string; typing: string; reminder: string; silent: string; emptyTitle: string; emptyText: string;
+  voiceHint: string; speak: string; stopListening: string; phase: Record<Phase, string>; status: Record<Status, string>;
+}> = {
+  es: {
+    subtitle: "Asistente con IA · suele responder en unos segundos",
+    voiceCall: "Llamada de voz", elevenlabs: "voz de ElevenLabs", browserVoice: "voz del navegador",
+    placeholder: "Escribe un mensaje…", send: "Enviar", listening: "Escuchando…", typing: "Sofía está escribiendo",
+    reminder: "Recordatorio automático · no has respondido",
+    silent: "Sofía no responde: la conversación está cerrada y no había nada que contestar.",
+    emptyTitle: "Solicitud de repartidor/a", emptyText: "Inicia una conversación para recibir el primer mensaje de Sofía.",
+    voiceHint: "Tu voz se transcribe en el navegador; también puedes escribir o tocar una opción.",
+    speak: "Hablar", stopListening: "Dejar de escuchar",
+    phase: { idle: "Toca el micrófono para responder", listening: "Escuchando… haz una pausa para enviar", thinking: "Sofía está pensando…", speaking: "Sofía está hablando…" },
+    status: { in_progress: "En curso", awaiting_reply: "Esperando respuesta", abandoned: "Sin respuesta", qualified: "Cumple los requisitos", needs_review: "En revisión", disqualified: "No cumple los requisitos", withdrawn: "Retirada", terminated: "Cerrada" },
+  },
+  en: {
+    subtitle: "AI assistant · usually replies in a few seconds",
+    voiceCall: "Voice call", elevenlabs: "ElevenLabs voice", browserVoice: "browser voice",
+    placeholder: "Write a message…", send: "Send", listening: "Listening…", typing: "Sofía is typing",
+    reminder: "Automatic reminder · you went silent",
+    silent: "Sofía doesn't reply: the conversation is closed and there was nothing to answer.",
+    emptyTitle: "Apply as a delivery driver", emptyText: "Start a conversation to receive Sofía's first message.",
+    voiceHint: "The same API as the chat: your voice is transcribed in the browser; you can also type or tap.",
+    speak: "Speak", stopListening: "Stop listening",
+    phase: { idle: "Tap the microphone to answer", listening: "Listening… pause to send", thinking: "Sofía is thinking…", speaking: "Sofía is speaking…" },
+    status: { in_progress: "In progress", awaiting_reply: "Awaiting reply", abandoned: "No reply", qualified: "Qualified", needs_review: "Needs review", disqualified: "Disqualified", withdrawn: "Withdrawn", terminated: "Closed" },
+  },
 };
 const STORAGE_KEY = "try-agent-session";
 
@@ -34,9 +64,9 @@ function loadSession(): Session | null {
   try { const raw = sessionStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch { return null; }
 }
 
-function TypingDots() {
+function TypingDots({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-1 rounded-2xl rounded-tl-md bg-surface-2 px-4 py-3" aria-label="Sofía is typing">
+    <div className="flex items-center gap-1 rounded-2xl rounded-tl-md bg-surface-2 px-4 py-3" aria-label={label}>
       {[0, 1, 2].map((i) => (
         <motion.span key={i} className="size-1.5 rounded-full bg-ink-3" animate={{ y: [0, -4, 0], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }} />
@@ -142,6 +172,7 @@ export function TryAgentPage() {
   const showQuick = !!session?.quick.length && last?.role === "agent" && last.meta.kind !== "followup" && !send.isPending;
   const finished = detail && !["in_progress", "awaiting_reply", "abandoned"].includes(detail.row.status);
   const a = session?.analysis;
+  const t = CHAT_COPY[(session?.locale ?? language).startsWith("en") ? "en" : "es"];
 
   return (
     <div>
@@ -182,10 +213,10 @@ export function TryAgentPage() {
             <div className="leading-tight">
               <div className="font-semibold text-ink">Sofía · Grupo Sazón</div>
               <div className="text-xs text-ink-3">{session?.voice
-                ? <>Voice call · {voiceInfo?.provider === "elevenlabs" ? "ElevenLabs voice" : "browser voice"}</>
-                : "AI assistant · usually replies in a few seconds"}</div>
+                ? <>{t.voiceCall} · {voiceInfo?.provider === "elevenlabs" ? t.elevenlabs : t.browserVoice}</>
+                : t.subtitle}</div>
             </div>
-            {detail && <div className="ml-auto"><StatusBadge status={detail.row.status} size="sm" /></div>}
+            {detail && <div className="ml-auto"><StatusBadge status={detail.row.status} size="sm" label={t.status[detail.row.status]} /></div>}
           </div>
 
           <div ref={scroller} className="flex-1 space-y-3 overflow-y-auto px-5 py-5" aria-live="polite">
@@ -193,8 +224,8 @@ export function TryAgentPage() {
               <div className="grid h-full place-items-center text-center">
                 <div>
                   <div className="mx-auto mb-3 grid size-14 place-items-center rounded-2xl bg-brand-soft"><MessageCircle className="size-6 text-brand-ink" /></div>
-                  <p className="font-medium text-ink">Apply as a delivery driver</p>
-                  <p className="mt-1 text-sm text-ink-3">Start a conversation to receive Sofía's first message.</p>
+                  <p className="font-medium text-ink">{t.emptyTitle}</p>
+                  <p className="mt-1 text-sm text-ink-3">{t.emptyText}</p>
                 </div>
               </div>
             )}
@@ -208,7 +239,7 @@ export function TryAgentPage() {
                       agent ? m.meta.kind === "followup" ? "rounded-tl-md bg-violet-50 text-ink ring-1 ring-violet-500/20 dark:bg-violet-400/10" : "rounded-tl-md bg-surface-2 text-ink"
                         : "rounded-tr-md bg-brand-btn text-on-brand")}>
                       {m.text}
-                      {m.meta.kind === "followup" && <div className="mt-1 flex items-center gap-1 text-xs text-violet-700 dark:text-violet-300"><Hourglass className="size-3" />Automatic reminder · you went silent</div>}
+                      {m.meta.kind === "followup" && <div className="mt-1 flex items-center gap-1 text-xs text-violet-700 dark:text-violet-300"><Hourglass className="size-3" />{t.reminder}</div>}
                     </div>
                   </motion.div>
                 );
@@ -221,13 +252,13 @@ export function TryAgentPage() {
               {phase === "listening" && (
                 <motion.div key="heard" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
                   <div className="inline-flex max-w-[82%] items-center gap-2 rounded-2xl rounded-tr-md border border-dashed border-brand-btn/40 px-4 py-2.5 text-[15px] text-ink-2">
-                    <AudioLines className="size-4 shrink-0 text-brand-ink" aria-hidden />{heard || "Listening…"}
+                    <AudioLines className="size-4 shrink-0 text-brand-ink" aria-hidden />{heard || t.listening}
                   </div>
                 </motion.div>
               )}
-              {send.isPending && <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex"><TypingDots /></motion.div>}
+              {send.isPending && <motion.div key="typing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex"><TypingDots label={t.typing} /></motion.div>}
             </AnimatePresence>
-            {session?.silent && <p className="text-center text-xs text-ink-3">Sofía doesn't reply: the conversation is closed and there was nothing to answer.</p>}
+            {session?.silent && <p className="text-center text-xs text-ink-3">{t.silent}</p>}
             {finished && (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center pt-2">
                 <Link to={`/candidates/${session!.id}`} className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-medium text-surface">
@@ -250,23 +281,23 @@ export function TryAgentPage() {
               </AnimatePresence>
               {session.voice && (
                 <div className="mb-2 flex items-center gap-3 rounded-2xl bg-surface-2 px-3 py-2">
-                  <button type="button" onClick={micPressed} disabled={phase === "thinking"} aria-label={phase === "listening" ? "Stop listening" : "Speak"}
+                  <button type="button" onClick={micPressed} disabled={phase === "thinking"} aria-label={phase === "listening" ? t.stopListening : t.speak}
                     className={clsx("relative grid size-12 shrink-0 cursor-pointer place-items-center rounded-full text-on-brand transition active:scale-95 disabled:opacity-40",
                       phase === "listening" ? "bg-rose-600" : "bg-brand-btn")}>
                     {phase === "listening" && <motion.span className="absolute inset-0 rounded-full bg-rose-500/40" animate={{ scale: [1, 1.35], opacity: [0.7, 0] }} transition={{ duration: 1.1, repeat: Infinity }} aria-hidden />}
                     {phase === "listening" ? <Square className="relative size-4" fill="currentColor" /> : <Mic className="relative size-5" />}
                   </button>
                   <div className="min-w-0 text-sm">
-                    <div className="font-medium text-ink">{PHASE_LABEL[phase]}</div>
-                    <div className="truncate text-xs text-ink-3">The same API as the chat: your voice is transcribed in the browser; you can also type or tap.</div>
+                    <div className="font-medium text-ink">{t.phase[phase]}</div>
+                    <div className="truncate text-xs text-ink-3">{t.voiceHint}</div>
                   </div>
                 </div>
               )}
               <form onSubmit={(e) => { e.preventDefault(); submit(text); }} className="flex items-center gap-2">
                 <label htmlFor="msg" className="sr-only">Your message</label>
-                <input id="msg" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write as the candidate…" autoComplete="off"
+                <input id="msg" value={text} onChange={(e) => setText(e.target.value)} placeholder={t.placeholder} autoComplete="off"
                   className="h-11 flex-1 rounded-full border border-line bg-surface-2 px-4 text-[15px] text-ink placeholder:text-ink-3 focus:border-focus focus:outline-none" />
-                <button type="submit" disabled={!text.trim() || send.isPending} aria-label="Send"
+                <button type="submit" disabled={!text.trim() || send.isPending} aria-label={t.send}
                   className="grid size-11 cursor-pointer place-items-center rounded-full bg-brand-btn text-on-brand transition active:scale-95 disabled:opacity-40">
                   <Send className="size-4" />
                 </button>
