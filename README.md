@@ -9,7 +9,7 @@ The client has two different problems, and the design addresses each one separat
 | 60% of candidates don't answer recruiter calls | Asynchronous chat, first message seconds after applying, candidate answers when it suits them |
 | 80% of recruiter time goes to unqualified candidates | Knock-out questions first; recruiters only receive qualified (or flagged) candidates with a summary |
 
-**Demo video:** [youtu.be/HKy3JE6FRv0](https://youtu.be/HKy3JE6FRv0)
+**Demo video:** [youtu.be/PjxjN6PHDis](https://youtu.be/PjxjN6PHDis)
 
 **[Process design](docs/process-design.pdf)** (Phase 1, two pages; [Markdown version](docs/process-design.md), [appendix](docs/process-design-appendix.md)) · **[Decision log](docs/decisions/decision-log.md)** (the ten decisions that matter, then the full record) · **[ADRs](docs/decisions/README.md)** (deep-dives) · **[Live testing log](docs/live-testing-log.md)** (what real conversations broke, and the fixes) · **[Evals](evals/README.md)** (what the models get right, measured, and what that changed) · **[Sample conversations](samples/README.md)**
 
