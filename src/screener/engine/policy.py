@@ -444,6 +444,13 @@ class ScreeningPolicy:
 
     # ------------------------------------------------------------------ understanding -> state
     def _update_language(self, state, analysis: TurnAnalysis, message: str, events) -> None:
+        # An explicit request wins at once, whatever language the message is in: a Spanish speaker
+        # asking for English, or English speech that the voice channel transcribed as Spanish.
+        if analysis.requested_language and analysis.requested_language != state.language:
+            events.append(Event("language_switched", {"from": state.language, "to": analysis.requested_language,
+                                                      "requested": True}))
+            state.language = analysis.requested_language
+            return
         # Hysteresis: the model must see a clear new language AND the deterministic check must
         # confirm it, or (for long mixed messages with no function-word signal) at least not
         # contradict it. Short loanword answers ("full time", "flexible") never switch.

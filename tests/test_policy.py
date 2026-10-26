@@ -560,6 +560,17 @@ class TestLanguage:
         say(policy, state, "full time y part time", availability=["full_time", "part_time"], language="en", language_is_clear=True)
         assert state.language == "es"
 
+    def test_explicit_request_switches_whatever_the_message_language(self, policy, state):
+        # regression: by voice, "I prefer to speak English" was transcribed as Spanish and never switched
+        d, events = say(policy, state, "hay perfer tu speak English", intents=("question",), language="es",
+                        language_is_clear=True, requested_language="en")
+        assert state.language == "en" and d.locale == "en" and "language_switched" in events
+
+    def test_request_for_the_current_language_changes_nothing(self, policy, state):
+        _, events = say(policy, state, "¿podemos hablar en español?", intents=("question",), language="es",
+                        language_is_clear=True, requested_language="es")
+        assert state.language == "es" and "language_switched" not in events
+
     def test_city_sets_the_spanish_variant(self, policy, state):
         to_screening(policy, state)
         d, _ = say(policy, state, "Monterrey", location_text="Monterrey")

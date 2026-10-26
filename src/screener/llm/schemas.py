@@ -70,6 +70,11 @@ class TurnAnalysis(BaseModel):
         description="True if the message has ordinary words of its language (a phrase or sentence). "
         "False only if it is just names, numbers, sí/no/ok, a single word, emojis or proper nouns."
     )
+    requested_language: Literal["es", "en"] | None = Field(
+        default=None,
+        description="The language the candidate explicitly asks to continue in ('can we do this in English?', "
+        "'¿podemos seguir en inglés?'), whatever language the message itself is in. Null otherwise.",
+    )
     spanish_variant: Literal["es-ES", "es-MX", "unknown"]
     intents: list[Intent]
     sentiment: Literal["neutral", "positive", "confused", "frustrated"]

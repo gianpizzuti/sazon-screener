@@ -57,3 +57,9 @@ The Understand system prompt is served from cache (`cache_read_input_tokens` ≈
 | L16 | "Template fallback rate 10%" with zero model errors | Follow-up reminders (templates by design) were counted as fallbacks | Excluded from the metric (D121) | Metric reads 0% with no errors |
 | L17 | Muted text at 4.44:1 on the page background | Token chosen by eye | Computed contrast for every token pair; darkened to 5.14:1 (D112) | Script output in the commit history |
 | L18 | After rejecting a qualified candidate, the recruiter couldn't find them: the row still said "Qualified" and had moved down the list (**found in manual testing**) | The React pipeline showed only the bot outcome (the recruiter column of the old dashboard was lost in the rewrite), and "Action needed" ignored recruiter decisions | Recruiter decision shown next to the bot outcome with an "override" label, recruiter filters, "Action needed" = not yet decided (D130–D132) | API test on `overridden`; verified in the browser |
+
+## Round 4 (2026-10-26): rehearsing the demo video
+
+| # | What happened | Root cause | Fix | Check |
+|---|---|---|---|---|
+| L19 | By voice, a candidate said "Hi, I prefer to speak English": Sofía answered "podemos seguir en español o en inglés" and stayed in Spanish (**found in manual testing**) | The browser transcribes in the language Sofía is speaking, so the English sentence arrived as "Hay Perfer tu Speak English" and was read as Spanish. The same gap existed in chat: "¿podemos seguir en inglés?" is a Spanish message and never switched | The understanding model now returns `requested_language` when the candidate explicitly asks for a language, and the policy switches at once, whatever language the message is in; the voice channel then listens in English too (D242) | 2 policy tests; real models: the garbled transcript and "¿podemos seguir en inglés?" switch, "¿la entrevista es en inglés?" does not |
