@@ -4,7 +4,7 @@ Unit tests prove the rules; only real conversations prove the prompts. Each issu
 
 **Scenarios run:** cooperative candidate (Spain), English speaker in Mexico City, Mexican Spanish with slang and everything in one message, no licence, out of area, questions + prompt injection + frustration, ambiguity + contradictions + corrections at the recap.
 
-## Round 1 (2026-10-21)
+## Round 1
 
 | # | What happened | Root cause | Fix | Regression test |
 |---|---|---|---|---|
@@ -15,7 +15,7 @@ Unit tests prove the rules; only real conversations prove the prompts. Each issu
 | L5 | 2.5–8 s per turn | Adaptive thinking on the writer: ~430 thinking tokens for a one-line message | Writer runs with thinking off (`between_tools`): **1.3 s vs 6.0 s median**, and followed the instructions better (D65) | measured, see below |
 | L6 | `language_is_clear: false` on long, plainly Spanish sentences | Field semantics too vague | Explicit definition with examples in the prompt and the schema | mini-eval: **18/18** correct |
 | L7 | "en la noche" and "full time y part time" read as English: the agent switched to English mid-conversation | A single classifier deciding alone | Deterministic second opinion (function words); a switch needs both signals not to disagree (D71) | `test_function_word_second_opinion`, `test_model_mistake_is_vetoed_by_the_second_opinion` |
-| L8 | On 21 Oct, "el 1 de octubre" accepted as 1 Oct **2027**; recap showed "01/10" without year | Prompt told the model to roll past dates to next year | Model keeps the current year; code rolls over only if > 60 days past, else asks again; recap shows the year when it's not the current one (D72, D73) | `test_recent_past_day_month_is_an_error_not_next_year`, `test_far_past_day_month_means_next_year` |
+| L8 | Three weeks after 1 October, "el 1 de octubre" accepted as 1 Oct **2027**; recap showed "01/10" without year | Prompt told the model to roll past dates to next year | Model keeps the current year; code rolls over only if > 60 days past, else asks again; recap shows the year when it's not the current one (D72, D73) | `test_recent_past_day_month_is_an_error_not_next_year`, `test_far_past_day_month_means_next_year` |
 | L9 | "Can we do this in English?" → "the team will confirm" | Not in the FAQ, although we know the answer | FAQ entry `language` (D75) | checked live |
 | L10 | Final message: "(no es todavía una oferta de trabajo)" | A constraint for the model leaked into the text | Phrased as a prohibition, not as content (D76) | checked live |
 | L11 | "licencia… de vehículo o de moto" | Neutral-Spanish vocabulary choice | "auto o moto" (D74) | n/a |
@@ -40,16 +40,16 @@ The Understand system prompt is served from cache (`cache_read_input_tokens` ≈
 - A frustrated candidate → "Te entiendo, ya vamos a la mitad: solo quedan 4 preguntas" (count supplied by the policy).
 - "3 años" about the licence was not extracted as delivery experience.
 - Mexican vocabulary once the city was known ("licencia de manejo", "tiempo completo", "Listo").
-- "asap" on 21 Oct (Madrid) stored as 20 Oct for a candidate in Mexico City, where it was still the 20th: start dates are computed in the candidate's timezone.
+- "asap" sent just after midnight Madrid time was stored as the previous day for a candidate in Mexico City, where it still was: start dates are computed in the candidate's timezone.
 
-## Round 2 (2026-10-21): manual testing and demo data generation
+## Round 2: manual testing and demo data generation
 
 | # | What happened | Root cause | Fix | Regression test |
 |---|---|---|---|---|
 | L13 | A Spanish candidate answered just "full time" and the agent switched to English, then back at the next message (found while generating demo data) | The function-word check gives no opinion on loanwords, so the model decided alone | A switch now needs the check to confirm, or ≥ 4 words without signal (D97) | `TestLanguageLoanwords` (3 tests); demo conversation regenerated: no switch |
 | L14 | "no, pero puedo conducir ebike" → disqualified (manual test) | Working as specified: a licence is a knock-out | None in code. It is real evidence for **open question #1 to the client** (are e-bikes accepted?); a recruiter can override the outcome (D87) | n/a |
 
-## Round 3 (2026-10-21): new web app, verified in the browser
+## Round 3: new web app, verified in the browser
 
 | # | What happened | Root cause | Fix | Check |
 |---|---|---|---|---|
@@ -58,7 +58,7 @@ The Understand system prompt is served from cache (`cache_read_input_tokens` ≈
 | L17 | Muted text at 4.44:1 on the page background | Token chosen by eye | Computed contrast for every token pair; darkened to 5.14:1 (D112) | Script output in the commit history |
 | L18 | After rejecting a qualified candidate, the recruiter couldn't find them: the row still said "Qualified" and had moved down the list (**found in manual testing**) | The React pipeline showed only the bot outcome (the recruiter column of the old dashboard was lost in the rewrite), and "Action needed" ignored recruiter decisions | Recruiter decision shown next to the bot outcome with an "override" label, recruiter filters, "Action needed" = not yet decided (D130–D132) | API test on `overridden`; verified in the browser |
 
-## Round 4 (2026-10-26): rehearsing the demo video
+## Round 4: rehearsing the demo video
 
 | # | What happened | Root cause | Fix | Check |
 |---|---|---|---|---|
