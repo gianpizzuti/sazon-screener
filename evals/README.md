@@ -25,7 +25,7 @@ python -m evals.conversations --only p08 --no-judge       # one persona, no judg
 
 | Metric | Result |
 |---|---|
-| Cases fully correct | 124/126 (final run, 2026-10-25, on the delivered prompt) |
+| Cases fully correct | 124/126 (final run, on the delivered prompt) |
 | Fields correct | 158/158 |
 | Spurious values (said by nobody) | 1 in 126 messages ("tiempo completo, ando buscando chamba **ya**" also read as "start now"; earlier runs had a different single one) |
 | Interview time chosen, model reading (used only when the rules can't tell) | 5/5 |

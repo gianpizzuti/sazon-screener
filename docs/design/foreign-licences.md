@@ -1,6 +1,6 @@
 # Driving licences issued abroad
 
-Research note behind [`foreign_licences.yaml`](../../config/clients/grupo_sazon/foreign_licences.yaml) (D222–D223), written on 2026-10-23. It is not legal advice: the client's legal or HR team should confirm it before the pilot, and someone should own it, because the lists change.
+Research note behind [`foreign_licences.yaml`](../../config/clients/grupo_sazon/foreign_licences.yaml) (D222–D223). It is not legal advice: the client's legal or HR team should confirm it before the pilot, and someone should own it, because the lists change.
 
 ## Why it matters
 Many delivery-driver applicants in Spain moved there recently. Testing found two failures:
